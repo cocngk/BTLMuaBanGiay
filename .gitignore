@@ -1,0 +1,42 @@
+# AI Agent working dirs (local only, never commit)
+.opencode/
+.opencode/*
+.openchamber/
+.agent/
+.agents/
+.cursor/
+.copilot/
+continue/
+aider*/
+
+# Visual Studio / VS Code
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Ll]og/
+
+# NuGet packages (restored via packages.config)
+packages/
+*.nupkg
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Publish profiles
+**/PublishProfiles/
+
+# OS / temp
+.DS_Store
+Thumbs.db
+*~
+*.tmp
+*.bak

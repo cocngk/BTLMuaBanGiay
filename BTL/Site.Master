@@ -1,0 +1,584 @@
+﻿
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="ShoeStore.SiteMaster" %>
+
+<!DOCTYPE html>
+<html>
+<head runat="server">
+    <title>SneakerX - Giày Dép Chính Hãng</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #fcf6f8;
+            color: #333;
+        }
+
+        .header-container {
+            background: #fff;
+            padding: 12px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(225, 112, 133, 0.12);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .logo-icon {
+            background: #e63946;
+            color: white;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 2px 8px rgba(230, 57, 70, 0.3);
+        }
+
+        .logo-text {
+            font-size: 26px;
+            font-weight: 800;
+            color: #e63946;
+            font-style: italic;
+        }
+
+        .nav-center {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            background: #fdf2f4;
+            padding: 5px;
+            border-radius: 30px;
+            list-style: none;
+            gap: 5px;
+        }
+
+        .nav-item a {
+            text-decoration: none;
+            color: #555;
+            padding: 8px 14px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s;
+        }
+
+        .nav-item a:hover,
+        .nav-item a.active {
+            background: #e63946;
+            color: white;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .search-pill {
+            display: flex;
+            align-items: center;
+            background: #fdf2f4;
+            border-radius: 25px;
+            padding: 3px 3px 3px 15px;
+            border: 1px solid #fce8ec;
+        }
+
+        .search-pill input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 13px;
+            width: 120px;
+        }
+
+        .btn-search-icon {
+            background: #e63946;
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .btn-search-icon:hover {
+            background: #c1121f;
+        }
+
+        .cart-icon-btn {
+            background: #fdf2f4;
+            color: #e63946;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 17px;
+            border: 1px solid #fce8ec;
+            transition: all 0.3s;
+        }
+
+        .cart-icon-btn:hover {
+            background: #e63946;
+            color: white;
+        }
+
+        .auth-buttons-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-header-login {
+            color: #e63946;
+            background: #fde8ed;
+            border: 1.5px solid #f8c2cc;
+            padding: 8px 16px;
+            border-radius: 22px;
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-header-login:hover {
+            background: #e63946;
+            color: white;
+            border-color: #e63946;
+        }
+
+        .btn-header-register {
+            background: #e63946;
+            color: white;
+            border: 1.5px solid #e63946;
+            padding: 8px 16px;
+            border-radius: 22px;
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            box-shadow: 0 3px 10px rgba(230, 57, 70, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-header-register:hover {
+            background: #c1121f;
+            border-color: #c1121f;
+            transform: translateY(-1px);
+        }
+
+        .user-logged-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #fdf2f4;
+            padding: 4px 12px 4px 6px;
+            border-radius: 25px;
+            border: 1px solid #f8c2cc;
+        }
+
+        .user-avatar-circle {
+            background: #e63946;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .user-name-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: #e63946;
+        }
+
+        .btn-logout-icon {
+            color: #888;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .btn-logout-icon:hover {
+            color: #e63946;
+        }
+
+        .main-wrapper {
+            min-height: 600px;
+        }
+
+        .footer {
+            background: #fff;
+            border-top: 1px solid #f8d7da;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+            font-size: 13px;
+            color: #777;
+        }
+
+        /* THONG BAO TOAST */
+        .toast-container {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
+
+        .toast-message {
+            min-width: 300px;
+            max-width: 420px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            animation: toastSlideIn 0.3s ease;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: auto;
+        }
+
+        .toast-message.success {
+            background: #2ec4b6;
+            border-left: 5px solid #0f9f90;
+        }
+
+        .toast-message.error {
+            background: #e63946;
+            border-left: 5px solid #9d0208;
+        }
+
+        .toast-message.info {
+            background: #3a86ff;
+            border-left: 5px solid #004e89;
+        }
+
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow-wrap: anywhere;
+        }
+
+        .toast-content i {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .btn-close-toast {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0.85;
+            flex-shrink: 0;
+        }
+
+        .btn-close-toast:hover {
+            opacity: 1;
+        }
+
+        @keyframes toastSlideIn {
+            from {
+                transform: translateX(110%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 1100px) {
+            .header-container {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-center {
+                order: 3;
+                width: 100%;
+            }
+
+            .header-right {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header-container {
+                padding: 12px 3%;
+            }
+
+            .nav-center {
+                gap: 3px;
+            }
+
+            .nav-item a {
+                padding: 8px 9px;
+                font-size: 12px;
+            }
+
+            .header-right {
+                gap: 8px;
+            }
+
+            .search-pill input {
+                width: 100px;
+            }
+
+            .toast-container {
+                left: 12px;
+                right: 12px;
+                top: 12px;
+            }
+
+            .toast-message {
+                min-width: 0;
+                max-width: none;
+                width: 100%;
+            }
+        }
+    </style>
+
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server"></asp:ContentPlaceHolder>
+</head>
+
+<body>
+    <form id="form1" runat="server">
+
+        <header class="header-container">
+            <a href="TrangChu.aspx" class="logo-area">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-shoe-prints"></i>
+                </div>
+                <span class="logo-text">SneakerX</span>
+            </a>
+
+            <ul class="nav-center">
+                <li class="nav-item">
+                    <a href="TrangChu.aspx" id="navHome" runat="server">
+                        <i class="fa-solid fa-house"></i> Trang chủ
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="SanPham.aspx" id="navProduct" runat="server">
+                        <i class="fa-solid fa-shoe-prints"></i> Sản phẩm
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="TinTuc.aspx" id="navNews" runat="server">
+                        <i class="fa-solid fa-newspaper"></i> Tin tức
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="TuVan.aspx" id="navConsult" runat="server">
+                        <i class="fa-solid fa-headset"></i> Tư vấn
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="GioHang.aspx" id="navCart" runat="server">
+                        <i class="fa-solid fa-bag-shopping"></i> Giỏ hàng
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="ThanhToan.aspx" id="navCheckout" runat="server">
+                        <i class="fa-solid fa-credit-card"></i> Thanh toán
+                    </a>
+                </li>
+            </ul>
+
+            <div class="header-right">
+                <div class="search-pill">
+                    <asp:TextBox
+                        ID="txtHeaderSearch"
+                        runat="server"
+                        Placeholder="Tìm giày...">
+                    </asp:TextBox>
+
+                    <asp:LinkButton
+                        ID="btnHeaderSearch"
+                        runat="server"
+                        CssClass="btn-search-icon"
+                        OnClick="btnHeaderSearch_Click">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </asp:LinkButton>
+                </div>
+
+                <a href="GioHang.aspx" class="cart-icon-btn" title="Giỏ hàng">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                </a>
+
+                <asp:Panel ID="pnlGuest" runat="server" CssClass="auth-buttons-group">
+                    <a href="DangNhap.aspx" class="btn-header-login">
+                        <i class="fa-solid fa-user"></i> Đăng nhập
+                    </a>
+
+                    <a href="DangKy.aspx" class="btn-header-register">
+                        <i class="fa-solid fa-user-plus"></i> Đăng ký
+                    </a>
+                </asp:Panel>
+
+                <asp:Panel ID="pnlUser" runat="server" CssClass="user-logged-box" Visible="false">
+                    <div class="user-avatar-circle">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+
+                    <span class="user-name-text">
+                        <asp:Literal ID="litUsername" runat="server"></asp:Literal>
+                    </span>
+
+                    <asp:LinkButton
+                        ID="btnLogout"
+                        runat="server"
+                        CssClass="btn-logout-icon"
+                        OnClick="btnLogout_Click"
+                        CausesValidation="false"
+                        title="Đăng xuất">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </asp:LinkButton>
+                </asp:Panel>
+            </div>
+        </header>
+
+        <div class="main-wrapper">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server"></asp:ContentPlaceHolder>
+        </div>
+
+        <footer class="footer">
+            <p>&copy; 2026 SneakerX. Tất cả quyền được bảo lưu.</p>
+        </footer>
+
+        <!-- NOI HIEN THI THONG BAO -->
+        <div id="toastContainer" class="toast-container"></div>
+
+        <!-- HAM TOAST DUNG CHUNG CHO CAC TRANG -->
+        <script type="text/javascript">
+            function showToast(message, type) {
+                type = type || 'error';
+
+                var container = document.getElementById('toastContainer');
+
+                if (!container) {
+                    return;
+                }
+
+                var toast = document.createElement('div');
+                toast.className = 'toast-message ' + type;
+
+                var iconClass = 'fa-triangle-exclamation';
+
+                if (type === 'success') {
+                    iconClass = 'fa-circle-check';
+                } else if (type === 'info') {
+                    iconClass = 'fa-circle-info';
+                }
+
+                var content = document.createElement('div');
+                content.className = 'toast-content';
+
+                var icon = document.createElement('i');
+                icon.className = 'fa-solid ' + iconClass;
+
+                var text = document.createElement('span');
+                text.textContent = message;
+
+                content.appendChild(icon);
+                content.appendChild(text);
+
+                var closeButton = document.createElement('button');
+                closeButton.type = 'button';
+                closeButton.className = 'btn-close-toast';
+                closeButton.textContent = '\u00D7';
+                closeButton.setAttribute('aria-label', 'Đóng thông báo');
+
+                closeButton.onclick = function () {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                };
+
+                toast.appendChild(content);
+                toast.appendChild(closeButton);
+                container.appendChild(toast);
+
+                setTimeout(function () {
+                    if (toast.parentNode) {
+                        toast.style.opacity = '0';
+                        toast.style.transform = 'translateX(110%)';
+
+                        setTimeout(function () {
+                            if (toast.parentNode) {
+                                toast.parentNode.removeChild(toast);
+                            }
+                        }, 300);
+                    }
+                }, 3500);
+            }
+        </script>
+
+    </form>
+</body>
+</html>
