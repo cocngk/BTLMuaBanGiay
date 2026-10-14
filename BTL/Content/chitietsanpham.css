@@ -21,7 +21,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 40px;
             background: var(--panel);
-            border-radius: 25px;
+            border-radius: 24px;
             padding: 30px;
             border: 1px solid var(--border);
             box-shadow: 0 5px 20px rgba(0,0,0,0.03);
@@ -35,8 +35,8 @@
             width: 100%;
             height: 400px;
             object-fit: cover;
-            border-radius: 20px;
-            background: #fafafa;
+            border-radius: 24px;
+            background: var(--tint);
         }
 
         .product-info-box {
@@ -58,7 +58,7 @@
         .product-title-large {
             font-size: 26px;
             font-weight: 800;
-            color: #111;
+            color: var(--heading);
             margin-bottom: 10px;
         }
 
@@ -92,7 +92,7 @@
             font-size: 13px;
             font-weight: 700;
             cursor: pointer;
-            color: #444;
+            color: var(--heading);
             transition: all 0.2s;
             user-select: none;
         }
@@ -174,7 +174,7 @@
         .product-desc-box {
             margin-top: 30px;
             background: var(--panel);
-            border-radius: 20px;
+            border-radius: 24px;
             padding: 25px;
             border: 1px solid var(--border);
         }
@@ -182,7 +182,7 @@
         .desc-title {
             font-size: 18px;
             font-weight: 800;
-            color: #111;
+            color: var(--heading);
             margin-bottom: 12px;
             border-bottom: 2px solid var(--brand-tint);
             padding-bottom: 8px;
@@ -190,6 +190,6 @@
 
         .desc-content {
             font-size: 14px;
-            color: #555;
+            color: var(--body);
             line-height: 1.7;
         }

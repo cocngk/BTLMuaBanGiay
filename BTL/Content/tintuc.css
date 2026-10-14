@@ -9,7 +9,7 @@
             grid-template-columns: 1.2fr 1fr;
             gap: 25px;
             background: var(--panel);
-            border-radius: 25px;
+            border-radius: 24px;
             overflow: hidden;
             border: 1px solid var(--border);
             box-shadow: 0 5px 20px rgba(0,0,0,0.03);
@@ -43,7 +43,7 @@
         .featured-news-title {
             font-size: 22px;
             font-weight: 800;
-            color: #111;
+            color: var(--heading);
             margin-bottom: 10px;
             line-height: 1.4;
         }
@@ -58,7 +58,7 @@
 
         .featured-news-desc {
             font-size: 13px;
-            color: #666;
+            color: var(--body);
             line-height: 1.6;
             margin-bottom: 20px;
         }
@@ -87,7 +87,7 @@
 
         .blog-card {
             background: var(--panel);
-            border-radius: 20px;
+            border-radius: 24px;
             overflow: hidden;
             border: 1px solid var(--border);
             display: flex;
@@ -124,7 +124,7 @@
 
         .sidebar-widget {
             background: var(--panel);
-            border-radius: 20px;
+            border-radius: 24px;
             padding: 20px;
             border: 1px solid var(--border);
             margin-bottom: 25px;
@@ -133,7 +133,7 @@
         .widget-title {
             font-size: 16px;
             font-weight: 800;
-            color: #111;
+            color: var(--heading);
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 2px solid var(--brand-tint);
@@ -145,9 +145,9 @@
             display: flex;
             justify-content: space-between;
             padding: 8px 0;
-            border-bottom: 1px dashed #eee;
+            border-bottom: 1px dashed var(--border);
             font-size: 13px;
-            color: #555;
+            color: var(--body);
             cursor: pointer;
         }
 
@@ -187,7 +187,7 @@
             border-radius: 12px;
             background: var(--panel);
             border: 1px solid var(--border-strong);
-            color: #555;
+            color: var(--body);
             font-size: 13px;
             font-weight: 700;
             text-decoration: none;
@@ -203,9 +203,9 @@
         }
 
         .page-link-custom.disabled {
-            background: #f8f9fa;
-            color: #ccc;
-            border-color: #eee;
+            background: var(--tint);
+            color: var(--border);
+            border-color: var(--border);
             cursor: not-allowed;
             pointer-events: none;
         }

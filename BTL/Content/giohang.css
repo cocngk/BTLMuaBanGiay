@@ -1,7 +1,7 @@
 .cart-page-title {
             font-size: 28px;
             font-weight: 800;
-            color: #111;
+            color: var(--heading);
             margin-bottom: 8px;
         }
 
@@ -16,13 +16,13 @@
 
         .cart-empty-icon {
             font-size: 50px;
-            color: #ced4da;
+            color: var(--border);
             margin-bottom: 15px;
         }
 
         .cart-empty-text {
             font-size: 16px;
-            color: #6c757d;
+            color: var(--muted);
             margin-bottom: 20px;
         }
 
@@ -31,7 +31,7 @@
             background-color: var(--brand);
             color: var(--panel);
             padding: 10px 25px;
-            border-radius: 20px;
+            border-radius: 24px;
             font-weight: 700;
             text-decoration: none;
             transition: all 0.3s;
@@ -69,14 +69,14 @@
         .cart-table th {
             text-align: left;
             padding-bottom: 15px;
-            border-bottom: 2px solid #f1f3f5;
-            color: #495057;
+            border-bottom: 2px solid var(--tint);
+            color: var(--body);
             font-size: 14px;
         }
 
         .cart-table td {
             padding: 15px 0;
-            border-bottom: 1px solid #f1f3f5;
+            border-bottom: 1px solid var(--tint);
             vertical-align: middle;
         }
 
@@ -91,18 +91,18 @@
             height: 70px;
             object-fit: cover;
             border-radius: 10px;
-            background: #f8f9fa;
+            background: var(--tint);
         }
 
         .item-name {
             font-weight: 700;
             font-size: 15px;
-            color: #212529;
+            color: var(--heading);
         }
 
         .item-size {
             font-size: 12px;
-            color: #6c757d;
+            color: var(--muted);
         }
 
         .item-price {
@@ -114,7 +114,7 @@
             width: 60px;
             padding: 6px;
             text-align: center;
-            border: 1px solid #dee2e6;
+            border: 1px solid var(--border);
             border-radius: 8px;
             font-weight: bold;
         }
@@ -122,7 +122,7 @@
         .btn-delete {
             background: none;
             border: none;
-            color: #adb5bd;
+            color: var(--border);
             cursor: pointer;
             font-size: 16px;
         }
@@ -135,7 +135,7 @@
             font-size: 18px;
             font-weight: 800;
             margin-bottom: 20px;
-            color: #111;
+            color: var(--heading);
         }
 
         .summary-row {
@@ -143,11 +143,11 @@
             justify-content: space-between;
             margin-bottom: 12px;
             font-size: 14px;
-            color: #495057;
+            color: var(--body);
         }
 
         .summary-row.total {
-            border-top: 2px dashed #f1f3f5;
+            border-top: 2px dashed var(--tint);
             padding-top: 15px;
             margin-top: 15px;
             font-size: 18px;
