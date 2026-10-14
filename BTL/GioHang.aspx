@@ -60,8 +60,8 @@
                 </table>
 
                 <div style="margin-top: 20px; display: flex; justify-content: space-between;">
-                    <a href="SanPham.aspx" class="btn-continue" style="background:#6c757d;">&larr; Tiếp tục chọn hàng</a>
-                    <asp:Button ID="btnUpdateCart" runat="server" Text="Cập nhật giỏ hàng" OnClick="btnUpdateCart_Click" Style="background:#111; color:white; border:none; padding:10px 20px; border-radius:20px; cursor:pointer;" />
+                    <a href="SanPham.aspx" class="btn-continue" style="background:var(--muted);">&larr; Tiếp tục chọn hàng</a>
+                    <asp:Button ID="btnUpdateCart" runat="server" Text="Cập nhật giỏ hàng" OnClick="btnUpdateCart_Click" Style="background:var(--heading); color:white; border:none; padding:10px 20px; border-radius:20px; cursor:pointer;" />
                 </div>
             </div>
 

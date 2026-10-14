@@ -60,7 +60,7 @@
                     </asp:LinkButton>
                 </div>
                 <div>
-                    <span style="font-size:13px; color:#777; margin-right:10px;">Sắp xếp:</span>
+                    <span style="font-size:13px; color:var(--muted); margin-right:10px;">Sắp xếp:</span>
                     <asp:DropDownList ID="ddlSort" runat="server" CssClass="sort-select" AutoPostBack="true" OnSelectedIndexChanged="btnFilter_Click">
                         <asp:ListItem Value="Default">Mặc định</asp:ListItem>
                         <asp:ListItem Value="PriceAsc">Giá: Thấp đến Cao</asp:ListItem>
@@ -106,7 +106,7 @@
                 </asp:Repeater>
 
                 <asp:Panel ID="pnlNoResults" runat="server" Visible="false" CssClass="no-results">
-                    <i class="fa-solid fa-box-open" style="font-size: 40px; color: #f8d7da; margin-bottom: 10px;"></i>
+                    <i class="fa-solid fa-box-open" style="font-size: 40px; color: var(--border-strong); margin-bottom: 10px;"></i>
                     <p style="font-size: 15px; font-weight: 700;">Không tìm thấy sản phẩm phù hợp!</p>
                     <p style="font-size: 13px;">Vui lòng thử điều chỉnh lại bộ lọc hoặc từ khóa tìm kiếm.</p>
                 </asp:Panel>

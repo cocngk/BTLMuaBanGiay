@@ -15,6 +15,8 @@ namespace ShoeStore
             public string Brand { get; set; }
             public string Description { get; set; }
             public decimal Price { get; set; }
+            public decimal? OldPrice { get; set; }
+            public int Stock { get; set; } = 10;
             public string Sizes { get; set; }
             public string ImageUrl { get; set; }
             public bool IsHot { get; set; }

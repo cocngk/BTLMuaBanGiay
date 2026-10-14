@@ -71,8 +71,8 @@
                 <div class="quick-contact-box">
                     <div class="quick-contact-icon"><i class="fa-solid fa-phone"></i></div>
                     <div>
-                        <div style="font-size:12px; color:#666;">Tư vấn trực tiếp qua Hotline:</div>
-                        <div style="font-size:18px; font-weight:800; color:#e63946;">1900 6789 - 0988 123 456</div>
+                        <div style="font-size:12px; color:var(--body);">Tư vấn trực tiếp qua Hotline:</div>
+                        <div style="font-size:18px; font-weight:800; color:var(--brand);">1900 6789 - 0988 123 456</div>
                     </div>
                 </div>
             </div>
