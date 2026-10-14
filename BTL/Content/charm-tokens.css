@@ -1,0 +1,35 @@
+/* Charm design tokens — adapted for SneakerX (typeui.sh/design-skills/charm) */
+/* Load order: charm-tokens.css FIRST, then site.css / page css. */
+:root {
+    /* surfaces */
+    --section: #fcf6f8;        /* Charm section #F7F7F5 */
+    --panel: #ffffff;           /* Charm panel #FBFAF9 */
+    --tint: #fdf2f4;            /* nav / search pill tint */
+    --brand-tint: #fde8ed;      /* badge / login button fill */
+    --accent-band: #f1f2ea;     /* hero / footer cream band */
+
+    /* brand */
+    --brand: #e63946;           /* Charm brand #E4544B */
+    --brand-hover: #c1121f;
+    --brand-text: #c9443a;      /* accessible links on light */
+    --brand-glow: rgba(230, 57, 70, 0.3);
+    --brand-glow-soft: var(--brand-glow-soft);
+    --brand-glow-strong: rgba(230, 57, 70, 0.5);
+    --header-shadow: rgba(225, 112, 133, 0.12);
+    --card-shadow: rgba(0, 0, 0, 0.03);
+
+    /* text */
+    --heading: #1c1917;         /* project legacy #222 */
+    --body: #57534e;            /* project legacy #333 */
+    --muted: #79716b;           /* project legacy #888/#777 */
+
+    /* borders */
+    --border: #fce8ec;          /* Charm border #E7E6E5 */
+    --border-strong: #f8c2cc;
+
+    /* shape (Charm: pill controls, 20-24px panels, 12px menus, 4px checkbox) */
+    --radius-pill: 30px;
+    --radius-panel: 20px;
+    --radius-menu: 12px;
+    --radius-circle: 50%;
+}

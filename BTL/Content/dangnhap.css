@@ -1,0 +1,64 @@
+.auth-page-container {
+            max-width: 440px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .auth-card-page {
+            background: var(--panel);
+            border-radius: 25px;
+            box-shadow: 0 10px 30px var(--header-shadow);
+            padding: 40px 32px;
+            border: 1px solid var(--border);
+        }
+
+        .auth-header { text-align: center; margin-bottom: 25px; }
+
+        .auth-badge-icon {
+            background: var(--brand-tint);
+            color: var(--brand);
+            width: 52px; height: 52px;
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 24px;
+        }
+
+        .auth-title { font-size: 24px; font-weight: 800; color: var(--brand); margin-bottom: 4px; }
+        .auth-subtitle { font-size: 13px; color: var(--muted); }
+
+        .form-group-item { margin-bottom: 16px; text-align: left; }
+        .form-label-custom { display: block; font-size: 13px; font-weight: 700; color: #444; margin-bottom: 6px; }
+
+        .form-input-pill {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-strong);
+            border-radius: 15px;
+            font-size: 13px;
+            outline: none;
+            background: #fafafa;
+        }
+
+        .form-input-pill:focus { border-color: var(--brand); background: var(--panel); }
+
+        .chk-remember-flex { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #555; margin-bottom: 20px; }
+
+        .btn-pink-submit {
+            width: 100%;
+            background: var(--brand);
+            color: var(--panel);
+            border: none;
+            padding: 13px;
+            border-radius: 15px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px var(--brand-glow-soft);
+            transition: background 0.3s;
+        }
+
+        .btn-pink-submit:hover { background: var(--brand-hover); }
+
+        .auth-footer-link { text-align: center; margin-top: 22px; font-size: 13px; color: #666; }
+        .auth-footer-link a { color: var(--brand); font-weight: 700; text-decoration: none; }

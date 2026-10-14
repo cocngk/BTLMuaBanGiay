@@ -76,6 +76,17 @@
     <Content Include="TinTuc.aspx" />
     <Content Include="TrangChu.aspx" />
     <Content Include="TuVan.aspx" />
+    <Content Include="Content\charm-tokens.css" />
+    <Content Include="Content\site.css" />
+    <Content Include="Content\trangchu.css" />
+    <Content Include="Content\sanpham.css" />
+    <Content Include="Content\chitietsanpham.css" />
+    <Content Include="Content\giohang.css" />
+    <Content Include="Content\thanhtoan.css" />
+    <Content Include="Content\dangnhap.css" />
+    <Content Include="Content\dangky.css" />
+    <Content Include="Content\tintuc.css" />
+    <Content Include="Content\tuvan.css" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

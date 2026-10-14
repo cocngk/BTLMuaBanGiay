@@ -40,3 +40,6 @@ Thumbs.db
 *~
 *.tmp
 *.bak
+
+# Human-readable design notes (generated from typeui.sh, not for build)
+DESIGN.md

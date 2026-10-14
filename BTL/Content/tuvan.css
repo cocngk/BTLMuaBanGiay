@@ -1,0 +1,151 @@
+.consult-container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .consult-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .consult-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--brand);
+            margin-bottom: 8px;
+        }
+
+        .consult-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* GRID CỘT: FORM TƯ VẤN & FAQ */
+        .consult-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 35px;
+        }
+
+        @media (max-width: 850px) {
+            .consult-layout { grid-template-columns: 1fr; }
+        }
+
+        .card-box {
+            background: var(--panel);
+            border-radius: 25px;
+            padding: 30px;
+            border: 1px solid var(--border);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #111;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i { color: var(--brand); }
+
+        .form-group-item {
+            margin-bottom: 16px;
+        }
+
+        .form-label-custom {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #444;
+            margin-bottom: 6px;
+        }
+
+        .form-input-pill {
+            width: 100%;
+            padding: 12px 18px;
+            border: 1px solid var(--border-strong);
+            border-radius: 15px;
+            font-size: 13px;
+            outline: none;
+            background: #fafafa;
+        }
+
+        .form-input-pill:focus {
+            border-color: var(--brand);
+            background: var(--panel);
+        }
+
+        .btn-pink-submit {
+            width: 100%;
+            background: var(--brand);
+            color: var(--panel);
+            border: none;
+            padding: 13px;
+            border-radius: 15px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px var(--brand-glow-soft);
+            transition: background 0.3s;
+        }
+
+        .btn-pink-submit:hover { background: var(--brand-hover); }
+
+        /* DANH SÁCH FAQ */
+        .faq-item {
+            margin-bottom: 15px;
+            border-bottom: 1px dashed var(--border-strong);
+            padding-bottom: 15px;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
+        .faq-question {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--heading);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .faq-question i { color: var(--brand); font-size: 12px; }
+
+        .faq-answer {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+            padding-left: 20px;
+        }
+
+        /* CONTACT QUICK CHAT */
+        .quick-contact-box {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            background: var(--tint);
+            padding: 15px 20px;
+            border-radius: 20px;
+            align-items: center;
+        }
+
+        .quick-contact-icon {
+            background: var(--brand);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
