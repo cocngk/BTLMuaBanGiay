@@ -149,9 +149,9 @@ namespace ShoeStore
 
         protected void btnAddToCart_Click(object sender, EventArgs e)
         {
-            if (!CartHelper.IsLoggedIn())
+            if (!AuthHelper.IsLoggedIn())
             {
-                CartHelper.RequireLoginToast(this, "RequireLoginDetailToast",
+                Toast.RequireLogin(this, "RequireLoginDetailToast",
                     "Vui lòng đăng nhập hoặc đăng ký tài khoản để mua hàng!");
                 return;
             }
@@ -162,17 +162,17 @@ namespace ShoeStore
             if (product != null)
             {
                 string size = ResolveSize(product);
-                CartHelper.AddOrMerge(product.Id, product.Name, product.Price, size, ResolveQty(product), product.ImageUrl, product.Stock);
-                CartHelper.SuccessToast(this, "DetailToastSuccess",
+                new SessionCartStore(Session).AddOrMerge(product.Id, product.Name, product.Price, size, ResolveQty(product), product.ImageUrl, product.Stock);
+                Toast.Success(this, "DetailToastSuccess",
                     "Đã thêm " + product.Name + " (Size " + size + ") vào giỏ hàng!");
             }
         }
 
         protected void btnBuyNow_Click(object sender, EventArgs e)
         {
-            if (!CartHelper.IsLoggedIn())
+            if (!AuthHelper.IsLoggedIn())
             {
-                CartHelper.RequireLoginToast(this, "RequireLoginBuyNowToast",
+                Toast.RequireLogin(this, "RequireLoginBuyNowToast",
                     "Vui lòng đăng nhập để tiến hành thanh toán!");
                 return;
             }
@@ -184,7 +184,7 @@ namespace ShoeStore
             {
                 // Gộp vào giỏ hiện có (không xóa giỏ cũ) rồi sang thanh toán
                 string size = ResolveSize(product);
-                CartHelper.AddOrMerge(product.Id, product.Name, product.Price, size, ResolveQty(product), product.ImageUrl, product.Stock);
+                new SessionCartStore(Session).AddOrMerge(product.Id, product.Name, product.Price, size, ResolveQty(product), product.ImageUrl, product.Stock);
                 Response.Redirect("ThanhToan.aspx");
             }
         }

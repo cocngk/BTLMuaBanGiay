@@ -1,22 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ShoeStore.Data;
+using ShoeStore.Helpers;
+using ShoeStore.Models;
 
 namespace ShoeStore
 {
     public partial class GioHang : System.Web.UI.Page
     {
-        [Serializable]
-        public class CartItem
+        private SessionCartStore Store => new SessionCartStore(Session);
+
+        private int LookupStock(int id)
         {
-            public int Id { get; set; }
-            public string Name { get; set; }
-            public string Size { get; set; }
-            public decimal Price { get; set; }
-            public int Quantity { get; set; }
-            public string ImageUrl { get; set; }
+            ProductItem product = ProductStore.GetAll().FirstOrDefault(p => p.Id == id);
+            return product != null ? product.Stock : int.MaxValue;
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -29,9 +28,9 @@ namespace ShoeStore
 
         private void LoadCartData()
         {
-            List<CartItem> cart = Session["Cart"] as List<CartItem>;
+            Cart cart = Store.Load();
 
-            if (cart == null || cart.Count == 0)
+            if (cart.IsEmpty)
             {
                 pnlEmptyCart.Visible = true;
                 pnlCartHasItems.Visible = false;
@@ -41,59 +40,73 @@ namespace ShoeStore
                 pnlEmptyCart.Visible = false;
                 pnlCartHasItems.Visible = true;
 
-                rptCart.DataSource = cart;
+                rptCart.DataSource = cart.Lines.ToList();
                 rptCart.DataBind();
 
-                decimal total = cart.Sum(item => item.Price * item.Quantity);
-                litSubTotal.Text = string.Format("{0:N0}đ", total);
-                litTotal.Text = string.Format("{0:N0}đ", total);
+                litSubTotal.Text = string.Format("{0:N0}đ", cart.SubTotal());
+                litTotal.Text = string.Format("{0:N0}đ", cart.SubTotal());
             }
+        }
+
+        private bool TryParseKey(string key, out int id, out string size)
+        {
+            id = 0;
+            size = "";
+            if (string.IsNullOrEmpty(key)) return false;
+            string[] parts = key.Split('|');
+            if (parts.Length != 2) return false;
+            if (!int.TryParse(parts[0], out id)) return false;
+            size = parts[1];
+            return true;
         }
 
         protected void rptCart_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             if (e.CommandName == "Remove")
             {
-                int id = Convert.ToInt32(e.CommandArgument);
-                List<CartItem> cart = Session["Cart"] as List<CartItem>;
-
-                if (cart != null)
+                int id;
+                string size;
+                if (TryParseKey(Convert.ToString(e.CommandArgument), out id, out size))
                 {
-                    cart.RemoveAll(x => x.Id == id);
-                    Session["Cart"] = cart;
-                    LoadCartData();
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "ToastDelete", "showToast('Đã xóa sản phẩm khỏi giỏ hàng!', 'info');", true);
+                    Cart cart = Store.Load();
+                    if (cart.Remove(id, size))
+                    {
+                        Store.Save(cart);
+                        LoadCartData();
+                        Toast.Info(this, "ToastDelete", "Đã xóa sản phẩm khỏi giỏ hàng!");
+                    }
                 }
             }
         }
 
         protected void btnUpdateCart_Click(object sender, EventArgs e)
         {
-            List<CartItem> cart = Session["Cart"] as List<CartItem>;
-            if (cart != null)
+            Cart cart = Store.Load();
+            foreach (RepeaterItem item in rptCart.Items)
             {
-                for (int i = 0; i < rptCart.Items.Count && i < cart.Count; i++)
-                {
-                    RepeaterItem item = rptCart.Items[i];
-                    TextBox txtQty = (TextBox)item.FindControl("txtQuantity");
+                HiddenField hfKey = (HiddenField)item.FindControl("hfKey");
+                TextBox txtQty = (TextBox)item.FindControl("txtQuantity");
+                if (hfKey == null || txtQty == null) continue;
 
-                    if (txtQty != null && int.TryParse(txtQty.Text, out int qty))
-                    {
-                        cart[i].Quantity = qty > 0 ? qty : 1;
-                    }
-                }
-                Session["Cart"] = cart;
-                LoadCartData();
-                // Tu dong luu: khong hien toast, so tien da cap nhat tu dong o client.
+                int id;
+                string size;
+                if (!TryParseKey(hfKey.Value, out id, out size)) continue;
+
+                int qty;
+                if (!int.TryParse(txtQty.Text, out qty)) continue;
+                cart.SetQuantity(id, size, qty, LookupStock(id));
             }
+            Store.Save(cart);
+            LoadCartData();
+            // Tu dong luu: khong hien toast, so tien da cap nhat tu dong o client.
         }
 
         protected void btnGoToCheckout_Click(object sender, EventArgs e)
         {
-            if (Session["Username"] == null)
+            if (!AuthHelper.IsLoggedIn())
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "RequireLoginCheckoutToast",
-                    "showToast('Vui lòng đăng nhập để tiến hành thanh toán!', 'info'); openLoginModal();", true);
+                Toast.RequireLogin(this, "RequireLoginCheckoutToast",
+                    "Vui lòng đăng nhập để tiến hành thanh toán!");
                 return;
             }
 

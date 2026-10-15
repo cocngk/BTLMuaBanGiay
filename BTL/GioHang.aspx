@@ -37,6 +37,7 @@
                             <ItemTemplate>
                                 <tr class="cart-row" data-price='<%# Convert.ToDecimal(Eval("Price")).ToString(System.Globalization.CultureInfo.InvariantCulture) %>'>
                                     <td>
+                                        <asp:HiddenField ID="hfKey" runat="server" Value='<%# Eval("Id") + "|" + Eval("Size") %>' />
                                         <div class="item-info">
                                             <img src='<%# Eval("ImageUrl") %>' class="item-img" />
                                             <div>
@@ -51,7 +52,7 @@
                                     </td>
                                     <td class="item-price line-total"><%# string.Format("{0:N0}đ", Convert.ToDecimal(Eval("Price")) * Convert.ToInt32(Eval("Quantity"))) %></td>
                                     <td>
-                                        <asp:LinkButton ID="btnRemove" runat="server" CommandName="Remove" CommandArgument='<%# Eval("Id") %>' CssClass="btn-delete">
+                                        <asp:LinkButton ID="btnRemove" runat="server" CommandName="Remove" CommandArgument='<%# Eval("Id") + "|" + Eval("Size") %>' CssClass="btn-delete">
                                             <i class="fa-solid fa-trash-can"></i>
                                         </asp:LinkButton>
                                     </td>

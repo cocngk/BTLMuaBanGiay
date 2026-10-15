@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
-using static ShoeStore.GioHang;
+using ShoeStore.Data;
+using ShoeStore.Helpers;
+using ShoeStore.Models;
 
 namespace ShoeStore
 {
@@ -39,9 +41,9 @@ namespace ShoeStore
 
         private void LoadOrderSummary()
         {
-            List<CartItem> cart = Session["Cart"] as List<CartItem>;
+            Cart cart = new SessionCartStore(Session).Load();
 
-            if (cart == null || cart.Count == 0)
+            if (cart.IsEmpty)
             {
                 pnlEmpty.Visible = true;
                 pnlCheckout.Visible = false;
@@ -54,7 +56,7 @@ namespace ShoeStore
                 rptSummary.DataSource = cart;
                 rptSummary.DataBind();
 
-                decimal total = cart.Sum(item => item.Price * item.Quantity);
+                decimal total = cart.SubTotal();
 
                 litSubTotal.Text = string.Format("{0:N0}đ", total);
                 litTotal.Text = string.Format("{0:N0}đ", total);
@@ -75,9 +77,9 @@ namespace ShoeStore
                 return;
             }
 
-            List<CartItem> cart = Session["Cart"] as List<CartItem>;
+            Cart cart = new SessionCartStore(Session).Load();
 
-            if (cart == null || cart.Count == 0)
+            if (cart.IsEmpty)
             {
                 ShowToast("Giỏ hàng đang trống. Vui lòng chọn sản phẩm trước!", "error");
                 return;
@@ -90,7 +92,7 @@ namespace ShoeStore
                 return;
             }
 
-            Session["Cart"] = null;
+            new SessionCartStore(Session).Clear();
 
             string script = @"
                 showToast('Đặt hàng thành công! Cảm ơn bạn đã mua sắm tại SneakerX.', 'success');

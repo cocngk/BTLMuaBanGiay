@@ -91,8 +91,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\ProductStore.cs" />
+    <Compile Include="Data\SessionCartStore.cs" />
     <Compile Include="Helpers\AuthHelper.cs" />
-    <Compile Include="Helpers\CartHelper.cs" />
+    <Compile Include="Helpers\Toast.cs" />
+    <Compile Include="Models\Cart.cs" />
+    <Compile Include="Models\CartItem.cs" />
     <Compile Include="Models\ProductItem.cs" />
     <Compile Include="ChiTietSanPham.aspx.cs">
       <DependentUpon>ChiTietSanPham.aspx</DependentUpon>

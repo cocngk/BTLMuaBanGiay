@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ShoeStore.Data;
 using ShoeStore.Helpers;
 
 namespace ShoeStore
@@ -49,12 +50,7 @@ namespace ShoeStore
         private void UpdateCartBadge()
         {
             if (cartCount == null) return;
-            List<GioHang.CartItem> cart = Session["Cart"] as List<GioHang.CartItem>;
-            int total = 0;
-            if (cart != null)
-            {
-                foreach (GioHang.CartItem item in cart) total += item.Quantity;
-            }
+            int total = new SessionCartStore(Session).Load().TotalQuantity();
             cartCount.Visible = total > 0;
             cartCount.InnerText = total > 99 ? "99+" : total.ToString();
         }

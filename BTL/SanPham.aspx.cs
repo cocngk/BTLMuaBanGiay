@@ -234,9 +234,9 @@ namespace ShoeStore
 
         protected void rptAllProducts_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            if (!CartHelper.IsLoggedIn())
+            if (!AuthHelper.IsLoggedIn())
             {
-                CartHelper.RequireLoginToast(this, "RequireLoginToast",
+                Toast.RequireLogin(this, "RequireLoginToast",
                     "Vui lòng đăng nhập hoặc đăng ký tài khoản để mua hàng!");
                 return;
             }
@@ -250,13 +250,13 @@ namespace ShoeStore
 
             if (e.CommandName == "AddToCart")
             {
-                CartHelper.AddOrMerge(selected.Id, selected.Name, selected.Price, selectedSize, 1, selected.ImageUrl, selected.Stock);
-                CartHelper.SuccessToast(this, "AddToCartToast", "Đã thêm " + selected.Name + " vào giỏ hàng!");
+                new SessionCartStore(Session).AddOrMerge(selected.Id, selected.Name, selected.Price, selectedSize, 1, selected.ImageUrl, selected.Stock);
+                Toast.Success(this, "AddToCartToast", "Đã thêm " + selected.Name + " vào giỏ hàng!");
             }
             else if (e.CommandName == "BuyNow")
             {
                 // Gộp vào giỏ hiện có (không xóa giỏ cũ) rồi sang thanh toán
-                CartHelper.AddOrMerge(selected.Id, selected.Name, selected.Price, selectedSize, 1, selected.ImageUrl, selected.Stock);
+                new SessionCartStore(Session).AddOrMerge(selected.Id, selected.Name, selected.Price, selectedSize, 1, selected.ImageUrl, selected.Stock);
                 Response.Redirect("ThanhToan.aspx");
             }
         }

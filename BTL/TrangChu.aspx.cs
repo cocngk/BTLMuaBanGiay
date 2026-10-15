@@ -26,9 +26,9 @@ namespace ShoeStore
         // BẤM NÚT "KHÁM PHÁ NGAY" TRÊN HERO BANNER
         protected void btnHeroDiscover_Click(object sender, EventArgs e)
         {
-            if (!CartHelper.IsLoggedIn())
+            if (!AuthHelper.IsLoggedIn())
             {
-                CartHelper.RequireLoginToast(this, "HomeHeroRequireLogin",
+                Toast.RequireLogin(this, "HomeHeroRequireLogin",
                     "Vui lòng đăng nhập hoặc đăng ký tài khoản để khám phá cửa hàng!");
                 return;
             }
@@ -42,9 +42,9 @@ namespace ShoeStore
             if (e.CommandName == "QuickAdd")
             {
                 // 1. KIỂM TRA ĐĂNG NHẬP
-                if (!CartHelper.IsLoggedIn())
+                if (!AuthHelper.IsLoggedIn())
                 {
-                    CartHelper.RequireLoginToast(this, "HomeRequireLoginToast",
+                    Toast.RequireLogin(this, "HomeRequireLoginToast",
                         "Vui lòng đăng nhập hoặc đăng ký tài khoản để mua hàng!");
                     return;
                 }
@@ -57,8 +57,8 @@ namespace ShoeStore
                 {
                     string size = (selected.Sizes ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                         .Select(s => s.Trim()).FirstOrDefault() ?? "40";
-                    CartHelper.AddOrMerge(selected.Id, selected.Name, selected.Price, size, 1, selected.ImageUrl, selected.Stock);
-                    CartHelper.SuccessToast(this, "HomeAddToCartSuccessToast",
+                    new SessionCartStore(Session).AddOrMerge(selected.Id, selected.Name, selected.Price, size, 1, selected.ImageUrl, selected.Stock);
+                    Toast.Success(this, "HomeAddToCartSuccessToast",
                         "Đã thêm " + selected.Name + " (Size " + size + ") vào giỏ hàng!");
                 }
             }
