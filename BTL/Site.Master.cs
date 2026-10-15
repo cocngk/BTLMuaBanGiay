@@ -64,6 +64,21 @@ namespace ShoeStore
                 if (pnlGuest != null) pnlGuest.Visible = true;
                 if (pnlUser != null) pnlUser.Visible = false;
             }
+
+            UpdateCartBadge();
+        }
+
+        private void UpdateCartBadge()
+        {
+            if (cartCount == null) return;
+            List<GioHang.CartItem> cart = Session["Cart"] as List<GioHang.CartItem>;
+            int total = 0;
+            if (cart != null)
+            {
+                foreach (GioHang.CartItem item in cart) total += item.Quantity;
+            }
+            cartCount.Visible = total > 0;
+            cartCount.InnerText = total > 99 ? "99+" : total.ToString();
         }
 
         private void HighlightCurrentMenu()
@@ -74,20 +89,19 @@ namespace ShoeStore
             var navProduct = FindControl("navProduct") as System.Web.UI.HtmlControls.HtmlAnchor;
             var navNews = FindControl("navNews") as System.Web.UI.HtmlControls.HtmlAnchor;
             var navConsult = FindControl("navConsult") as System.Web.UI.HtmlControls.HtmlAnchor;
-            var navCart = FindControl("navCart") as System.Web.UI.HtmlControls.HtmlAnchor;
             var navCheckout = FindControl("navCheckout") as System.Web.UI.HtmlControls.HtmlAnchor;
 
             if (navHome != null) navHome.Attributes["class"] = "";
             if (navProduct != null) navProduct.Attributes["class"] = "";
             if (navNews != null) navNews.Attributes["class"] = "";
             if (navConsult != null) navConsult.Attributes["class"] = "";
-            if (navCart != null) navCart.Attributes["class"] = "";
             if (navCheckout != null) navCheckout.Attributes["class"] = "";
+            if (cartIcon != null) cartIcon.Attributes["class"] = "cart-icon-btn";
 
             if (pageName.Contains("sanpham") && navProduct != null) navProduct.Attributes["class"] = "active";
             else if (pageName.Contains("tintuc") && navNews != null) navNews.Attributes["class"] = "active";
             else if (pageName.Contains("tuvan") && navConsult != null) navConsult.Attributes["class"] = "active";
-            else if (pageName.Contains("giohang") && navCart != null) navCart.Attributes["class"] = "active";
+            else if (pageName.Contains("giohang") && cartIcon != null) cartIcon.Attributes["class"] = "cart-icon-btn active";
             else if (pageName.Contains("thanhtoan") && navCheckout != null) navCheckout.Attributes["class"] = "active";
             else if (navHome != null) navHome.Attributes["class"] = "active";
         }

@@ -56,12 +56,6 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="GioHang.aspx" id="navCart" runat="server">
-                        <i class="fa-solid fa-bag-shopping"></i> Giỏ hàng
-                    </a>
-                </li>
-
-                <li class="nav-item">
                     <a href="ThanhToan.aspx" id="navCheckout" runat="server">
                         <i class="fa-solid fa-credit-card"></i> Thanh toán
                     </a>
@@ -85,8 +79,9 @@
                     </asp:LinkButton>
                 </div>
 
-                <a href="GioHang.aspx" class="cart-icon-btn" title="Giỏ hàng">
+                <a href="GioHang.aspx" id="cartIcon" runat="server" class="cart-icon-btn" title="Giỏ hàng">
                     <i class="fa-solid fa-bag-shopping"></i>
+                    <span id="cartCount" runat="server" class="cart-count" visible="false"></span>
                 </a>
 
                 <asp:Panel ID="pnlGuest" runat="server" CssClass="auth-buttons-group">

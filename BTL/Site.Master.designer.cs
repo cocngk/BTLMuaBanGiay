@@ -69,13 +69,22 @@ namespace ShoeStore
         protected global::System.Web.UI.HtmlControls.HtmlAnchor navConsult;
 
         /// <summary>
-        /// navCart control.
+        /// cartIcon control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlAnchor navCart;
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor cartIcon;
+
+        /// <summary>
+        /// cartCount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl cartCount;
 
         /// <summary>
         /// navCheckout control.
