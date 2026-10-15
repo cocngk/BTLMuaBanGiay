@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.UI;
 using ShoeStore.Helpers;
+using ShoeStore.Models;
 
 namespace ShoeStore
 {
@@ -85,7 +86,7 @@ namespace ShoeStore
                 return;
             }
 
-            if (!Regex.IsMatch(phone, @"^[0-9]{9,11}$"))
+            if (!OrderValidator.IsValidPhone(phone))
             {
                 ShowToast(
                     "So dien thoai phai co tu 9 den 11 chu so!",

@@ -65,15 +65,18 @@ namespace ShoeStore
 
         protected void btnConfirmCheckout_Click(object sender, EventArgs e)
         {
-            string name = txtName.Text.Trim();
-            string phone = txtPhone.Text.Trim();
-            string address = txtAddress.Text.Trim();
-
-            if (string.IsNullOrEmpty(name) ||
-                string.IsNullOrEmpty(phone) ||
-                string.IsNullOrEmpty(address))
+            OrderInput order = new OrderInput
             {
-                ShowToast("Bạn chưa nhập đủ thông tin nhận hàng!", "error");
+                CustomerName = txtName.Text.Trim(),
+                Phone = txtPhone.Text.Trim(),
+                Address = txtAddress.Text.Trim(),
+                PaymentMethod = rblPaymentMethod.SelectedValue
+            };
+
+            string error = OrderValidator.Validate(order);
+            if (error != null)
+            {
+                Toast.Show(this, "Toast_" + Guid.NewGuid().ToString("N"), error, "error");
                 return;
             }
 
@@ -81,21 +84,18 @@ namespace ShoeStore
 
             if (cart.IsEmpty)
             {
-                ShowToast("Giỏ hàng đang trống. Vui lòng chọn sản phẩm trước!", "error");
-                return;
-            }
-
-            if (phone.Length < 9 || phone.Length > 11 ||
-                !phone.All(char.IsDigit))
-            {
-                ShowToast("Số điện thoại chưa hợp lệ. Vui lòng kiểm tra lại!", "error");
+                Toast.Show(this, "Toast_" + Guid.NewGuid().ToString("N"),
+                    "Giỏ hàng đang trống. Vui lòng chọn sản phẩm trước!", "error");
                 return;
             }
 
             new SessionCartStore(Session).Clear();
 
+            string methodText = rblPaymentMethod.SelectedItem != null
+                ? rblPaymentMethod.SelectedItem.Text
+                : "Thanh toán khi nhận hàng (COD)";
             string script = @"
-                showToast('Đặt hàng thành công! Cảm ơn bạn đã mua sắm tại SneakerX.', 'success');
+                showToast('Đặt hàng thành công! " + methodText.Replace("'", "\\'") + @"', 'success');
                 setTimeout(function() {
                     window.location.href = 'TrangChu.aspx';
                 }, 2000);
@@ -104,20 +104,6 @@ namespace ShoeStore
             ClientScript.RegisterStartupScript(
                 this.GetType(),
                 "CheckoutSuccess",
-                script,
-                true
-            );
-        }
-
-        private void ShowToast(string message, string type)
-        {
-            string safeMessage = HttpUtility.JavaScriptStringEncode(message);
-
-            string script = "showToast('" + safeMessage + "', '" + type + "');";
-
-            ClientScript.RegisterStartupScript(
-                this.GetType(),
-                "Toast_" + Guid.NewGuid().ToString("N"),
                 script,
                 true
             );
