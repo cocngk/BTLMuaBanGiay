@@ -135,13 +135,25 @@
                 window.location.href = 'DangNhap.aspx';
             }
 
-            // Search header: bấm lần đầu chỉ mở ô nhập, có chữ mới submit
+            // Search: chỉ submit khi chữ khác lúc mở trang;
+            // bấm khi chưa gõ/chưa đổi thì focus + bôi đen để sửa
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('.search-pill input, .search-inner input').forEach(function (inp) {
+                    inp.dataset.initial = inp.value;
+                });
+            });
+
             function headerSearchSubmit(btn) {
-                var pill = btn.closest ? btn.closest('.search-pill') : null;
-                var input = pill ? pill.querySelector('input') : null;
+                var wrap = null;
+                if (btn.closest) {
+                    wrap = btn.closest('.search-pill') || btn.closest('.search-inner');
+                }
+                var input = wrap ? wrap.querySelector('input') : null;
                 if (!input) return true;
-                if (input.value.trim() === '') {
+                var cur = input.value.trim();
+                if (cur === '' || cur === (input.dataset.initial || '')) {
                     input.focus();
+                    try { input.select(); } catch (e) {}
                     return false;
                 }
                 return true;

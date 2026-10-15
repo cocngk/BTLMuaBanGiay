@@ -56,7 +56,7 @@
                 <div class="search-inner">
                     <asp:Panel ID="pnlStoreSearch" runat="server" DefaultButton="btnStoreSearch" Style="display:contents;">
                     <asp:TextBox ID="txtStoreSearch" runat="server" Placeholder="Tìm kiếm trong cửa hàng..."></asp:TextBox>
-                    <asp:LinkButton ID="btnStoreSearch" runat="server" CssClass="btn-inner-search" OnClick="btnFilter_Click">
+                    <asp:LinkButton ID="btnStoreSearch" runat="server" CssClass="btn-inner-search" OnClientClick="return headerSearchSubmit(this);" OnClick="btnFilter_Click">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </asp:LinkButton>
                     </asp:Panel>
