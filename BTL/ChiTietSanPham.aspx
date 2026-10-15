@@ -147,7 +147,7 @@
                         <h2 class="section-title-text">Sản phẩm liên quan</h2>
                         <p class="section-subtitle-text">Bạn cũng có thể sẽ thích những đôi này.</p>
                     </div>
-                    <a href="SanPham.aspx" class="btn-view-all-pill">Xem tất cả &rarr;</a>
+                    <asp:HyperLink ID="lnkViewAllRelated" runat="server" CssClass="btn-view-all-pill" NavigateUrl="SanPham.aspx">Xem tất cả &rarr;</asp:HyperLink>
                 </div>
                 <div class="products-grid">
                     <asp:Repeater ID="rptRelated" runat="server">

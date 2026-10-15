@@ -36,6 +36,8 @@ namespace ShoeStore
                     imgProduct.ImageUrl = mainUrl;
                     imgProduct.AlternateText = product.Name;
                     litBrand.Text = product.Brand;
+                    lnkViewAllRelated.NavigateUrl = "SanPham.aspx?brand=" + Server.UrlEncode(product.Brand);
+                    lnkViewAllRelated.Text = "Xem thêm " + product.Brand + " &rarr;";
                     litName.Text = product.Name;
                     litBreadcrumb.Text = product.Name;
                     litSku.Text = "SNK-" + product.Id.ToString("D4");
