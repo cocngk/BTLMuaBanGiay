@@ -24,32 +24,99 @@ namespace ShoeStore
         {
             if (!IsPostBack)
             {
-                if (Request.QueryString["search"] != null)
+                ApplyQueryToControls();
+                int page;
+                if (int.TryParse(Request.QueryString["page"], out page) && page > 0)
                 {
-                    txtStoreSearch.Text = Request.QueryString["search"];
+                    CurrentPage = page;
                 }
-
-                CurrentPage = 1;
-                FilterAndBindProducts();
+                else
+                {
+                    CurrentPage = 1;
+                }
             }
+
+            FilterAndBindProducts();
+        }
+
+        private class FilterParams
+        {
+            public string Keyword = "";
+            public List<string> Brands = new List<string>();
+            public string PriceRange = "All";
+            public string Size = "";
+            public string Sort = "Default";
+            public int Page = 1;
+        }
+
+        private FilterParams GetFiltersFromControls()
+        {
+            return new FilterParams
+            {
+                Keyword = txtStoreSearch.Text.Trim(),
+                Brands = cblBrands.Items.Cast<ListItem>().Where(i => i.Selected).Select(i => i.Value).ToList(),
+                PriceRange = rblPriceRange.SelectedValue,
+                Size = hfSelectedSize.Value,
+                Sort = ddlSort.SelectedValue,
+                Page = CurrentPage
+            };
+        }
+
+        private FilterParams GetFiltersFromQuery()
+        {
+            FilterParams f = new FilterParams();
+            f.Keyword = Request.QueryString["search"] ?? "";
+            string brands = Request.QueryString["brand"] ?? "";
+            f.Brands = brands.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(b => b.Trim()).ToList();
+            f.PriceRange = string.IsNullOrEmpty(Request.QueryString["price"]) ? "All" : Request.QueryString["price"];
+            f.Size = Request.QueryString["size"] ?? "";
+            f.Sort = string.IsNullOrEmpty(Request.QueryString["sort"]) ? "Default" : Request.QueryString["sort"];
+            int page;
+            f.Page = (int.TryParse(Request.QueryString["page"], out page) && page > 0) ? page : 1;
+            return f;
+        }
+
+        private void ApplyQueryToControls()
+        {
+            FilterParams f = GetFiltersFromQuery();
+            txtStoreSearch.Text = f.Keyword;
+            foreach (ListItem item in cblBrands.Items)
+            {
+                item.Selected = f.Brands.Contains(item.Value, StringComparer.OrdinalIgnoreCase);
+            }
+            if (rblPriceRange.Items.FindByValue(f.PriceRange) != null)
+            {
+                rblPriceRange.SelectedValue = f.PriceRange;
+            }
+            hfSelectedSize.Value = f.Size;
+            if (ddlSort.Items.FindByValue(f.Sort) != null)
+            {
+                ddlSort.SelectedValue = f.Sort;
+            }
+        }
+
+        private string BuildFilterUrl(FilterParams f)
+        {
+            List<string> parts = new List<string>();
+            if (!string.IsNullOrEmpty(f.Keyword)) parts.Add("search=" + Server.UrlEncode(f.Keyword));
+            if (f.Brands.Count > 0) parts.Add("brand=" + Server.UrlEncode(string.Join(",", f.Brands)));
+            if (!string.IsNullOrEmpty(f.PriceRange) && f.PriceRange != "All") parts.Add("price=" + Server.UrlEncode(f.PriceRange));
+            if (!string.IsNullOrEmpty(f.Size)) parts.Add("size=" + Server.UrlEncode(f.Size));
+            if (!string.IsNullOrEmpty(f.Sort) && f.Sort != "Default") parts.Add("sort=" + Server.UrlEncode(f.Sort));
+            if (f.Page > 1) parts.Add("page=" + f.Page);
+            return "SanPham.aspx" + (parts.Count > 0 ? "?" + string.Join("&", parts) : "");
         }
 
         protected void btnFilter_Click(object sender, EventArgs e)
         {
-            CurrentPage = 1;
-            FilterAndBindProducts();
+            FilterParams f = GetFiltersFromControls();
+            f.Page = 1;
+            Response.Redirect(BuildFilterUrl(f));
         }
 
         protected void btnResetFilter_Click(object sender, EventArgs e)
         {
-            cblBrands.ClearSelection();
-            rblPriceRange.SelectedValue = "All";
-            hfSelectedSize.Value = "";
-            txtStoreSearch.Text = "";
-            ddlSort.SelectedValue = "Default";
-
-            CurrentPage = 1;
-            FilterAndBindProducts();
+            Response.Redirect("SanPham.aspx");
         }
 
         private void FilterAndBindProducts()
@@ -144,24 +211,25 @@ namespace ShoeStore
         {
             if (e.CommandName == "Page")
             {
-                CurrentPage = Convert.ToInt32(e.CommandArgument);
-                FilterAndBindProducts();
+                FilterParams f = GetFiltersFromQuery();
+                int page;
+                f.Page = (int.TryParse(Convert.ToString(e.CommandArgument), out page) && page > 0) ? page : 1;
+                Response.Redirect(BuildFilterUrl(f));
             }
         }
 
         protected void btnPrevPage_Click(object sender, EventArgs e)
         {
-            if (CurrentPage > 1)
-            {
-                CurrentPage--;
-                FilterAndBindProducts();
-            }
+            FilterParams f = GetFiltersFromQuery();
+            f.Page = Math.Max(f.Page - 1, 1);
+            Response.Redirect(BuildFilterUrl(f));
         }
 
         protected void btnNextPage_Click(object sender, EventArgs e)
         {
-            CurrentPage++;
-            FilterAndBindProducts();
+            FilterParams f = GetFiltersFromQuery();
+            f.Page = f.Page + 1;
+            Response.Redirect(BuildFilterUrl(f));
         }
 
         protected void rptAllProducts_ItemCommand(object source, RepeaterCommandEventArgs e)
