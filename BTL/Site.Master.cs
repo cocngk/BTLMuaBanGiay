@@ -42,6 +42,21 @@ namespace ShoeStore
                 if (pnlGuest != null) pnlGuest.Visible = true;
                 if (pnlUser != null) pnlUser.Visible = false;
             }
+
+            UpdateCartBadge();
+        }
+
+        private void UpdateCartBadge()
+        {
+            if (cartCount == null) return;
+            List<GioHang.CartItem> cart = Session["Cart"] as List<GioHang.CartItem>;
+            int total = 0;
+            if (cart != null)
+            {
+                foreach (GioHang.CartItem item in cart) total += item.Quantity;
+            }
+            cartCount.Visible = total > 0;
+            cartCount.InnerText = total > 99 ? "99+" : total.ToString();
         }
 
         private void HighlightCurrentMenu()

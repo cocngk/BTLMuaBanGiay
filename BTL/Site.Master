@@ -87,6 +87,7 @@
 
                 <a href="GioHang.aspx" class="cart-icon-btn" title="Giỏ hàng">
                     <i class="fa-solid fa-bag-shopping"></i>
+                    <span id="cartCount" runat="server" class="cart-count" visible="false"></span>
                 </a>
 
                 <asp:Panel ID="pnlGuest" runat="server" CssClass="auth-buttons-group">
