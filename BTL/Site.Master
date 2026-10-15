@@ -75,6 +75,7 @@
                         ID="btnHeaderSearch"
                         runat="server"
                         CssClass="btn-search-icon"
+                        OnClientClick="return headerSearchSubmit(this);"
                         OnClick="btnHeaderSearch_Click">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </asp:LinkButton>
@@ -132,6 +133,18 @@
         <script type="text/javascript">
             function openLoginModal() {
                 window.location.href = 'DangNhap.aspx';
+            }
+
+            // Search header: bấm lần đầu chỉ mở ô nhập, có chữ mới submit
+            function headerSearchSubmit(btn) {
+                var pill = btn.closest ? btn.closest('.search-pill') : null;
+                var input = pill ? pill.querySelector('input') : null;
+                if (!input) return true;
+                if (input.value.trim() === '') {
+                    input.focus();
+                    return false;
+                }
+                return true;
             }
 
             function showToast(message, type) {
