@@ -209,3 +209,10 @@
             cursor: not-allowed;
             pointer-events: none;
         }
+
+        /* Mobile: tin nổi bật xếp dọc */
+        @media (max-width: 750px) {
+            .featured-news-hero { grid-template-columns: 1fr; }
+            .featured-news-content { padding: 0 25px 25px; }
+            .featured-news-img { height: 220px; }
+        }

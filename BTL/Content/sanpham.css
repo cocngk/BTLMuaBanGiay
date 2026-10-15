@@ -323,3 +323,8 @@
             border-radius: 24px;
             color: var(--muted);
         }
+
+        /* Mobile: sidebar lọc xếp lên trên, lưới sản phẩm full width */
+        @media (max-width: 900px) {
+            .shop-page-layout { grid-template-columns: 1fr; }
+        }

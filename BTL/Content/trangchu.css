@@ -54,9 +54,23 @@
             padding: 10px 25px;
             border-radius: 30px;
             display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 92%;
             gap: 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.15);
             backdrop-filter: blur(5px);
+        }
+
+        /* Cảm ứng không có hover: luôn hiện CTA, ẩn chữ gợi ý */
+        @media (hover: none) {
+            .hero-action-box {
+                opacity: 1;
+                transform: none;
+                pointer-events: auto;
+            }
+
+            .hero-hint-text { display: none; }
         }
 
         .feature-item {

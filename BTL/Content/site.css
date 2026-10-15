@@ -58,14 +58,21 @@
 
         .nav-center {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             justify-content: center;
             background: var(--tint);
             padding: 5px;
             border-radius: 30px;
             list-style: none;
             gap: 5px;
+            overflow-x: auto;
+            max-width: 100%;
+            scrollbar-width: none;
         }
+
+        .nav-center::-webkit-scrollbar { display: none; }
+
+        .nav-item { flex-shrink: 0; }
 
         .nav-item a {
             text-decoration: none;
@@ -77,6 +84,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            white-space: nowrap;
             transition: all 0.3s;
         }
 
@@ -348,6 +356,8 @@
             .nav-center {
                 order: 3;
                 width: 100%;
+                flex-wrap: wrap;
+                overflow: visible;
             }
 
             .header-right {
