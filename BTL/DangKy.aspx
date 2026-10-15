@@ -82,6 +82,33 @@
             <asp:CustomValidator ID="cvServerCheck" runat="server" CssClass="field-error" Display="Dynamic"
                 OnServerValidate="cvServerCheck_ServerValidate" />
 
+            <script type="text/javascript">
+                // Live-check trùng tài khoản khi gõ (server vẫn chốt lúc submit)
+                (function () {
+                    var userInput = document.getElementById('<%= txtUsername.ClientID %>');
+                    var emailInput = document.getElementById('<%= txtEmail.ClientID %>');
+                    var timer = null;
+                    function checkLive() {
+                        var cv = document.getElementById('<%= cvServerCheck.ClientID %>');
+                        if (!cv) return;
+                        var u = userInput ? userInput.value.trim() : '';
+                        var m = emailInput ? emailInput.value.trim() : '';
+                        if (u.length < 3 && m === '') { cv.style.display = 'none'; return; }
+                        if (typeof PageMethods === 'undefined') return;
+                        PageMethods.CheckDuplicate(u, m, function (res) {
+                            var msgs = [];
+                            if (res && res.userTaken) msgs.push('Tên đăng nhập đã tồn tại! Vui lòng chọn tên khác.');
+                            if (res && res.emailTaken) msgs.push('Email này đã được đăng ký!');
+                            if (msgs.length > 0) { cv.textContent = msgs.join(' '); cv.style.display = 'block'; }
+                            else { cv.style.display = 'none'; }
+                        });
+                    }
+                    function schedule() { clearTimeout(timer); timer = setTimeout(checkLive, 500); }
+                    if (userInput) userInput.addEventListener('input', schedule);
+                    if (emailInput) emailInput.addEventListener('input', schedule);
+                })();
+            </script>
+
             <asp:Button ID="btnRegister" runat="server" Text="Đăng Ký Tài Khoản" CssClass="btn-pink-submit" OnClick="btnRegister_Click" />
 
             <div class="auth-footer-link">

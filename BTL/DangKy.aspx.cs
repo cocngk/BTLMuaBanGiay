@@ -66,6 +66,16 @@ namespace ShoeStore
             args.IsValid = true;
         }
 
+        [System.Web.Services.WebMethod]
+        public static object CheckDuplicate(string username, string email)
+        {
+            return new
+            {
+                userTaken = !string.IsNullOrEmpty(username) && AuthHelper.UsernameExists(username),
+                emailTaken = !string.IsNullOrEmpty(email) && AuthHelper.EmailExists(email)
+            };
+        }
+
         private void ShowToastAndRedirect(
             string message, string type, string url)
         {

@@ -21,7 +21,7 @@
 
 <body>
     <form id="form1" runat="server">
-        <asp:ScriptManager ID="ScriptManager1" runat="server" />
+        <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true" />
 
         <header class="header-container">
             <a href="TrangChu.aspx" class="logo-area">
@@ -135,9 +135,21 @@
                 window.location.href = 'DangNhap.aspx';
             }
 
-            // Search: chỉ submit khi chữ khác lúc mở trang;
-            // bấm khi chưa gõ/chưa đổi thì focus + bôi đen để sửa
+            // Validate động phía client (server check lại làm chuẩn)
+            function validateUsernameLive(source, args) {
+                var v = (args.Value || '').trim();
+                if (v.indexOf('@') >= 0) {
+                    var ok = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v);
+                    args.IsValid = ok;
+                    if (!ok) source.errormessage = 'Địa chỉ email chưa đúng định dạng.';
+                } else {
+                    args.IsValid = v.length >= 3;
+                    if (!args.IsValid) source.errormessage = 'Tên đăng nhập phải có ít nhất 3 ký tự.';
+                }
+            }
             document.addEventListener('DOMContentLoaded', function () {
+                // Search: chỉ submit khi chữ khác lúc mở trang;
+                // bấm khi chưa gõ/chưa đổi thì focus + bôi đen để sửa
                 document.querySelectorAll('.search-pill input, .search-inner input').forEach(function (inp) {
                     inp.dataset.initial = inp.value;
                 });

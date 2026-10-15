@@ -22,6 +22,7 @@
                 <asp:RequiredFieldValidator ID="reqUsername" runat="server" ControlToValidate="txtUsername"
                     ErrorMessage="Vui lòng nhập tên đăng nhập hoặc email." CssClass="field-error" Display="Dynamic" />
                 <asp:CustomValidator ID="cvUsername" runat="server" ControlToValidate="txtUsername"
+                    ClientValidationFunction="validateUsernameLive"
                     OnServerValidate="cvUsername_ServerValidate" CssClass="field-error" Display="Dynamic" />
             </div>
 
