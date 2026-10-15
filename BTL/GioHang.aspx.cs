@@ -62,7 +62,7 @@ namespace ShoeStore
                     cart.RemoveAll(x => x.Id == id);
                     Session["Cart"] = cart;
                     LoadCartData();
-                    ClientScript.RegisterStartupScript(this.GetType(), "ToastDelete", "showToast('Đã xóa sản phẩm khỏi giỏ hàng!', 'info');", true);
+                    ScriptManager.RegisterStartupScript(this.GetType(), "ToastDelete", "showToast('Đã xóa sản phẩm khỏi giỏ hàng!', 'info');", true);
                 }
             }
         }
@@ -92,7 +92,7 @@ namespace ShoeStore
         {
             if (Session["Username"] == null)
             {
-                ClientScript.RegisterStartupScript(this.GetType(), "RequireLoginCheckoutToast",
+                ScriptManager.RegisterStartupScript(this.GetType(), "RequireLoginCheckoutToast",
                     "showToast('Vui lòng đăng nhập để tiến hành thanh toán!', 'info'); openLoginModal();", true);
                 return;
             }

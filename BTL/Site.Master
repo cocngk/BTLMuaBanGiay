@@ -21,6 +21,7 @@
 
 <body>
     <form id="form1" runat="server">
+        <asp:ScriptManager ID="ScriptManager1" runat="server" />
 
         <header class="header-container">
             <a href="TrangChu.aspx" class="logo-area">

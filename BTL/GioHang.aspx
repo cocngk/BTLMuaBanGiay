@@ -18,6 +18,8 @@
     </asp:Panel>
 
     <asp:Panel ID="pnlCartHasItems" runat="server">
+        <asp:UpdatePanel ID="updCart" runat="server" UpdateMode="Conditional">
+            <ContentTemplate>
         <div class="cart-layout">
             <div class="cart-table-card">
                 <table class="cart-table">
@@ -86,10 +88,12 @@
                 <asp:Button ID="btnGoToCheckout" runat="server" Text="TIẾN HÀNH THANH TOÁN &rarr;" OnClick="btnGoToCheckout_Click" CssClass="btn-checkout" />
             </div>
         </div>
+            </ContentTemplate>
+        </asp:UpdatePanel>
     </asp:Panel>
 
     <script type="text/javascript">
-        (function () {
+        function bindCartAuto() {
             function fmt(n) {
                 return n.toLocaleString('vi-VN') + 'đ';
             }
@@ -129,6 +133,12 @@
                     scheduleSave();
                 });
             });
-        })();
+            recalc();
+        }
+        bindCartAuto();
+        // UpdatePanel render lại DOM sau mỗi async postback -> gắn lại listener
+        if (typeof Sys !== 'undefined' && Sys.WebForms && Sys.WebForms.PageRequestManager) {
+            Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () { bindCartAuto(); });
+        }
     </script>
 </asp:Content>
