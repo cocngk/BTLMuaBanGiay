@@ -10,6 +10,7 @@
     <div class="auth-page-container">
         <div class="auth-card-page">
             <a href="TrangChu.aspx" class="auth-back-link"><i class="fa-solid fa-arrow-left"></i> Trang chủ</a>
+            <asp:Panel ID="pnlLoginForm" runat="server" DefaultButton="btnLogin">
             <div class="auth-header">
                 <div class="auth-badge-icon"><i class="fa-solid fa-shoe-prints"></i></div>
                 <h2 class="auth-title">Đăng Nhập</h2>
@@ -46,6 +47,7 @@
             <div class="auth-footer-link">
                 Chưa có tài khoản? <a href="DangKy.aspx">Đăng ký ngay</a>
             </div>
+            </asp:Panel>
         </div>
     </div>
 </asp:Content>
