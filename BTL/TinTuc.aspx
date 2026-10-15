@@ -76,14 +76,14 @@
                         <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200" class="popular-news-img" />
                         <div>
                             <div class="popular-news-title">5 Bước làm sạch giày trắng siêu tốc</div>
-                            <span style="font-size:11px; color:#999;">10/10/2026</span>
+                            <span style="font-size:11px; color:var(--muted);">10/10/2026</span>
                         </div>
                     </div>
                     <div class="popular-news-item">
                         <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=200" class="popular-news-img" />
                         <div>
                             <div class="popular-news-title">Top 10 đôi Sneaker không bao giờ lỗi mốt</div>
-                            <span style="font-size:11px; color:#999;">08/10/2026</span>
+                            <span style="font-size:11px; color:var(--muted);">08/10/2026</span>
                         </div>
                     </div>
                 </div>

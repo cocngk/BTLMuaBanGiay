@@ -2,26 +2,17 @@
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ShoeStore.Helpers;
 
 namespace ShoeStore
 {
     public partial class SiteMaster : System.Web.UI.MasterPage
     {
-        [Serializable]
-        public class UserAccount
-        {
-            public string FullName { get; set; }
-            public string Username { get; set; }
-            public string Email { get; set; }
-            public string Phone { get; set; }
-            public string Password { get; set; }
-        }
-
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                InitDefaultAccounts();
+                AuthHelper.GetUsers();
                 HighlightCurrentMenu();
 
                 TextBox txtSearch = FindControl("txtHeaderSearch") as TextBox;
@@ -34,30 +25,17 @@ namespace ShoeStore
             CheckLoginState();
         }
 
-        private void InitDefaultAccounts()
-        {
-            if (Application["UserList"] == null)
-            {
-                List<UserAccount> users = new List<UserAccount>
-                {
-                    new UserAccount { FullName = "Nguyễn Văn A", Username = "admin", Email = "admin@sneakerx.com", Phone = "0987654321", Password = "123" },
-                    new UserAccount { FullName = "Khách Hàng Demo", Username = "sneakerx", Email = "demo@sneakerx.com", Phone = "0912345678", Password = "123" }
-                };
-                Application["UserList"] = users;
-            }
-        }
-
         private void CheckLoginState()
         {
             Panel pnlGuest = FindControl("pnlGuest") as Panel;
             Panel pnlUser = FindControl("pnlUser") as Panel;
             Literal litUsername = FindControl("litUsername") as Literal;
 
-            if (Session["Username"] != null)
+            if (AuthHelper.IsLoggedIn())
             {
                 if (pnlGuest != null) pnlGuest.Visible = false;
                 if (pnlUser != null) pnlUser.Visible = true;
-                if (litUsername != null) litUsername.Text = Session["Username"].ToString();
+                if (litUsername != null) litUsername.Text = AuthHelper.CurrentUserName();
             }
             else
             {
@@ -123,7 +101,7 @@ namespace ShoeStore
 
         protected void btnLogout_Click(object sender, EventArgs e)
         {
-            Session["Username"] = null;
+            AuthHelper.SignOut();
             CheckLoginState();
             Response.Redirect("TrangChu.aspx");
         }

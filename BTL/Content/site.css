@@ -449,6 +449,8 @@
                 opacity: 1;
             }
 
+            .user-name-text { display: none; }
+
             .toast-container {
                 left: 12px;
                 right: 12px;

@@ -129,6 +129,10 @@
 
         <!-- HAM TOAST DUNG CHUNG CHO CAC TRANG -->
         <script type="text/javascript">
+            function openLoginModal() {
+                window.location.href = 'DangNhap.aspx';
+            }
+
             function showToast(message, type) {
                 type = type || 'error';
 

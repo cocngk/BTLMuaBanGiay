@@ -12,10 +12,10 @@
 
         <asp:Panel ID="pnlEmpty" runat="server" Visible="false">
             <div class="card-box" style="text-align: center; padding: 50px 20px;">
-                <i class="fa-solid fa-bag-shopping" style="font-size: 40px; color: #f8d7da; margin-bottom: 15px;"></i>
+                <i class="fa-solid fa-bag-shopping" style="font-size: 40px; color: var(--border-strong); margin-bottom: 15px;"></i>
                 <p style="font-size: 15px; font-weight: 700;">Chưa có sản phẩm nào để thanh toán!</p>
-                <p style="font-size: 13px; color: #777; margin-bottom: 20px;">Vui lòng chọn sản phẩm vào giỏ hàng trước khi thực hiện thanh toán.</p>
-                <a href="SanPham.aspx" style="background:#e63946; color:white; padding:10px 25px; border-radius:20px; text-decoration:none; font-weight:700;">Xem sản phẩm &rarr;</a>
+                <p style="font-size: 13px; color: var(--muted); margin-bottom: 20px;">Vui lòng chọn sản phẩm vào giỏ hàng trước khi thực hiện thanh toán.</p>
+                <a href="SanPham.aspx" style="background:var(--brand); color:white; padding:10px 25px; border-radius:20px; text-decoration:none; font-weight:700;">Xem sản phẩm &rarr;</a>
             </div>
         </asp:Panel>
 
