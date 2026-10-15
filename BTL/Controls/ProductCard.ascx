@@ -1,4 +1,4 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ProductCard.ascx.cs" Inherits="ShoeStore.ProductCard" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ProductCard.ascx.cs" Inherits="ShoeStore.ProductCard" %>
 <%-- Thẻ sản phẩm dùng chung (TrangChu / SanPham / Related). Nút bấm bubble Command về Repeater cha. --%>
 <div class="product-card-custom">
     <asp:Panel ID="pnlHot" runat="server" CssClass="badge-hot-pink" Visible="false">
