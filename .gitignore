@@ -43,3 +43,6 @@ Thumbs.db
 
 # Human-readable design notes (generated from typeui.sh, not for build)
 DESIGN.md
+
+# Local agent working notes (regenerable, not for build)
+CONTEXT.md
