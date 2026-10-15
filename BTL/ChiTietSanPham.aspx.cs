@@ -4,6 +4,9 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
+using ShoeStore.Data;
+using ShoeStore.Helpers;
+using ShoeStore.Models;
 
 namespace ShoeStore
 {
@@ -21,8 +24,8 @@ namespace ShoeStore
         {
             if (Request.QueryString["id"] != null && int.TryParse(Request.QueryString["id"], out int id))
             {
-                List<SanPham.ProductItem> list = GetMockProducts();
-                SanPham.ProductItem product = list.FirstOrDefault(p => p.Id == id);
+                List<ProductItem> list = ProductStore.GetAll();
+                ProductItem product = list.FirstOrDefault(p => p.Id == id);
 
                 if (product != null)
                 {
@@ -100,7 +103,7 @@ namespace ShoeStore
                     rptThumbs.DataBind();
 
                     // Sản phẩm liên quan: cùng brand trước, rồi lấp đầy
-                    List<SanPham.ProductItem> related = list
+                    List<ProductItem> related = list
                         .Where(p => p.Id != id)
                         .OrderByDescending(p => p.Brand == product.Brand)
                         .ThenBy(p => p.Id)
@@ -130,110 +133,61 @@ namespace ShoeStore
             return s.PadRight(5, '☆');
         }
 
+        private string ResolveSize(ProductItem product)
+        {
+            List<string> sizes = (product.Sizes ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+            return !string.IsNullOrEmpty(hfSelectedSize.Value) && sizes.Contains(hfSelectedSize.Value)
+                ? hfSelectedSize.Value
+                : sizes.FirstOrDefault() ?? "40";
+        }
+
+        private int ResolveQty(ProductItem product)
+        {
+            int qty = int.TryParse(txtQuantity.Text, out int q) ? (q > 0 ? q : 1) : 1;
+            return Math.Min(qty, Math.Max(product.Stock, 1));
+        }
+
         protected void btnAddToCart_Click(object sender, EventArgs e)
         {
-            if (Session["Username"] == null)
+            if (!CartHelper.IsLoggedIn())
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "RequireLoginDetailToast",
-                    "showToast('Vui lòng đăng nhập hoặc đăng ký tài khoản để mua hàng!', 'info'); openLoginModal();", true);
+                CartHelper.RequireLoginToast(this, "RequireLoginDetailToast",
+                    "Vui lòng đăng nhập hoặc đăng ký tài khoản để mua hàng!");
                 return;
             }
 
             int id = Convert.ToInt32(Request.QueryString["id"]);
-            SanPham.ProductItem product = GetMockProducts().FirstOrDefault(p => p.Id == id);
+            ProductItem product = ProductStore.GetAll().FirstOrDefault(p => p.Id == id);
 
             if (product != null)
             {
-                int qty = int.TryParse(txtQuantity.Text, out int q) ? (q > 0 ? q : 1) : 1;
-                qty = Math.Min(qty, Math.Max(product.Stock, 1));
-                List<string> sizes = (product.Sizes ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
-                string size = !string.IsNullOrEmpty(hfSelectedSize.Value) && sizes.Contains(hfSelectedSize.Value)
-                    ? hfSelectedSize.Value
-                    : sizes.FirstOrDefault() ?? "40";
-
-                List<GioHang.CartItem> cart = Session["Cart"] as List<GioHang.CartItem> ?? new List<GioHang.CartItem>();
-                GioHang.CartItem existing = cart.FirstOrDefault(c => c.Id == id && c.Size == size);
-
-                if (existing != null)
-                {
-                    existing.Quantity = Math.Min(existing.Quantity + qty, Math.Max(product.Stock, 1));
-                }
-                else
-                {
-                    cart.Add(new GioHang.CartItem
-                    {
-                        Id = product.Id,
-                        Name = product.Name,
-                        Price = product.Price,
-                        Quantity = qty,
-                        Size = size,
-                        ImageUrl = product.ImageUrl
-                    });
-                }
-
-                Session["Cart"] = cart;
-
-                string msg = "Đã thêm " + product.Name.Replace("'", "\\'") + " (Size " + size + ") vào giỏ hàng!";
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "DetailToastSuccess", "showToast('" + msg + "', 'success');", true);
+                string size = ResolveSize(product);
+                CartHelper.AddOrMerge(product.Id, product.Name, product.Price, size, ResolveQty(product), product.ImageUrl, product.Stock);
+                CartHelper.SuccessToast(this, "DetailToastSuccess",
+                    "Đã thêm " + product.Name + " (Size " + size + ") vào giỏ hàng!");
             }
         }
 
         protected void btnBuyNow_Click(object sender, EventArgs e)
         {
-            if (Session["Username"] == null)
+            if (!CartHelper.IsLoggedIn())
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "RequireLoginBuyNowToast",
-                    "showToast('Vui lòng đăng nhập để tiến hành thanh toán!', 'info'); openLoginModal();", true);
+                CartHelper.RequireLoginToast(this, "RequireLoginBuyNowToast",
+                    "Vui lòng đăng nhập để tiến hành thanh toán!");
                 return;
             }
 
             int id = Convert.ToInt32(Request.QueryString["id"]);
-            SanPham.ProductItem product = GetMockProducts().FirstOrDefault(p => p.Id == id);
+            ProductItem product = ProductStore.GetAll().FirstOrDefault(p => p.Id == id);
 
             if (product != null)
             {
                 // Gộp vào giỏ hiện có (không xóa giỏ cũ) rồi sang thanh toán
-                int qty = int.TryParse(txtQuantity.Text, out int q) ? (q > 0 ? q : 1) : 1;
-                qty = Math.Min(qty, Math.Max(product.Stock, 1));
-                List<string> sizes = (product.Sizes ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
-                string size = !string.IsNullOrEmpty(hfSelectedSize.Value) && sizes.Contains(hfSelectedSize.Value)
-                    ? hfSelectedSize.Value
-                    : sizes.FirstOrDefault() ?? "40";
-
-                List<GioHang.CartItem> cart = Session["Cart"] as List<GioHang.CartItem> ?? new List<GioHang.CartItem>();
-                GioHang.CartItem existing = cart.FirstOrDefault(c => c.Id == id && c.Size == size);
-                if (existing != null)
-                {
-                    existing.Quantity = Math.Min(existing.Quantity + qty, Math.Max(product.Stock, 1));
-                }
-                else
-                {
-                    cart.Add(new GioHang.CartItem
-                    {
-                        Id = product.Id,
-                        Name = product.Name,
-                        Price = product.Price,
-                        Quantity = qty,
-                        Size = size,
-                        ImageUrl = product.ImageUrl
-                    });
-                }
-                Session["Cart"] = cart;
+                string size = ResolveSize(product);
+                CartHelper.AddOrMerge(product.Id, product.Name, product.Price, size, ResolveQty(product), product.ImageUrl, product.Stock);
                 Response.Redirect("ThanhToan.aspx");
             }
         }
 
-        private List<SanPham.ProductItem> GetMockProducts()
-        {
-            return new List<SanPham.ProductItem>
-            {
-                new SanPham.ProductItem { Id = 1, Name = "Nike Air Force 1 '07", Brand = "Nike", Description = "Thiết kế kinh điển, đệm Air siêu êm.", Price = 2900000, OldPrice = 3500000, Stock = 12, Sizes = "38,39,40,41", ImageUrl = "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=400" },
-                new SanPham.ProductItem { Id = 2, Name = "Adidas Ultraboost Light", Brand = "Adidas", Description = "Trọng lượng siêu nhẹ, êm ái khi chạy bộ.", Price = 3800000, Stock = 8, Sizes = "39,40,41,42", ImageUrl = "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?q=80&w=400" },
-                new SanPham.ProductItem { Id = 3, Name = "Jordan 1 Retro High Chicago", Brand = "Jordan", Description = "Phối màu huyền thoại dành cho tín đồ Sneaker.", Price = 4500000, Stock = 3, Sizes = "40,41,42,43", ImageUrl = "https://images.unsplash.com/photo-1556906781-9a412961c28c?q=80&w=400" },
-                new SanPham.ProductItem { Id = 4, Name = "Puma RS-X Reinvent Red", Brand = "Puma", Description = "Cá tính, phối màu năng động cá tính.", Price = 1800000, OldPrice = 2200000, Stock = 15, Sizes = "38,39,40", ImageUrl = "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=400" },
-                new SanPham.ProductItem { Id = 5, Name = "Converse Chuck 70 High", Brand = "Converse", Description = "Phong cách Retro Vintage tối giản cổ điển.", Price = 1950000, Stock = 0, Sizes = "38,39,40,41,42", ImageUrl = "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=400" },
-                new SanPham.ProductItem { Id = 6, Name = "Vans Old Skool Black", Brand = "Vans", Description = "Mẫu giày Skateboard trường tồn với thời gian.", Price = 1850000, Stock = 20, Sizes = "38,39,40,41", ImageUrl = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=400" }
-            };
-        }
     }
 }

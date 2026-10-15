@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI;
+using ShoeStore.Helpers;
 
 namespace ShoeStore
 {
@@ -37,41 +38,11 @@ namespace ShoeStore
                 return;
             }
 
-            // 2. Lay danh sach tai khoan
-            List<SiteMaster.UserAccount> users =
-                Application["UserList"] as List<SiteMaster.UserAccount>;
-
-            if (users == null)
-            {
-                users = new List<SiteMaster.UserAccount>
-                {
-                    new SiteMaster.UserAccount
-                    {
-                        FullName = "Nguyen Van A",
-                        Username = "admin",
-                        Email = "admin@sneakerx.com",
-                        Phone = "0987654321",
-                        Password = "123"
-                    },
-                    new SiteMaster.UserAccount
-                    {
-                        FullName = "Khach Hang Demo",
-                        Username = "sneakerx",
-                        Email = "demo@sneakerx.com",
-                        Phone = "0912345678",
-                        Password = "123"
-                    }
-                };
-
-                Application["UserList"] = users;
-            }
+            // 2. Lay danh sach tai khoan (dùng chung qua AuthHelper)
+            List<UserAccount> users = AuthHelper.GetUsers();
 
             // 3. Tim tai khoan
-            SiteMaster.UserAccount account = users.FirstOrDefault(u =>
-                string.Equals(u.Username, username,
-                    StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(u.Email, username,
-                    StringComparison.OrdinalIgnoreCase));
+            UserAccount account = AuthHelper.FindByUsernameOrEmail(username);
 
             if (account == null)
             {
@@ -89,9 +60,9 @@ namespace ShoeStore
             }
 
             // 5. Dang nhap thanh cong
-            Session["Username"] = !string.IsNullOrEmpty(account.FullName)
+            AuthHelper.SignIn(!string.IsNullOrEmpty(account.FullName)
                 ? account.FullName
-                : account.Username;
+                : account.Username);
 
             ShowToastAndRedirect(
                 "Dang nhap thanh cong! Dang chuyen den trang chu...",

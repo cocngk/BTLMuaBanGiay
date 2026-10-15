@@ -10,7 +10,7 @@
 
     <div class="detail-container">
         <div class="breadcrumb-link">
-            <a href="TrangChu.aspx">Trang chủ</a> / <a href="SanPham.aspx">Sản phẩm</a> / <span><asp:Literal ID="litBreadcrumb" runat="server" Text="Chi tiết sản phẩm"></asp:Literal></span>
+            <a href="TrangChu.aspx">Trang chủ</a> / <a href="SanPham.aspx">Sản phẩm</a> / <span><asp:Literal ID="litBreadcrumb" runat="server" Mode="Encode" Text="Chi tiết sản phẩm"></asp:Literal></span>
         </div>
 
         <asp:Panel ID="pnlNotFound" runat="server" Visible="false" Style="text-align:center; padding:50px;">
@@ -37,20 +37,20 @@
                 </div>
 
                 <div class="product-info-box">
-                    <span class="product-brand-tag"><asp:Literal ID="litBrand" runat="server"></asp:Literal></span>
-                    <h1 class="product-title-large"><asp:Literal ID="litName" runat="server"></asp:Literal></h1>
+                    <span class="product-brand-tag"><asp:Literal ID="litBrand" runat="server" Mode="Encode"></asp:Literal></span>
+                    <h1 class="product-title-large"><asp:Literal ID="litName" runat="server" Mode="Encode"></asp:Literal></h1>
                     <div class="detail-meta-row">
-                        <span class="sku-text">Mã SP: <asp:Literal ID="litSku" runat="server"></asp:Literal></span>
+                        <span class="sku-text">Mã SP: <asp:Literal ID="litSku" runat="server" Mode="Encode"></asp:Literal></span>
                         <span class="rating-row">
-                            <span class="stars"><asp:Literal ID="litRatingStars" runat="server"></asp:Literal></span>
-                            <a href="#danh-gia" class="review-count-link"><asp:Literal ID="litReviewCount" runat="server"></asp:Literal> đánh giá</a>
+                            <span class="stars"><asp:Literal ID="litRatingStars" runat="server" Mode="Encode"></asp:Literal></span>
+                            <a href="#danh-gia" class="review-count-link"><asp:Literal ID="litReviewCount" runat="server" Mode="Encode"></asp:Literal> đánh giá</a>
                         </span>
                     </div>
                     <div class="price-row">
-                        <span class="product-price-large"><asp:Literal ID="litPrice" runat="server"></asp:Literal></span>
+                        <span class="product-price-large"><asp:Literal ID="litPrice" runat="server" Mode="Encode"></asp:Literal></span>
                         <asp:Panel ID="pnlDiscount" runat="server" Visible="false" CssClass="discount-inline">
-                            <span class="old-price"><asp:Literal ID="litOldPrice" runat="server"></asp:Literal></span>
-                            <span class="discount-badge"><asp:Literal ID="litDiscountPct" runat="server"></asp:Literal></span>
+                            <span class="old-price"><asp:Literal ID="litOldPrice" runat="server" Mode="Encode"></asp:Literal></span>
+                            <span class="discount-badge"><asp:Literal ID="litDiscountPct" runat="server" Mode="Encode"></asp:Literal></span>
                         </asp:Panel>
                     </div>
                     <div class="stock-row"><asp:Literal ID="litStock" runat="server"></asp:Literal></div>
@@ -108,7 +108,7 @@
             <div class="product-desc-box">
                 <h3 class="desc-title">Mô Tả Sản Phẩm Chi Tiết</h3>
                 <p class="desc-content">
-                    <asp:Literal ID="litDescription" runat="server"></asp:Literal>
+                    <asp:Literal ID="litDescription" runat="server" Mode="Encode"></asp:Literal>
                 </p>
                 <ul class="spec-list">
                     <li><b>Chất liệu:</b> Da tổng hợp cao cấp, lưới thoáng khí</li>
@@ -121,7 +121,7 @@
             <div class="product-desc-box" id="danh-gia">
                 <h3 class="desc-title">Đánh Giá Từ Khách Hàng</h3>
                 <div class="review-summary">
-                    <div class="review-score"><asp:Literal ID="litAvgScore" runat="server" Text="4.5"></asp:Literal><span>/5</span></div>
+                    <div class="review-score"><asp:Literal ID="litAvgScore" runat="server" Mode="Encode" Text="4.5"></asp:Literal><span>/5</span></div>
                     <div class="review-bars">
                         <div class="review-bar-row"><span>5★</span><div class="review-bar"><div class="review-fill" style="width:70%"></div></div></div>
                         <div class="review-bar-row"><span>4★</span><div class="review-bar"><div class="review-fill" style="width:20%"></div></div></div>

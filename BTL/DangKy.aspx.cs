@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.UI;
+using ShoeStore.Helpers;
 
 namespace ShoeStore
 {
@@ -101,37 +102,9 @@ namespace ShoeStore
                 return;
             }
 
-            // 5. Lay danh sach tai khoan
-            List<SiteMaster.UserAccount> users =
-                Application["UserList"] as List<SiteMaster.UserAccount>;
-
-            if (users == null)
-            {
-                users = new List<SiteMaster.UserAccount>
-                {
-                    new SiteMaster.UserAccount
-                    {
-                        FullName = "Nguyen Van A",
-                        Username = "admin",
-                        Email = "admin@sneakerx.com",
-                        Phone = "0987654321",
-                        Password = "123"
-                    },
-                    new SiteMaster.UserAccount
-                    {
-                        FullName = "Khach Hang Demo",
-                        Username = "sneakerx",
-                        Email = "demo@sneakerx.com",
-                        Phone = "0912345678",
-                        Password = "123"
-                    }
-                };
-            }
-
+            // 5. Lay danh sach tai khoan (dùng chung qua AuthHelper)
             // 6. Kiem tra trung ten dang nhap
-            if (users.Any(u =>
-                string.Equals(u.Username, username,
-                    StringComparison.OrdinalIgnoreCase)))
+            if (AuthHelper.UsernameExists(username))
             {
                 ShowToast(
                     "Ten dang nhap da ton tai! Vui long chon ten khac.",
@@ -140,9 +113,7 @@ namespace ShoeStore
             }
 
             // 7. Kiem tra trung Email
-            if (users.Any(u =>
-                string.Equals(u.Email, email,
-                    StringComparison.OrdinalIgnoreCase)))
+            if (AuthHelper.EmailExists(email))
             {
                 ShowToast(
                     "Email nay da duoc dang ky!",
@@ -151,7 +122,7 @@ namespace ShoeStore
             }
 
             // 8. Luu tai khoan moi
-            users.Add(new SiteMaster.UserAccount
+            AuthHelper.Add(new UserAccount
             {
                 FullName = fullName,
                 Username = username,
@@ -160,10 +131,8 @@ namespace ShoeStore
                 Password = password
             });
 
-            Application["UserList"] = users;
-
             // 9. Dang nhap ngay sau khi dang ky
-            Session["Username"] = fullName;
+            AuthHelper.SignIn(fullName);
 
             ShowToastAndRedirect(
                 "Dang ky thanh cong! Ban da dang nhap.",
