@@ -84,4 +84,5 @@
 
         /* Auth gọn để vừa màn hình, không cuộn */
         .main-wrapper { min-height: 0; }
-        .footer { margin-top: 24px; }
+        /* Auth gọn: ẩn footer trang để khỏi cuộn màn hình thấp */
+        .footer { display: none; }
