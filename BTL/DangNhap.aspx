@@ -18,11 +18,17 @@
             <div class="form-group-item">
                 <label class="form-label-custom">Tên đăng nhập / Email *</label>
                 <asp:TextBox ID="txtUsername" runat="server" CssClass="form-input-pill" Placeholder="Nhập tên đăng nhập hoặc email"></asp:TextBox>
+                <asp:RequiredFieldValidator ID="reqUsername" runat="server" ControlToValidate="txtUsername"
+                    ErrorMessage="Vui lòng nhập tên đăng nhập hoặc email." CssClass="field-error" Display="Dynamic" />
             </div>
 
             <div class="form-group-item">
                 <label class="form-label-custom">Mật khẩu *</label>
                 <asp:TextBox ID="txtPassword" runat="server" CssClass="form-input-pill" TextMode="Password" Placeholder="Nhập mật khẩu"></asp:TextBox>
+                <asp:RequiredFieldValidator ID="reqPassword" runat="server" ControlToValidate="txtPassword"
+                    ErrorMessage="Vui lòng nhập mật khẩu." CssClass="field-error" Display="Dynamic" />
+                <asp:CustomValidator ID="cvLogin" runat="server" ControlToValidate="txtPassword"
+                    OnServerValidate="cvLogin_ServerValidate" CssClass="field-error" Display="Dynamic" />
             </div>
 
             <div class="chk-remember-flex">

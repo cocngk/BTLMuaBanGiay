@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using ShoeStore.Helpers;
 using ShoeStore.Models;
 
@@ -24,104 +25,23 @@ namespace ShoeStore
             string password = txtPassword.Text;
             string confirm = txtConfirm.Text;
 
-            // 1. Kiem tra bo trong
-            if (string.IsNullOrWhiteSpace(fullName))
-            {
-                ShowToast("Vui long nhap ho va ten!", "error");
-                return;
-            }
+            // Validators (required/regex/compare) đã chạy ở client + server.
+            // Chỉ còn kiểm tra trùng tài khoản ở đây.
+            if (!Page.IsValid) return;
 
-            if (string.IsNullOrWhiteSpace(username))
-            {
-                ShowToast("Vui long nhap ten dang nhap!", "error");
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                ShowToast("Vui long nhap dia chi Email!", "error");
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(phone))
-            {
-                ShowToast("Vui long nhap so dien thoai!", "error");
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                ShowToast("Vui long nhap mat khau!", "error");
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(confirm))
-            {
-                ShowToast("Vui long xac nhan mat khau!", "error");
-                return;
-            }
-
-            // 2. Kiem tra do dai
-            if (username.Length < 3)
-            {
-                ShowToast(
-                    "Ten dang nhap phai co it nhat 3 ky tu!",
-                    "error");
-                return;
-            }
-
-            if (password.Length < 6)
-            {
-                ShowToast(
-                    "Mat khau phai co it nhat 6 ky tu!",
-                    "error");
-                return;
-            }
-
-            // 3. Kiem tra Email va so dien thoai
-            if (!Regex.IsMatch(
-                email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
-            {
-                ShowToast("Dia chi Email khong hop le!", "error");
-                return;
-            }
-
-            if (!OrderValidator.IsValidPhone(phone))
-            {
-                ShowToast(
-                    "So dien thoai phai co tu 9 den 11 chu so!",
-                    "error");
-                return;
-            }
-
-            // 4. Kiem tra mat khau xac nhan
-            if (password != confirm)
-            {
-                ShowToast(
-                    "Mat khau xac nhan khong trung khop!",
-                    "error");
-                return;
-            }
-
-            // 5. Lay danh sach tai khoan (dùng chung qua AuthHelper)
-            // 6. Kiem tra trung ten dang nhap
             if (AuthHelper.UsernameExists(username))
             {
-                ShowToast(
-                    "Ten dang nhap da ton tai! Vui long chon ten khac.",
-                    "error");
+                cvServerCheck.ErrorMessage = "Tên đăng nhập đã tồn tại! Vui lòng chọn tên khác.";
+                cvServerCheck.IsValid = false;
                 return;
             }
 
-            // 7. Kiem tra trung Email
             if (AuthHelper.EmailExists(email))
             {
-                ShowToast(
-                    "Email nay da duoc dang ky!",
-                    "error");
+                cvServerCheck.ErrorMessage = "Email này đã được đăng ký!";
+                cvServerCheck.IsValid = false;
                 return;
             }
-
             // 8. Luu tai khoan moi
             AuthHelper.Add(new UserAccount
             {
@@ -141,21 +61,9 @@ namespace ShoeStore
                 "TrangChu.aspx");
         }
 
-        private void ShowToast(string message, string type)
+        protected void cvServerCheck_ServerValidate(object source, ServerValidateEventArgs args)
         {
-            string cleanMessage =
-                System.Web.HttpUtility.JavaScriptStringEncode(message);
-
-            string script =
-                "if (typeof showToast === 'function') {" +
-                "showToast('" + cleanMessage + "', '" + type + "');" +
-                "}";
-
-            ClientScript.RegisterStartupScript(
-                this.GetType(),
-                "Toast_" + Guid.NewGuid().ToString("N"),
-                script,
-                true);
+            args.IsValid = true;
         }
 
         private void ShowToastAndRedirect(

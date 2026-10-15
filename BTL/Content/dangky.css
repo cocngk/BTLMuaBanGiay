@@ -61,3 +61,11 @@
 
         .auth-footer-link { text-align: center; margin-top: 20px; font-size: 13px; color: var(--body); }
         .auth-footer-link a { color: var(--brand); font-weight: 700; text-decoration: none; }
+
+        .field-error {
+            display: block;
+            color: #dc2626;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 6px;
+        }
