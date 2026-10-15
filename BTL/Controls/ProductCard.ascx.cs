@@ -28,7 +28,8 @@ namespace ShoeStore
         {
             base.OnDataBinding(e);
 
-            string detailUrl = "ChiTietSanPham.aspx?id=" + ProductId;
+            // URL tuyệt đối từ gốc app: không bao giờ rớt vào /Controls/...
+            string detailUrl = ResolveUrl("~/ChiTietSanPham.aspx") + "?id=" + ProductId;
             lnkImage.HRef = detailUrl;
             lnkName.HRef = detailUrl;
 
