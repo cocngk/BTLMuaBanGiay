@@ -65,28 +65,17 @@
 
         .field-error {
             display: block;
-            background: var(--brand-tint);
-            border: 1px solid var(--border-strong);
-            color: var(--brand-text);
+            color: #dc2626;
             font-size: 12px;
             font-weight: 600;
-            margin-top: 6px;
-            padding: 6px 10px;
-            border-radius: 10px;
-        }
-
-        .field-error::before {
-            content: "\f071";
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
-            margin-right: 6px;
+            margin-top: 8px;
         }
 
         /* Auth gọn để vừa màn hình, không cuộn */
         .main-wrapper { min-height: 0; }
         /* Auth gọn: ẩn header trang, giữ footer; link quay lại nằm trong card */
         .header-container { display: none; }
-        .footer { margin-top: 24px; }
+        .footer { display: none; }
 
         .auth-back-link {
             display: inline-flex;
