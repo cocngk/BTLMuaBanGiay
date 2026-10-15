@@ -1,6 +1,8 @@
-﻿<%@ Page Title="Trang Chủ" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="TrangChu.aspx.cs" Inherits="ShoeStore.TrangChu" %>
+﻿<%@ Register Src="~/Controls/ProductCard.ascx" TagPrefix="uc" TagName="ProductCard" %>
+<%@ Page Title="Trang Chủ" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="TrangChu.aspx.cs" Inherits="ShoeStore.TrangChu" %>
 
 <asp:Content ID="HeadCss" ContentPlaceHolderID="HeadContent" runat="server">
+    <link rel="stylesheet" href="Content/product-card.css" />
     <link rel="stylesheet" href="Content/trangchu.css" />
 </asp:Content>
 
@@ -36,31 +38,13 @@
         <div class="products-grid">
             <asp:Repeater ID="rptProducts" runat="server" OnItemCommand="rptProducts_ItemCommand">
                 <ItemTemplate>
-                    <div class="product-card-custom">
-                        <asp:Panel ID="pnlHot" runat="server" CssClass="badge-hot-pink" Visible='<%# Convert.ToBoolean(Eval("IsHot")) %>'>
-                            Nổi bật
-                        </asp:Panel>
-
-                        <button type="button" class="btn-heart-wishlist"><i class="fa-solid fa-heart"></i></button>
-
-                        <a href='ChiTietSanPham.aspx?id=<%# Eval("Id") %>'>
-                            <img src='<%# Eval("ImageUrl") %>' class="product-thumb" alt="Product" />
-                        </a>
-
-                        <div class="product-details">
-                            <a href='ChiTietSanPham.aspx?id=<%# Eval("Id") %>' style="text-decoration:none;">
-                                <h3 class="product-title-bold"><%# Eval("Name") %></h3>
-                            </a>
-                            <p class="product-desc-muted"><%# Eval("Description") %></p>
-
-                            <div class="product-footer-flex">
-                                <span class="product-price-bold"><%# string.Format("{0:N0}đ", Eval("Price")) %></span>
-                                <asp:LinkButton ID="btnQuickAdd" runat="server" CommandName="QuickAdd" CommandArgument='<%# Eval("Id") %>' CssClass="btn-add-plus-circle" title="Thêm vào giỏ hàng">
-                                    <i class="fa-solid fa-plus"></i>
-                                </asp:LinkButton>
-                            </div>
-                        </div>
-                    </div>
+                    <uc:ProductCard runat="server" ActionMode="QuickAdd"
+                        ProductId='<%# Eval("Id") %>'
+                        ProductName='<%# Eval("Name") %>'
+                        Description='<%# Eval("Description") %>'
+                        Price='<%# Eval("Price") %>'
+                        ImageUrl='<%# Eval("ImageUrl") %>'
+                        IsHot='<%# Eval("IsHot") %>' />
                 </ItemTemplate>
             </asp:Repeater>
         </div>

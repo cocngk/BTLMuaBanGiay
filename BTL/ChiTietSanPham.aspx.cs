@@ -83,10 +83,8 @@ namespace ShoeStore
                     }
 
                     // Size theo data thật, mặc định size đầu tiên
-                    List<string> sizes = (product.Sizes ?? "")
-                        .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                        .Select(s => s.Trim()).ToList();
-                    if (sizes.Count == 0) sizes.Add("40");
+                    List<string> sizes = product.SizeList();
+                    if (sizes.Count == 0) sizes.Add(product.FirstSize());
                     hfSelectedSize.Value = sizes[0];
                     rptSizes.DataSource = sizes.Select(s => new { Size = s }).ToList();
                     rptSizes.DataBind();
@@ -135,10 +133,10 @@ namespace ShoeStore
 
         private string ResolveSize(ProductItem product)
         {
-            List<string> sizes = (product.Sizes ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+            List<string> sizes = product.SizeList();
             return !string.IsNullOrEmpty(hfSelectedSize.Value) && sizes.Contains(hfSelectedSize.Value)
                 ? hfSelectedSize.Value
-                : sizes.FirstOrDefault() ?? "40";
+                : product.FirstSize();
         }
 
         private int ResolveQty(ProductItem product)

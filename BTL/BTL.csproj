@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ChiTietSanPham.aspx" />
+    <Content Include="Controls\ProductCard.ascx" />
     <Content Include="DangKy.aspx" />
     <Content Include="DangNhap.aspx" />
     <Content Include="GioHang.aspx" />
@@ -77,6 +78,7 @@
     <Content Include="TrangChu.aspx" />
     <Content Include="TuVan.aspx" />
     <Content Include="Content\charm-tokens.css" />
+    <Content Include="Content\product-card.css" />
     <Content Include="Content\site.css" />
     <Content Include="Content\trangchu.css" />
     <Content Include="Content\sanpham.css" />
@@ -91,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\ProductStore.cs" />
+    <Compile Include="Data\CatalogQuery.cs" />
     <Compile Include="Data\SessionCartStore.cs" />
     <Compile Include="Helpers\AuthHelper.cs" />
     <Compile Include="Helpers\Toast.cs" />
@@ -100,6 +103,12 @@
     <Compile Include="ChiTietSanPham.aspx.cs">
       <DependentUpon>ChiTietSanPham.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ProductCard.ascx.cs">
+      <DependentUpon>ProductCard.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ProductCard.ascx.designer.cs">
+      <DependentUpon>ProductCard.ascx</DependentUpon>
     </Compile>
     <Compile Include="ChiTietSanPham.aspx.designer.cs">
       <DependentUpon>ChiTietSanPham.aspx</DependentUpon>

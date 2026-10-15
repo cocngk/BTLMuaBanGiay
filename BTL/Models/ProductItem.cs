@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+
 namespace ShoeStore.Models
 {
     /// <summary>
@@ -16,5 +19,18 @@ namespace ShoeStore.Models
         public string Sizes { get; set; }
         public string ImageUrl { get; set; }
         public bool IsHot { get; set; }
+
+        /// <summary>Single source for "which size if none chosen". Replaces magic "40" scattered in pages.</summary>
+        public List<string> SizeList()
+        {
+            return (Sizes ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => s.Trim()).ToList();
+        }
+
+        public string FirstSize()
+        {
+            List<string> sizes = SizeList();
+            return sizes.Count > 0 ? sizes[0] : "40";
+        }
     }
 }

@@ -55,8 +55,7 @@ namespace ShoeStore
 
                 if (selected != null)
                 {
-                    string size = (selected.Sizes ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                        .Select(s => s.Trim()).FirstOrDefault() ?? "40";
+                    string size = selected.FirstSize();
                     new SessionCartStore(Session).AddOrMerge(selected.Id, selected.Name, selected.Price, size, 1, selected.ImageUrl, selected.Stock);
                     Toast.Success(this, "HomeAddToCartSuccessToast",
                         "Đã thêm " + selected.Name + " (Size " + size + ") vào giỏ hàng!");

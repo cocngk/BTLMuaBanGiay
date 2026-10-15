@@ -1,7 +1,8 @@
-﻿<%@ Page Title="Chi Tiết Sản Phẩm" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="ChiTietSanPham.aspx.cs" Inherits="ShoeStore.ChiTietSanPham" %>
+﻿<%@ Register Src="~/Controls/ProductCard.ascx" TagPrefix="uc" TagName="ProductCard" %>
+<%@ Page Title="Chi Tiết Sản Phẩm" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="ChiTietSanPham.aspx.cs" Inherits="ShoeStore.ChiTietSanPham" %>
 
 <asp:Content ID="HeadCss" ContentPlaceHolderID="HeadContent" runat="server">
-    <link rel="stylesheet" href="Content/trangchu.css" />
+    <link rel="stylesheet" href="Content/product-card.css" />
     <link rel="stylesheet" href="Content/chitietsanpham.css" />
 </asp:Content>
 
@@ -151,20 +152,13 @@
                 <div class="products-grid">
                     <asp:Repeater ID="rptRelated" runat="server">
                         <ItemTemplate>
-                            <div class="product-card-custom">
-                                <a href='ChiTietSanPham.aspx?id=<%# Eval("Id") %>'>
-                                    <img src='<%# Eval("ImageUrl") %>' class="product-thumb" alt='<%# Eval("Name") %>' />
-                                </a>
-                                <div class="product-details">
-                                    <a href='ChiTietSanPham.aspx?id=<%# Eval("Id") %>' style="text-decoration:none;">
-                                        <h3 class="product-title-bold"><%# Eval("Name") %></h3>
-                                    </a>
-                                    <p class="product-desc-muted"><%# Eval("Description") %></p>
-                                    <div class="product-footer-flex">
-                                        <span class="product-price-bold"><%# string.Format("{0:N0}đ", Eval("Price")) %></span>
-                                    </div>
-                                </div>
-                            </div>
+                            <uc:ProductCard runat="server" ActionMode="None"
+                                ProductId='<%# Eval("Id") %>'
+                                ProductName='<%# Eval("Name") %>'
+                                Description='<%# Eval("Description") %>'
+                                Price='<%# Eval("Price") %>'
+                                ImageUrl='<%# Eval("ImageUrl") %>'
+                                IsHot='<%# Eval("IsHot") %>' />
                         </ItemTemplate>
                     </asp:Repeater>
                 </div>
