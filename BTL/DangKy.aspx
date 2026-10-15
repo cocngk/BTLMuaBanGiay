@@ -9,6 +9,7 @@
 
     <div class="auth-page-container">
         <div class="auth-card-page">
+            <a href="TrangChu.aspx" class="auth-back-link"><i class="fa-solid fa-arrow-left"></i> Trang chủ</a>
             <div class="auth-header">
                 <div class="auth-badge-icon"><i class="fa-solid fa-user-plus"></i></div>
                 <h2 class="auth-title">Đăng Ký Tài Khoản</h2>

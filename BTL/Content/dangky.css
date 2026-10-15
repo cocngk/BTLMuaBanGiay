@@ -83,8 +83,22 @@
 
         /* Auth gọn để vừa màn hình, không cuộn */
         .main-wrapper { min-height: 0; }
-        /* Auth gọn: ẩn footer trang để khỏi cuộn màn hình thấp */
-        .footer { display: none; }
+        /* Auth gọn: ẩn header trang, giữ footer; link quay lại nằm trong card */
+        .header-container { display: none; }
+        .footer { margin-top: 24px; }
+
+        .auth-back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            margin-bottom: 10px;
+        }
+
+        .auth-back-link:hover { color: var(--brand); }
 
         .form-row-2col {
             display: grid;
