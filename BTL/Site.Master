@@ -64,7 +64,7 @@
             </ul>
 
             <div class="header-right">
-                <div class="search-pill">
+                <asp:Panel ID="pnlHeaderSearch" runat="server" CssClass="search-pill" DefaultButton="btnHeaderSearch">
                     <asp:TextBox
                         ID="txtHeaderSearch"
                         runat="server"
@@ -79,7 +79,7 @@
                         OnClick="btnHeaderSearch_Click">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </asp:LinkButton>
-                </div>
+                </asp:Panel>
 
                 <a href="GioHang.aspx" id="cartIcon" runat="server" class="cart-icon-btn" title="Giỏ hàng">
                     <i class="fa-solid fa-bag-shopping"></i>

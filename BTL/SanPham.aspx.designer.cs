@@ -69,6 +69,15 @@ namespace ShoeStore
         protected global::System.Web.UI.WebControls.TextBox txtStoreSearch;
 
         /// <summary>
+        /// pnlStoreSearch control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlStoreSearch;
+
+        /// <summary>
         /// btnStoreSearch control.
         /// </summary>
         /// <remarks>
