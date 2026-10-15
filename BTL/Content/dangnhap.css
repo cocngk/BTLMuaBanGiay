@@ -1,6 +1,6 @@
-.auth-page-container {
+﻿.auth-page-container {
             max-width: 440px;
-            margin: 60px auto;
+            margin: 24px auto;
             padding: 0 20px;
         }
 
@@ -8,31 +8,31 @@
             background: var(--panel);
             border-radius: 24px;
             box-shadow: 0 10px 30px var(--header-shadow);
-            padding: 40px 32px;
+            padding: 26px 28px;
             border: 1px solid var(--border);
         }
 
-        .auth-header { text-align: center; margin-bottom: 25px; }
+        .auth-header { text-align: center; margin-bottom: 16px; }
 
         .auth-badge-icon {
             background: var(--brand-tint);
             color: var(--brand);
-            width: 52px; height: 52px;
-            border-radius: 16px;
+            width: 44px; height: 44px;
+            border-radius: 14px;
             display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 12px;
-            font-size: 24px;
+            margin: 0 auto 8px;
+            font-size: 20px;
         }
 
-        .auth-title { font-size: 24px; font-weight: 800; color: var(--brand); margin-bottom: 4px; }
+        .auth-title { font-size: 21px; font-weight: 800; color: var(--brand); margin-bottom: 4px; }
         .auth-subtitle { font-size: 13px; color: var(--muted); }
 
-        .form-group-item { margin-bottom: 16px; text-align: left; }
+        .form-group-item { margin-bottom: 12px; text-align: left; }
         .form-label-custom { display: block; font-size: 13px; font-weight: 700; color: var(--heading); margin-bottom: 6px; }
 
         .form-input-pill {
             width: 100%;
-            padding: 12px 16px;
+            padding: 10px 16px;
             border: 1px solid var(--border-strong);
             border-radius: 15px;
             font-size: 13px;
@@ -42,14 +42,14 @@
 
         .form-input-pill:focus { border-color: var(--brand); background: var(--panel); }
 
-        .chk-remember-flex { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--body); margin-bottom: 20px; }
+        .chk-remember-flex { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--body); margin-bottom: 14px; }
 
         .btn-pink-submit {
             width: 100%;
             background: var(--brand);
             color: var(--panel);
             border: none;
-            padding: 13px;
+            padding: 12px;
             border-radius: 15px;
             font-size: 15px;
             font-weight: 700;
@@ -60,13 +60,28 @@
 
         .btn-pink-submit:hover { background: var(--brand-hover); }
 
-        .auth-footer-link { text-align: center; margin-top: 22px; font-size: 13px; color: var(--body); }
+        .auth-footer-link { text-align: center; margin-top: 16px; font-size: 13px; color: var(--body); }
         .auth-footer-link a { color: var(--brand); font-weight: 700; text-decoration: none; }
 
         .field-error {
             display: block;
-            color: #dc2626;
+            background: var(--brand-tint);
+            border: 1px solid var(--border-strong);
+            color: var(--brand-text);
             font-size: 12px;
             font-weight: 600;
             margin-top: 6px;
+            padding: 6px 10px;
+            border-radius: 10px;
         }
+
+        .field-error::before {
+            content: "\f071";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            margin-right: 6px;
+        }
+
+        /* Auth gọn để vừa màn hình, không cuộn */
+        .main-wrapper { min-height: 0; }
+        .footer { margin-top: 24px; }

@@ -26,16 +26,16 @@ namespace ShoeStore
 
             if (account == null)
             {
-                cvLogin.ErrorMessage = "Tài khoản chưa được đăng ký! Vui lòng đăng ký tài khoản mới.";
-                cvLogin.IsValid = false;
+                cvLoginSummary.ErrorMessage = "Tài khoản chưa được đăng ký! Vui lòng đăng ký tài khoản mới.";
+                cvLoginSummary.IsValid = false;
                 return;
             }
 
             // 3. Kiem tra mat khau
             if (account.Password != password)
             {
-                cvLogin.ErrorMessage = "Sai mật khẩu! Vui lòng kiểm tra lại.";
-                cvLogin.IsValid = false;
+                cvLoginSummary.ErrorMessage = "Sai mật khẩu! Vui lòng kiểm tra lại.";
+                cvLoginSummary.IsValid = false;
                 return;
             }
 
@@ -50,7 +50,29 @@ namespace ShoeStore
                 "TrangChu.aspx");
         }
 
-        protected void cvLogin_ServerValidate(object source, ServerValidateEventArgs args)
+        protected void cvUsername_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            string value = (txtUsername.Text ?? "").Trim();
+            if (value.Contains("@"))
+            {
+                args.IsValid = System.Text.RegularExpressions.Regex.IsMatch(
+                    value, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+                if (!args.IsValid)
+                {
+                    cvUsername.ErrorMessage = "Địa chỉ email chưa đúng định dạng.";
+                }
+            }
+            else
+            {
+                args.IsValid = value.Length >= 3;
+                if (!args.IsValid)
+                {
+                    cvUsername.ErrorMessage = "Tên đăng nhập phải có ít nhất 3 ký tự.";
+                }
+            }
+        }
+
+        protected void cvLoginSummary_ServerValidate(object source, ServerValidateEventArgs args)
         {
             args.IsValid = true;
         }

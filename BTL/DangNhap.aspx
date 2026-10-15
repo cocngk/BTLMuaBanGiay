@@ -20,6 +20,8 @@
                 <asp:TextBox ID="txtUsername" runat="server" CssClass="form-input-pill" Placeholder="Nhập tên đăng nhập hoặc email"></asp:TextBox>
                 <asp:RequiredFieldValidator ID="reqUsername" runat="server" ControlToValidate="txtUsername"
                     ErrorMessage="Vui lòng nhập tên đăng nhập hoặc email." CssClass="field-error" Display="Dynamic" />
+                <asp:CustomValidator ID="cvUsername" runat="server" ControlToValidate="txtUsername"
+                    OnServerValidate="cvUsername_ServerValidate" CssClass="field-error" Display="Dynamic" />
             </div>
 
             <div class="form-group-item">
@@ -27,14 +29,15 @@
                 <asp:TextBox ID="txtPassword" runat="server" CssClass="form-input-pill" TextMode="Password" Placeholder="Nhập mật khẩu"></asp:TextBox>
                 <asp:RequiredFieldValidator ID="reqPassword" runat="server" ControlToValidate="txtPassword"
                     ErrorMessage="Vui lòng nhập mật khẩu." CssClass="field-error" Display="Dynamic" />
-                <asp:CustomValidator ID="cvLogin" runat="server" ControlToValidate="txtPassword"
-                    OnServerValidate="cvLogin_ServerValidate" CssClass="field-error" Display="Dynamic" />
             </div>
 
             <div class="chk-remember-flex">
                 <asp:CheckBox ID="chkRemember" runat="server" />
                 <label for="<%= chkRemember.ClientID %>">Ghi nhớ mật khẩu</label>
             </div>
+
+            <asp:CustomValidator ID="cvLoginSummary" runat="server" CssClass="field-error" Display="Dynamic"
+                OnServerValidate="cvLoginSummary_ServerValidate" />
 
             <asp:Button ID="btnLogin" runat="server" Text="Đăng Nhập" CssClass="btn-pink-submit" OnClick="btnLogin_Click" />
 

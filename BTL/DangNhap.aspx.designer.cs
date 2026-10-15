@@ -59,6 +59,15 @@ namespace ShoeStore
         protected global::System.Web.UI.WebControls.RequiredFieldValidator reqUsername;
 
         /// <summary>
+        /// cvUsername control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator cvUsername;
+
+        /// <summary>
         /// reqPassword control.
         /// </summary>
         /// <remarks>
@@ -68,12 +77,12 @@ namespace ShoeStore
         protected global::System.Web.UI.WebControls.RequiredFieldValidator reqPassword;
 
         /// <summary>
-        /// cvLogin control.
+        /// cvLoginSummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator cvLogin;
+        protected global::System.Web.UI.WebControls.CustomValidator cvLoginSummary;
     }
 }
