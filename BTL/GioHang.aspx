@@ -33,7 +33,7 @@
                     <tbody>
                         <asp:Repeater ID="rptCart" runat="server" OnItemCommand="rptCart_ItemCommand">
                             <ItemTemplate>
-                                <tr>
+                                <tr class="cart-row" data-price='<%# Convert.ToDecimal(Eval("Price")).ToString(System.Globalization.CultureInfo.InvariantCulture) %>'>
                                     <td>
                                         <div class="item-info">
                                             <img src='<%# Eval("ImageUrl") %>' class="item-img" />
@@ -45,9 +45,9 @@
                                     </td>
                                     <td class="item-price"><%# string.Format("{0:N0}đ", Eval("Price")) %></td>
                                     <td>
-                                        <asp:TextBox ID="txtQuantity" runat="server" Text='<%# Eval("Quantity") %>' CssClass="qty-input" TextMode="Number" min="1" oninput="if(this.value<1)this.value=1;"></asp:TextBox>
+                                        <asp:TextBox ID="txtQuantity" runat="server" Text='<%# Eval("Quantity") %>' CssClass="qty-input js-qty" TextMode="Number" min="1"></asp:TextBox>
                                     </td>
-                                    <td class="item-price"><%# string.Format("{0:N0}đ", Convert.ToDecimal(Eval("Price")) * Convert.ToInt32(Eval("Quantity"))) %></td>
+                                    <td class="item-price line-total"><%# string.Format("{0:N0}đ", Convert.ToDecimal(Eval("Price")) * Convert.ToInt32(Eval("Quantity"))) %></td>
                                     <td>
                                         <asp:LinkButton ID="btnRemove" runat="server" CommandName="Remove" CommandArgument='<%# Eval("Id") %>' CssClass="btn-delete">
                                             <i class="fa-solid fa-trash-can"></i>
@@ -59,9 +59,10 @@
                     </tbody>
                 </table>
 
-                <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+                <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
                     <a href="SanPham.aspx" class="btn-continue" style="background:var(--muted);">&larr; Tiếp tục chọn hàng</a>
-                    <asp:Button ID="btnUpdateCart" runat="server" Text="Cập nhật giỏ hàng" OnClick="btnUpdateCart_Click" Style="background:var(--heading); color:white; border:none; padding:10px 20px; border-radius:20px; cursor:pointer;" />
+                    <span style="font-size:13px;color:var(--muted);">Số lượng thay đổi sẽ tự cập nhật tiền</span>
+                    <asp:Button ID="btnUpdateCart" runat="server" OnClick="btnUpdateCart_Click" Style="display:none;" />
                 </div>
             </div>
 
@@ -70,7 +71,7 @@
 
                 <div class="summary-row">
                     <span>Tạm tính:</span>
-                    <span><asp:Literal ID="litSubTotal" runat="server">0đ</asp:Literal></span>
+                    <span id="subTotalValue"><asp:Literal ID="litSubTotal" runat="server">0đ</asp:Literal></span>
                 </div>
                 <div class="summary-row">
                     <span>Phí vận chuyển:</span>
@@ -78,7 +79,7 @@
                 </div>
                 <div class="summary-row total">
                     <span>Tổng tiền:</span>
-                    <span><asp:Literal ID="litTotal" runat="server">0đ</asp:Literal></span>
+                    <span id="totalValue"><asp:Literal ID="litTotal" runat="server">0đ</asp:Literal></span>
                 </div>
 
                 <!-- CHUYỂN THÀNH OnClick Server-Side ĐỂ KIỂM TRA ĐĂNG NHẬP -->
@@ -86,4 +87,48 @@
             </div>
         </div>
     </asp:Panel>
+
+    <script type="text/javascript">
+        (function () {
+            function fmt(n) {
+                return n.toLocaleString('vi-VN') + 'đ';
+            }
+            function recalc() {
+                var total = 0;
+                document.querySelectorAll('.cart-row').forEach(function (row) {
+                    var price = parseFloat(row.getAttribute('data-price')) || 0;
+                    var input = row.querySelector('.js-qty');
+                    var qty = parseInt(input ? input.value : '1', 10);
+                    if (isNaN(qty) || qty < 1) qty = 1;
+                    total += price * qty;
+                    var cell = row.querySelector('.line-total');
+                    if (cell) cell.textContent = fmt(price * qty);
+                });
+                var sub = document.getElementById('subTotalValue');
+                var tot = document.getElementById('totalValue');
+                if (sub) sub.textContent = fmt(total);
+                if (tot) tot.textContent = fmt(total);
+            }
+            var timer = null;
+            function scheduleSave() {
+                var btnId = '<%= btnUpdateCart.ClientID %>';
+                var btn = document.getElementById(btnId);
+                if (!btn) return;
+                clearTimeout(timer);
+                timer = setTimeout(function () { btn.click(); }, 800);
+            }
+            document.querySelectorAll('.js-qty').forEach(function (input) {
+                input.addEventListener('input', function () {
+                    if (input.value !== '' && parseInt(input.value, 10) < 1) input.value = '1';
+                    recalc();
+                    scheduleSave();
+                });
+                input.addEventListener('change', function () {
+                    if (input.value === '' || parseInt(input.value, 10) < 1) input.value = '1';
+                    recalc();
+                    scheduleSave();
+                });
+            });
+        })();
+    </script>
 </asp:Content>

@@ -64,14 +64,14 @@ namespace ShoeStore.Helpers
         public static void RequireLoginToast(Page page, string key, string message)
         {
             string safe = HttpUtility.JavaScriptStringEncode(message);
-            ScriptManager.RegisterStartupScript(page, page.GetType(), key,
+            page.ClientScript.RegisterStartupScript(page.GetType(), key,
                 "showToast('" + safe + "', 'info'); openLoginModal();", true);
         }
 
         public static void SuccessToast(Page page, string key, string message)
         {
             string safe = HttpUtility.JavaScriptStringEncode(message);
-            ScriptManager.RegisterStartupScript(page, page.GetType(), key,
+            page.ClientScript.RegisterStartupScript(page.GetType(), key,
                 "showToast('" + safe + "', 'success');", true);
         }
     }

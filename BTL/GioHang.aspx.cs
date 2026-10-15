@@ -62,7 +62,7 @@ namespace ShoeStore
                     cart.RemoveAll(x => x.Id == id);
                     Session["Cart"] = cart;
                     LoadCartData();
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "ToastDelete", "showToast('Đã xóa sản phẩm khỏi giỏ hàng!', 'info');", true);
+                    ClientScript.RegisterStartupScript(this.GetType(), "ToastDelete", "showToast('Đã xóa sản phẩm khỏi giỏ hàng!', 'info');", true);
                 }
             }
         }
@@ -72,7 +72,7 @@ namespace ShoeStore
             List<CartItem> cart = Session["Cart"] as List<CartItem>;
             if (cart != null)
             {
-                for (int i = 0; i < rptCart.Items.Count; i++)
+                for (int i = 0; i < rptCart.Items.Count && i < cart.Count; i++)
                 {
                     RepeaterItem item = rptCart.Items[i];
                     TextBox txtQty = (TextBox)item.FindControl("txtQuantity");
@@ -84,7 +84,7 @@ namespace ShoeStore
                 }
                 Session["Cart"] = cart;
                 LoadCartData();
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "ToastUpdate", "showToast('Cập nhật giỏ hàng thành công!', 'success');", true);
+                // Tu dong luu: khong hien toast, so tien da cap nhat tu dong o client.
             }
         }
 
@@ -92,7 +92,7 @@ namespace ShoeStore
         {
             if (Session["Username"] == null)
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "RequireLoginCheckoutToast",
+                ClientScript.RegisterStartupScript(this.GetType(), "RequireLoginCheckoutToast",
                     "showToast('Vui lòng đăng nhập để tiến hành thanh toán!', 'info'); openLoginModal();", true);
                 return;
             }
