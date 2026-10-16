@@ -108,36 +108,6 @@
                     if (userInput) userInput.addEventListener('input', schedule);
                     if (emailInput) emailInput.addEventListener('input', schedule);
                 })();
-
-                // Nút Đăng ký chỉ sáng khi mọi ô đạt định dạng (trùng tài khoản vẫn chốt ở server)
-                (function () {
-                    var btn = document.getElementById('<%= btnRegister.ClientID %>');
-                    var ids = ['<%= txtFullName.ClientID %>', '<%= txtUsername.ClientID %>',
-                               '<%= txtEmail.ClientID %>', '<%= txtPhone.ClientID %>',
-                               '<%= txtPassword.ClientID %>', '<%= txtConfirm.ClientID %>'];
-                    function val(i) {
-                        var el = document.getElementById(ids[i]);
-                        return el ? (el.value || '').trim() : '';
-                    }
-                    function refreshRegisterBtn() {
-                        if (!btn) return;
-                        var ok = val(0) !== ''
-                            && val(1).length >= 3
-                            && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val(2))
-                            && /^[0-9]{9,11}$/.test(val(3))
-                            && val(4).length >= 6
-                            && val(5) !== '' && val(5) === val(4);
-                        btn.disabled = !ok;
-                    }
-                    ids.forEach(function (id) {
-                        var el = document.getElementById(id);
-                        if (!el) return;
-                        ['input', 'blur', 'change'].forEach(function (evt) {
-                            el.addEventListener(evt, refreshRegisterBtn);
-                        });
-                    });
-                    refreshRegisterBtn();
-                })();
             </script>
 
             <asp:Button ID="btnRegister" runat="server" Text="Đăng Ký Tài Khoản" CssClass="btn-pink-submit" OnClick="btnRegister_Click" />

@@ -99,8 +99,3 @@
             .form-row-2col { grid-template-columns: 1fr; }
         }
 
-        .btn-pink-submit:disabled {
-            opacity: 0.45;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
