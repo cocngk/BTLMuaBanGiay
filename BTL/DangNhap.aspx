@@ -89,6 +89,21 @@
                     if (!check() && ev.preventDefault) ev.preventDefault();
                 });
             }
+
+            // Nút Đăng nhập chỉ sáng khi cả 2 ô đều đạt (đồng bộ với check() trên)
+            var pwd = document.getElementById('<%= txtPassword.ClientID %>');
+            function refreshLoginBtn() {
+                if (!btn) return;
+                var v = ((u && u.value) || '').trim();
+                var okU = v !== '' && (v.indexOf('@') < 0 ? v.length >= 3 : /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v));
+                var okP = ((pwd && pwd.value) || '').length > 0;
+                btn.disabled = !(okU && okP);
+            }
+            ['input', 'blur', 'change'].forEach(function (evt) {
+                if (u) u.addEventListener(evt, refreshLoginBtn);
+                if (pwd) pwd.addEventListener(evt, refreshLoginBtn);
+            });
+            refreshLoginBtn();
         })();
     </script>
 </asp:Content>
