@@ -23,7 +23,6 @@
                 <asp:RequiredFieldValidator ID="reqUsername" runat="server" ControlToValidate="txtUsername"
                     ErrorMessage="Vui lòng nhập tên đăng nhập hoặc email." CssClass="field-error" Display="Dynamic" />
                 <asp:CustomValidator ID="cvUsername" runat="server" ControlToValidate="txtUsername"
-                    ClientValidationFunction="validateUsernameLive"
                     OnServerValidate="cvUsername_ServerValidate" CssClass="field-error" Display="Dynamic" />
             </div>
 
@@ -50,4 +49,46 @@
             </asp:Panel>
         </div>
     </div>
+
+    <script type="text/javascript">
+        // Live-check định dạng username bằng JS thường (không qua framework);
+        // server check lại làm chuẩn khi submit.
+        (function () {
+            var u = document.getElementById('<%= txtUsername.ClientID %>');
+            var cv = document.getElementById('<%= cvUsername.ClientID %>');
+            var btn = document.getElementById('<%= btnLogin.ClientID %>');
+            function check() {
+                if (!u || !cv) return true;
+                var v = (u.value || '').trim();
+                var msg = '';
+                if (v !== '') {
+                    if (v.indexOf('@') >= 0) {
+                        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) msg = 'Địa chỉ email chưa đúng định dạng.';
+                    } else if (v.length < 3) {
+                        msg = 'Tên đăng nhập phải có ít nhất 3 ký tự.';
+                    }
+                }
+                if (msg !== '') {
+                    cv.textContent = msg;
+                    cv.style.display = 'block';
+                    cv.dataset.own = '1';
+                    return false;
+                }
+                if (cv.dataset.own === '1') {
+                    cv.style.display = 'none';
+                    cv.dataset.own = '';
+                }
+                return true;
+            }
+            if (u) {
+                u.addEventListener('input', check);
+                u.addEventListener('blur', check);
+            }
+            if (btn) {
+                btn.addEventListener('click', function (ev) {
+                    if (!check() && ev.preventDefault) ev.preventDefault();
+                });
+            }
+        })();
+    </script>
 </asp:Content>
