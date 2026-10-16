@@ -59,7 +59,7 @@ namespace ShoeStore
                     value, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
                 if (!args.IsValid)
                 {
-                    cvUsername.ErrorMessage = "Địa chỉ email chưa đúng định dạng.";
+                    cvUsername.ErrorMessage = "Địa chỉ email không hợp lệ.";
                 }
             }
             else

@@ -63,7 +63,7 @@
                 var msg = '';
                 if (v !== '') {
                     if (v.indexOf('@') >= 0) {
-                        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) msg = 'Địa chỉ email chưa đúng định dạng.';
+                        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) msg = 'Địa chỉ email không hợp lệ.';
                     } else if (v.length < 3) {
                         msg = 'Tên đăng nhập phải có ít nhất 3 ký tự.';
                     }
