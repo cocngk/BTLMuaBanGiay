@@ -21,11 +21,18 @@
                 <div class="form-group-item">
                     <label class="form-label-custom">Họ và tên của bạn</label>
                     <asp:TextBox ID="txtName" runat="server" CssClass="form-input-pill" Placeholder="Ví dụ: Nguyễn Văn A"></asp:TextBox>
+                    <asp:RequiredFieldValidator ID="reqName" runat="server" ControlToValidate="txtName"
+                        ErrorMessage="Vui lòng nhập họ và tên." CssClass="field-error" Display="Dynamic" />
                 </div>
 
                 <div class="form-group-item">
                     <label class="form-label-custom">Số điện thoại / Zalo</label>
                     <asp:TextBox ID="txtPhone" runat="server" CssClass="form-input-pill" Placeholder="Nhập số điện thoại liên hệ"></asp:TextBox>
+                    <asp:RequiredFieldValidator ID="reqPhone" runat="server" ControlToValidate="txtPhone"
+                        ErrorMessage="Vui lòng nhập số điện thoại." CssClass="field-error" Display="Dynamic" />
+                    <asp:RegularExpressionValidator ID="revPhone" runat="server" ControlToValidate="txtPhone"
+                        ValidationExpression="^[0-9]{9,11}$" ErrorMessage="Số điện thoại phải có từ 9 đến 11 chữ số."
+                        CssClass="field-error" Display="Dynamic" />
                 </div>
 
                 <div class="form-group-item">
@@ -41,6 +48,8 @@
                 <div class="form-group-item">
                     <label class="form-label-custom">Nội dung câu hỏi</label>
                     <asp:TextBox ID="txtContent" runat="server" CssClass="form-input-pill" TextMode="MultiLine" Rows="4" Placeholder="Mô tả chi tiết thắc mắc của bạn (ví dụ: Chiều dài chân 25cm nên chọn size bao nhiêu?)..."></asp:TextBox>
+                    <asp:RequiredFieldValidator ID="reqContent" runat="server" ControlToValidate="txtContent"
+                        ErrorMessage="Vui lòng nhập nội dung câu hỏi." CssClass="field-error" Display="Dynamic" />
                 </div>
 
                 <asp:Button ID="btnSubmitConsult" runat="server" Text="GỬI CÂU HỎI TƯ VẤN" CssClass="btn-pink-submit" OnClick="btnSubmitConsult_Click" />

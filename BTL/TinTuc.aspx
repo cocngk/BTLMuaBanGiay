@@ -10,15 +10,15 @@
     <div class="news-container">
         <!-- BÀI VIẾT NỔI BẬT HERO -->
         <div class="featured-news-hero">
-            <img src="https://images.unsplash.com/photo-1512374382149-233c42b6a83b?q=80&w=800" class="featured-news-img" alt="Featured" />
+            <asp:Image ID="imgHero" runat="server" CssClass="featured-news-img" />
             <div class="featured-news-content">
-                <span class="badge-category">Mẹo chọn đồ</span>
-                <h2 class="featured-news-title">Cách chọn đúng size giày Sneaker chuẩn 100% khi đặt hàng Online</h2>
+                <span class="badge-category"><asp:Literal ID="litHeroCategory" runat="server" Mode="Encode"></asp:Literal></span>
+                <h2 class="featured-news-title"><asp:Literal ID="litHeroTitle" runat="server" Mode="Encode"></asp:Literal></h2>
                 <div class="news-meta">
-                    <span><i class="fa-regular fa-calendar"></i> 12/10/2026</span>
-                    <span><i class="fa-regular fa-eye"></i> 1,250 lượt xem</span>
+                    <span><i class="fa-regular fa-calendar"></i> <asp:Literal ID="litHeroDate" runat="server"></asp:Literal></span>
+                    <span><i class="fa-regular fa-eye"></i> <asp:Literal ID="litHeroViews" runat="server"></asp:Literal></span>
                 </div>
-                <p class="featured-news-desc">Không còn lo lắng việc đặt giày về bị chật hay rộng nữa. Dưới đây là quy chuẩn bảng đo chiều dài chân chuẩn từng milimet dành riêng cho bạn...</p>
+                <p class="featured-news-desc"><asp:Literal ID="litHeroDesc" runat="server" Mode="Encode"></asp:Literal></p>
                 <a href="#" class="btn-read-more">Đọc chi tiết bài viết &rarr;</a>
             </div>
         </div>
@@ -63,29 +63,27 @@
                 <div class="sidebar-widget">
                     <h3 class="widget-title">Chuyên mục tin tức</h3>
                     <ul class="category-list">
-                        <li class="category-item"><span>Mẹo chọn Size giày</span> <span>(12)</span></li>
-                        <li class="category-item"><span>Hướng dẫn vệ sinh</span> <span>(8)</span></li>
-                        <li class="category-item"><span>Xu hướng Sneaker 2026</span> <span>(15)</span></li>
-                        <li class="category-item"><span>Phối đồ thời trang</span> <span>(20)</span></li>
+                        <asp:Repeater ID="rptCategories" runat="server">
+                            <ItemTemplate>
+                                <li class="category-item"><span><%# Eval("Name") %></span> <span>(<%# Eval("Count") %>)</span></li>
+                            </ItemTemplate>
+                        </asp:Repeater>
                     </ul>
                 </div>
 
                 <div class="sidebar-widget">
                     <h3 class="widget-title">Bài viết đọc nhiều</h3>
-                    <div class="popular-news-item">
-                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200" class="popular-news-img" />
-                        <div>
-                            <div class="popular-news-title">5 Bước làm sạch giày trắng siêu tốc</div>
-                            <span style="font-size:11px; color:var(--muted);">10/10/2026</span>
-                        </div>
-                    </div>
-                    <div class="popular-news-item">
-                        <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=200" class="popular-news-img" />
-                        <div>
-                            <div class="popular-news-title">Top 10 đôi Sneaker không bao giờ lỗi mốt</div>
-                            <span style="font-size:11px; color:var(--muted);">08/10/2026</span>
-                        </div>
-                    </div>
+                    <asp:Repeater ID="rptPopular" runat="server">
+                        <ItemTemplate>
+                            <div class="popular-news-item">
+                                <img src='<%# Eval("ImageUrl") %>' class="popular-news-img" alt='<%# Eval("Title") %>' />
+                                <div>
+                                    <div class="popular-news-title"><%# Eval("Title") %></div>
+                                    <span style="font-size:11px; color:var(--muted);"><%# Eval("Date") %></span>
+                                </div>
+                            </div>
+                        </ItemTemplate>
+                    </asp:Repeater>
                 </div>
             </aside>
         </div>
