@@ -33,11 +33,6 @@
                     ErrorMessage="Vui lòng nhập mật khẩu." CssClass="field-error" Display="Dynamic" />
             </div>
 
-            <div class="chk-remember-flex">
-                <asp:CheckBox ID="chkRemember" runat="server" />
-                <label for="<%= chkRemember.ClientID %>">Ghi nhớ mật khẩu</label>
-            </div>
-
             <asp:CustomValidator ID="cvLoginSummary" runat="server" CssClass="field-error" Display="Dynamic"
                 OnServerValidate="cvLoginSummary_ServerValidate" />
 

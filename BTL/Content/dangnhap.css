@@ -42,7 +42,6 @@
 
         .form-input-pill:focus { border-color: var(--brand); background: var(--panel); }
 
-        .chk-remember-flex { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--body); margin-bottom: 14px; }
 
         .btn-pink-submit {
             width: 100%;

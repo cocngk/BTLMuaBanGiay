@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ShoeStore.Helpers;
+using ShoeStore.Models;
 
 namespace ShoeStore
 {
@@ -40,11 +41,9 @@ namespace ShoeStore
             }
 
             // 4. Dang nhap thanh cong
-            AuthHelper.SignIn(!string.IsNullOrEmpty(account.FullName)
-                ? account.FullName
-                : account.Username);
+            AuthHelper.SignIn(account);
 
-            ShowToastAndRedirect(
+            Toast.ShowAndRedirect(this, "LoginSuccess_" + Guid.NewGuid().ToString("N"),
                 "Dang nhap thanh cong! Dang chuyen den trang chu...",
                 "success",
                 "TrangChu.aspx");
@@ -77,28 +76,5 @@ namespace ShoeStore
             args.IsValid = true;
         }
 
-        private void ShowToastAndRedirect(
-            string message, string type, string url)
-        {
-            string cleanMessage =
-                System.Web.HttpUtility.JavaScriptStringEncode(message);
-
-            string cleanUrl =
-                System.Web.HttpUtility.JavaScriptStringEncode(url);
-
-            string script =
-                "if (typeof showToast === 'function') {" +
-                "showToast('" + cleanMessage + "', '" + type + "');" +
-                "}" +
-                "setTimeout(function() {" +
-                "window.location.href='" + cleanUrl + "';" +
-                "}, 1200);";
-
-            ClientScript.RegisterStartupScript(
-                this.GetType(),
-                "LoginSuccess_" + Guid.NewGuid().ToString("N"),
-                script,
-                true);
-        }
     }
 }

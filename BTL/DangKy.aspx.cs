@@ -43,19 +43,20 @@ namespace ShoeStore
                 return;
             }
             // 8. Luu tai khoan moi
-            AuthHelper.Add(new UserAccount
+            UserAccount account = new UserAccount
             {
                 FullName = fullName,
                 Username = username,
                 Email = email,
                 Phone = phone,
                 Password = password
-            });
+            };
+            AuthHelper.Add(account);
 
             // 9. Dang nhap ngay sau khi dang ky
-            AuthHelper.SignIn(fullName);
+            AuthHelper.SignIn(account);
 
-            ShowToastAndRedirect(
+            Toast.ShowAndRedirect(this, "RegisterSuccess_" + Guid.NewGuid().ToString("N"),
                 "Dang ky thanh cong! Ban da dang nhap.",
                 "success",
                 "TrangChu.aspx");
@@ -76,28 +77,5 @@ namespace ShoeStore
             };
         }
 
-        private void ShowToastAndRedirect(
-            string message, string type, string url)
-        {
-            string cleanMessage =
-                System.Web.HttpUtility.JavaScriptStringEncode(message);
-
-            string cleanUrl =
-                System.Web.HttpUtility.JavaScriptStringEncode(url);
-
-            string script =
-                "if (typeof showToast === 'function') {" +
-                "showToast('" + cleanMessage + "', '" + type + "');" +
-                "}" +
-                "setTimeout(function() {" +
-                "window.location.href='" + cleanUrl + "';" +
-                "}, 1200);";
-
-            ClientScript.RegisterStartupScript(
-                this.GetType(),
-                "RegisterSuccess_" + Guid.NewGuid().ToString("N"),
-                script,
-                true);
-        }
     }
 }

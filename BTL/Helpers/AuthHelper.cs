@@ -13,18 +13,31 @@ namespace ShoeStore.Helpers
         public string Email { get; set; }
         public string Phone { get; set; }
         public string Password { get; set; }
+
+        /// <summary>Tên hiển thị duy nhất một chỗ (trước rải ở 2 trang).</summary>
+        public string DisplayName
+        {
+            get { return !string.IsNullOrEmpty(FullName) ? FullName : Username; }
+        }
     }
 
     /// <summary>
-    /// Demo-only auth store (was triplicated in SiteMaster / DangNhap / DangKy).
-    /// Users live in Application state; passwords are plaintext — never use as-is
-    /// outside this school project.
+    /// Seam kho người dùng: test thay MemoryUserStore riêng, không đụng Application thật.
     /// </summary>
-    public static class AuthHelper
+    public interface IUserStore
+    {
+        List<UserAccount> GetAll();
+        UserAccount FindByUsernameOrEmail(string usernameOrEmail);
+        bool UsernameExists(string username);
+        bool EmailExists(string email);
+        void Add(UserAccount account);
+    }
+
+    public sealed class MemoryUserStore : IUserStore
     {
         private const string AppKey = "UserList";
 
-        public static List<UserAccount> GetUsers()
+        public List<UserAccount> GetAll()
         {
             var users = HttpContext.Current.Application[AppKey] as List<UserAccount>;
             if (users == null)
@@ -39,28 +52,62 @@ namespace ShoeStore.Helpers
             return users;
         }
 
-        public static UserAccount FindByUsernameOrEmail(string usernameOrEmail)
+        public UserAccount FindByUsernameOrEmail(string usernameOrEmail)
         {
-            return GetUsers().FirstOrDefault(u =>
+            return GetAll().FirstOrDefault(u =>
                 string.Equals(u.Username, usernameOrEmail, StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(u.Email, usernameOrEmail, StringComparison.OrdinalIgnoreCase));
         }
 
+        public bool UsernameExists(string username)
+        {
+            return GetAll().Any(u =>
+                string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public bool EmailExists(string email)
+        {
+            return GetAll().Any(u =>
+                string.Equals(u.Email, email, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public void Add(UserAccount account)
+        {
+            GetAll().Add(account);
+        }
+    }
+
+    /// <summary>
+    /// Demo-only auth (was triplicated in SiteMaster / DangNhap / DangKy).
+    /// Passwords are plaintext — never use as-is outside this school project.
+    /// </summary>
+    public static class AuthHelper
+    {
+        public static IUserStore Store { get; set; } = new MemoryUserStore();
+
+        public static List<UserAccount> GetUsers()
+        {
+            return Store.GetAll();
+        }
+
+        public static UserAccount FindByUsernameOrEmail(string usernameOrEmail)
+        {
+            return Store.FindByUsernameOrEmail(usernameOrEmail);
+        }
+
         public static bool UsernameExists(string username)
         {
-            return GetUsers().Any(u =>
-                string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase));
+            return Store.UsernameExists(username);
         }
 
         public static bool EmailExists(string email)
         {
-            return GetUsers().Any(u =>
-                string.Equals(u.Email, email, StringComparison.OrdinalIgnoreCase));
+            return Store.EmailExists(email);
         }
 
         public static void Add(UserAccount account)
         {
-            GetUsers().Add(account);
+            Store.Add(account);
         }
 
         public static bool IsLoggedIn()
@@ -74,9 +121,9 @@ namespace ShoeStore.Helpers
             return name != null ? name.ToString() : "";
         }
 
-        public static void SignIn(string displayName)
+        public static void SignIn(UserAccount account)
         {
-            HttpContext.Current.Session["Username"] = displayName;
+            HttpContext.Current.Session["Username"] = account != null ? account.DisplayName : "";
         }
 
         public static void SignOut()

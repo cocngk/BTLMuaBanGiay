@@ -1,4 +1,4 @@
-using System.Web;
+﻿using System.Web;
 using System.Web.UI;
 
 namespace ShoeStore.Helpers
@@ -9,10 +9,8 @@ namespace ShoeStore.Helpers
     /// </summary>
     public static class Toast
     {
-        public static void Show(Page page, string key, string message, string type)
+        private static void Register(Page page, string key, string script)
         {
-            string safe = HttpUtility.JavaScriptStringEncode(message);
-            string script = "showToast('" + safe + "', '" + type + "');";
             if (System.Web.UI.ScriptManager.GetCurrent(page) != null)
             {
                 System.Web.UI.ScriptManager.RegisterStartupScript(page, page.GetType(), key, script, true);
@@ -21,6 +19,12 @@ namespace ShoeStore.Helpers
             {
                 page.ClientScript.RegisterStartupScript(page.GetType(), key, script, true);
             }
+        }
+
+        public static void Show(Page page, string key, string message, string type)
+        {
+            string safe = HttpUtility.JavaScriptStringEncode(message);
+            Register(page, key, "showToast('" + safe + "', '" + type + "');");
         }
 
         public static void Success(Page page, string key, string message)
@@ -33,18 +37,23 @@ namespace ShoeStore.Helpers
             Show(page, key, message, "info");
         }
 
+        public static void ShowAndRedirect(Page page, string key, string message, string type, string url)
+        {
+            string safeMessage = HttpUtility.JavaScriptStringEncode(message);
+            string safeUrl = HttpUtility.JavaScriptStringEncode(url);
+            string script = "if (typeof showToast === 'function') {" +
+                "showToast('" + safeMessage + "', '" + type + "');" +
+                "}" +
+                "setTimeout(function() {" +
+                "window.location.href='" + safeUrl + "';" +
+                "}, 1200);";
+            Register(page, key, script);
+        }
+
         public static void RequireLogin(Page page, string key, string message)
         {
             string safe = HttpUtility.JavaScriptStringEncode(message);
-            string script = "showToast('" + safe + "', 'info'); openLoginModal();";
-            if (System.Web.UI.ScriptManager.GetCurrent(page) != null)
-            {
-                System.Web.UI.ScriptManager.RegisterStartupScript(page, page.GetType(), key, script, true);
-            }
-            else
-            {
-                page.ClientScript.RegisterStartupScript(page.GetType(), key, script, true);
-            }
+            Register(page, key, "showToast('" + safe + "', 'info'); openLoginModal();");
         }
     }
 }
