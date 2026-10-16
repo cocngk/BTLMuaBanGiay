@@ -77,8 +77,9 @@
     <Content Include="TinTuc.aspx" />
     <Content Include="TrangChu.aspx" />
     <Content Include="TuVan.aspx" />
-    <Content Include="Content\charm-tokens.css" />
+    <Content Include="Controls\SearchBox.ascx" />
     <Content Include="Content\product-card.css" />
+    <Content Include="Content\charm-tokens.css" />
     <Content Include="Content\site.css" />
     <Content Include="Content\trangchu.css" />
     <Content Include="Content\sanpham.css" />
@@ -100,10 +101,17 @@
     <Compile Include="Models\Cart.cs" />
     <Compile Include="Models\CartItem.cs" />
     <Compile Include="Models\Checkout.cs" />
+    <Compile Include="Models\MenuItem.cs" />
     <Compile Include="Models\ProductItem.cs" />
     <Compile Include="ChiTietSanPham.aspx.cs">
       <DependentUpon>ChiTietSanPham.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchBox.ascx.cs">
+      <DependentUpon>SearchBox.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SearchBox.ascx.designer.cs">
+      <DependentUpon>SearchBox.ascx</DependentUpon>
     </Compile>
     <Compile Include="Controls\ProductCard.ascx.cs">
       <DependentUpon>ProductCard.ascx</DependentUpon>

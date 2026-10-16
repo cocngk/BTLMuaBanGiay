@@ -1,5 +1,6 @@
 ﻿
 <%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="ShoeStore.SiteMaster" %>
+<%@ Register Src="~/Controls/SearchBox.ascx" TagPrefix="uc" TagName="SearchBox" %>
 
 <!DOCTYPE html>
 <html>
@@ -32,54 +33,19 @@
             </a>
 
             <ul class="nav-center">
-                <li class="nav-item">
-                    <a href="TrangChu.aspx" id="navHome" runat="server">
-                        <i class="fa-solid fa-house"></i> Trang chủ
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="SanPham.aspx" id="navProduct" runat="server">
-                        <i class="fa-solid fa-shoe-prints"></i> Sản phẩm
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="TinTuc.aspx" id="navNews" runat="server">
-                        <i class="fa-solid fa-newspaper"></i> Tin tức
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="TuVan.aspx" id="navConsult" runat="server">
-                        <i class="fa-solid fa-headset"></i> Tư vấn
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="ThanhToan.aspx" id="navCheckout" runat="server">
-                        <i class="fa-solid fa-credit-card"></i> Thanh toán
-                    </a>
-                </li>
+                <asp:Repeater ID="rptMenu" runat="server">
+                    <ItemTemplate>
+                        <li class="nav-item">
+                            <a href='<%# Eval("Url") %>' class='<%# (bool)Eval("IsActive") ? "active" : "" %>'>
+                                <i class='<%# Eval("IconClass") %>'></i> <%# Eval("Title") %>
+                            </a>
+                        </li>
+                    </ItemTemplate>
+                </asp:Repeater>
             </ul>
 
             <div class="header-right">
-                <asp:Panel ID="pnlHeaderSearch" runat="server" CssClass="search-pill" DefaultButton="btnHeaderSearch">
-                    <asp:TextBox
-                        ID="txtHeaderSearch"
-                        runat="server"
-                        Placeholder="Tìm giày...">
-                    </asp:TextBox>
-
-                    <asp:LinkButton
-                        ID="btnHeaderSearch"
-                        runat="server"
-                        CssClass="btn-search-icon"
-                        OnClientClick="return headerSearchSubmit(this);"
-                        OnClick="btnHeaderSearch_Click">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </asp:LinkButton>
-                </asp:Panel>
+                <uc:SearchBox ID="ucHeaderSearch" runat="server" />
 
                 <a href="GioHang.aspx" id="cartIcon" runat="server" class="cart-icon-btn" title="Giỏ hàng">
                     <i class="fa-solid fa-bag-shopping"></i>

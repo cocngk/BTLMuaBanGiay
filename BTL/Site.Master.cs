@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ShoeStore.Data;
@@ -14,13 +15,7 @@ namespace ShoeStore
             if (!IsPostBack)
             {
                 AuthHelper.GetUsers();
-                HighlightCurrentMenu();
-
-                TextBox txtSearch = FindControl("txtHeaderSearch") as TextBox;
-                if (txtSearch != null && Request.QueryString["search"] != null)
-                {
-                    txtSearch.Text = Request.QueryString["search"];
-                }
+                BindMenu();
             }
 
             CheckLoginState();
@@ -55,44 +50,24 @@ namespace ShoeStore
             cartCount.InnerText = total > 99 ? "99+" : total.ToString();
         }
 
-        private void HighlightCurrentMenu()
+        private void BindMenu()
         {
             string pageName = System.IO.Path.GetFileName(Request.Url.AbsolutePath).ToLower();
 
-            var navHome = FindControl("navHome") as System.Web.UI.HtmlControls.HtmlAnchor;
-            var navProduct = FindControl("navProduct") as System.Web.UI.HtmlControls.HtmlAnchor;
-            var navNews = FindControl("navNews") as System.Web.UI.HtmlControls.HtmlAnchor;
-            var navConsult = FindControl("navConsult") as System.Web.UI.HtmlControls.HtmlAnchor;
-            var navCheckout = FindControl("navCheckout") as System.Web.UI.HtmlControls.HtmlAnchor;
+            List<Models.MenuItem> items = Models.MenuItem.MainMenu();
+            foreach (Models.MenuItem item in items)
+            {
+                item.IsActive = string.Equals(item.Url, pageName, StringComparison.OrdinalIgnoreCase);
+            }
+            if (!items.Any(i => i.IsActive) && !pageName.Contains("giohang"))
+            {
+                items[0].IsActive = true;
+            }
+            rptMenu.DataSource = items;
+            rptMenu.DataBind();
 
-            if (navHome != null) navHome.Attributes["class"] = "";
-            if (navProduct != null) navProduct.Attributes["class"] = "";
-            if (navNews != null) navNews.Attributes["class"] = "";
-            if (navConsult != null) navConsult.Attributes["class"] = "";
-            if (navCheckout != null) navCheckout.Attributes["class"] = "";
             if (cartIcon != null) cartIcon.Attributes["class"] = "cart-icon-btn";
-
-            if (pageName.Contains("sanpham") && navProduct != null) navProduct.Attributes["class"] = "active";
-            else if (pageName.Contains("tintuc") && navNews != null) navNews.Attributes["class"] = "active";
-            else if (pageName.Contains("tuvan") && navConsult != null) navConsult.Attributes["class"] = "active";
-            else if (pageName.Contains("giohang") && cartIcon != null) cartIcon.Attributes["class"] = "cart-icon-btn active";
-            else if (pageName.Contains("thanhtoan") && navCheckout != null) navCheckout.Attributes["class"] = "active";
-            else if (navHome != null) navHome.Attributes["class"] = "active";
-        }
-
-        protected void btnHeaderSearch_Click(object sender, EventArgs e)
-        {
-            TextBox txtSearch = FindControl("txtHeaderSearch") as TextBox;
-            string keyword = txtSearch != null ? txtSearch.Text.Trim() : "";
-
-            if (!string.IsNullOrEmpty(keyword))
-            {
-                Response.Redirect("SanPham.aspx?search=" + Server.UrlEncode(keyword));
-            }
-            else
-            {
-                Response.Redirect("SanPham.aspx");
-            }
+            if (pageName.Contains("giohang") && cartIcon != null) cartIcon.Attributes["class"] = "cart-icon-btn active";
         }
 
         protected void btnLogout_Click(object sender, EventArgs e)
