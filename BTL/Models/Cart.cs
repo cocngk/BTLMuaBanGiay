@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -26,21 +26,48 @@ namespace ShoeStore.Models
 
         public bool IsEmpty => lines.Count == 0;
 
-        public static int ClampQty(int qty, int stock)
+        /// <summary>
+        /// Chuẩn hoá số lượng về [1, maxAllowed]. maxAllowed là số còn mua được,
+        /// không phải tồn kho thô — xem RemainingToBuy.
+        /// </summary>
+        public static int ClampQty(int qty, int maxAllowed)
         {
-            int max = stock > 0 ? stock : 1;
+            int max = maxAllowed > 0 ? maxAllowed : 1;
             if (qty < 1) qty = 1;
             if (qty > max) qty = max;
             return qty;
         }
 
+        /// <summary>
+        /// Tổng số đơn vị của sản phẩm đang có trong giỏ, cộng mọi size.
+        /// Stock là của cả sản phẩm nên phải tính tổng: clamp từng dòng riêng lẻ
+        /// sẽ cho size 40 × 12 + size 41 × 12 = 24 đôi dù kho chỉ còn 12.
+        /// </summary>
+        public int ProductQuantity(int id)
+        {
+            return lines.Where(c => c.Id == id).Sum(c => c.Quantity);
+        }
+
+        /// <summary>
+        /// Số đơn vị còn mua được = tồn kho − phần đã có trong giỏ.
+        /// excludeSize là size của dòng đang chỉnh, để không tự trừ chính nó.
+        /// </summary>
+        public int RemainingToBuy(int id, int stock, string excludeSize)
+        {
+            int inCart = ProductQuantity(id);
+            if (excludeSize != null)
+            {
+                inCart -= lines.Where(c => c.Id == id && c.Size == excludeSize).Sum(c => c.Quantity);
+            }
+            return stock - inCart;
+        }
+
         public void AddOrMerge(int id, string name, decimal price, string size, int qty, string imageUrl, int stock)
         {
-            qty = ClampQty(qty, stock);
             CartItem existing = lines.FirstOrDefault(c => c.Id == id && c.Size == size);
             if (existing != null)
             {
-                existing.Quantity = ClampQty(existing.Quantity + qty, stock);
+                existing.Quantity = ClampQty(existing.Quantity + qty, RemainingToBuy(id, stock, size));
             }
             else
             {
@@ -49,7 +76,7 @@ namespace ShoeStore.Models
                     Id = id,
                     Name = name,
                     Price = price,
-                    Quantity = qty,
+                    Quantity = ClampQty(qty, RemainingToBuy(id, stock, null)),
                     Size = size,
                     ImageUrl = imageUrl
                 });
@@ -67,7 +94,7 @@ namespace ShoeStore.Models
             CartItem existing = lines.FirstOrDefault(c => c.Id == id && c.Size == size);
             if (existing != null)
             {
-                existing.Quantity = ClampQty(qty, stock);
+                existing.Quantity = ClampQty(qty, RemainingToBuy(id, stock, size));
             }
         }
 

@@ -88,7 +88,7 @@
                     <span class="section-label">Số lượng:</span>
                     <div class="qty-box-flex">
                         <button type="button" class="qty-step-btn" onclick="stepQty(-1)">−</button>
-                        <asp:TextBox ID="txtQuantity" runat="server" Text="1" TextMode="Number" min="1" CssClass="qty-input-detail"></asp:TextBox>
+                        <asp:TextBox ID="txtQuantity" runat="server" Text="1" TextMode="Number" min="1" max='<%= hfMaxQty.Value %>' CssClass="qty-input-detail js-qty-detail"></asp:TextBox>
                         <button type="button" class="qty-step-btn" onclick="stepQty(1)">+</button>
                         <button type="button" id="btnWishlist" class="btn-wishlist-detail" title="Thêm vào yêu thích" onclick="toggleWishlist(this)"><i class="fa-regular fa-heart"></i></button>
                     </div>
@@ -175,14 +175,43 @@
             hf.value = sizeVal;
         }
 
+        function maxBuyable() {
+            var max = parseInt(document.getElementById('<%= hfMaxQty.ClientID %>').value, 10);
+            return isNaN(max) || max < 1 ? 1 : max;
+        }
+        // Nguồn sự thật vẫn là server (ResolveQty giữ luật Cart.ClampQty); ở đây chỉ
+        // chặn sớm để người dùng không gõ ra con số vô lý rồi mới bị cắt ngầm.
+        var capNotified = false;
+        function normalizeQty(raw, quiet) {
+            var max = maxBuyable();
+            var val = parseInt(raw, 10);
+            if (isNaN(val)) val = 1;
+            if (val < 1) val = 1;
+            if (val > max) {
+                val = max;
+                if (!quiet && !capNotified && typeof showToast === 'function') {
+                    capNotified = true;
+                    showToast('Tối đa ' + max + ' đôi cho sản phẩm này (tồn kho còn lại).', 'info');
+                }
+            } else {
+                capNotified = false;
+            }
+            return val;
+        }
         function stepQty(delta) {
             var input = document.getElementById('<%= txtQuantity.ClientID %>');
-            var max = parseInt(document.getElementById('<%= hfMaxQty.ClientID %>').value || '99', 10);
-            var val = (parseInt(input.value, 10) || 1) + delta;
-            if (val < 1) val = 1;
-            if (val > max) val = max;
-            input.value = val;
+            input.value = normalizeQty(input.value) + delta;
+            input.value = normalizeQty(input.value, true);
         }
+        function bindDetailQty() {
+            var input = document.getElementById('<%= txtQuantity.ClientID %>');
+            if (!input) return;
+            input.addEventListener('change', function () {
+                input.value = normalizeQty(input.value);
+            });
+            input.value = normalizeQty(input.value, true);
+        }
+        bindDetailQty();
 
         function toggleWishlist(btn) {
             var icon = btn.querySelector('i');

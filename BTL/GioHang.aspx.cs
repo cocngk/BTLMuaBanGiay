@@ -40,7 +40,19 @@ namespace ShoeStore
                 pnlEmptyCart.Visible = false;
                 pnlCartHasItems.Visible = true;
 
-                rptCart.DataSource = cart.Lines.ToList();
+                rptCart.DataSource = cart.Lines
+                    .Select(l => new
+                    {
+                        l.Id,
+                        l.Name,
+                        l.Price,
+                        l.Size,
+                        l.ImageUrl,
+                        l.Quantity,
+                        // Luôn >= 1: nếu size khác đã chiếm hết tồn kho thì max="0"
+                        // sẽ làm trình duyệt từ chối mọi giá trị hợp lệ.
+                        Max = Math.Max(1, cart.RemainingToBuy(l.Id, LookupStock(l.Id), l.Size))
+                    }).ToList();
                 rptCart.DataBind();
 
                 litSubTotal.Text = string.Format("{0:N0}đ", cart.SubTotal());
@@ -68,6 +80,10 @@ namespace ShoeStore
                 string size;
                 if (TryParseKey(Convert.ToString(e.CommandArgument), out id, out size))
                 {
+                    // Ô số lượng đang debounce 800ms; bấm xoá trong lúc đó sẽ nuốt
+                    // thao tác lưu. Đọc luôn giá trị đang được gõ trong form rồi mới xoá.
+                    FlushPendingQuantities();
+
                     Cart cart = Store.Load();
                     if (cart.Remove(id, size))
                     {
@@ -81,24 +97,55 @@ namespace ShoeStore
 
         protected void btnUpdateCart_Click(object sender, EventArgs e)
         {
+            FlushPendingQuantities();
+            LoadCartData();
+            // Tu dong luu: khong hien toast, so tien da cap nhat tu dong o client.
+        }
+
+        /// <summary>
+        /// Ghi lại số lượng của mọi dòng đang hiện trong form.
+        /// Mọi postback của trang đều mang theo giá trị các ô TextBox, nên gọi hàm này
+        /// ở đầu mỗi handler là cách duy nhất để không mất thay đổi khi người dùng
+        /// bấm nút khác trước khi debounce kịp chạy.
+        /// </summary>
+        private void FlushPendingQuantities()
+        {
             Cart cart = Store.Load();
+            if (cart.IsEmpty) return;
+
+            if (rptCart.Items.Count == 0)
+            {
+                rptCart.DataSource = cart.Lines.ToList();
+                rptCart.DataBind();
+            }
+
+            bool changed = false;
             foreach (RepeaterItem item in rptCart.Items)
             {
-                HiddenField hfKey = (HiddenField)item.FindControl("hfKey");
-                TextBox txtQty = (TextBox)item.FindControl("txtQuantity");
+                HiddenField hfKey = item.FindControl("hfKey") as HiddenField;
+                TextBox txtQty = item.FindControl("txtQuantity") as TextBox;
                 if (hfKey == null || txtQty == null) continue;
 
                 int id;
                 string size;
                 if (!TryParseKey(hfKey.Value, out id, out size)) continue;
 
+                // Ô trong Repeater không được Web Forms nạp postback data (item sinh sau
+                // ProcessPostData) nên phải đọc thẳng Request.Form theo UniqueID.
+                string posted = Request.Form[txtQty.UniqueID];
+                if (posted == null) continue;
+
                 int qty;
-                if (!int.TryParse(txtQty.Text, out qty)) continue;
+                if (!int.TryParse(posted, out qty)) qty = 1;
+
+                CartItem line = cart.Lines.FirstOrDefault(c => c.Id == id && c.Size == size);
+                if (line != null && line.Quantity == qty) continue;
+
                 cart.SetQuantity(id, size, qty, LookupStock(id));
+                changed = true;
             }
-            Store.Save(cart);
-            LoadCartData();
-            // Tu dong luu: khong hien toast, so tien da cap nhat tu dong o client.
+
+            if (changed) Store.Save(cart);
         }
 
         protected void btnGoToCheckout_Click(object sender, EventArgs e)
@@ -110,7 +157,10 @@ namespace ShoeStore
                 return;
             }
 
-            Response.Redirect("ThanhToan.aspx");
+            // Nút nằm trong UpdatePanel nên postback là async: Response.Redirect bị
+            // XHR đi theo và trình duyệt không đổi trang. Phải chuyển bằng script.
+            FlushPendingQuantities();
+            Toast.Navigate(this, "GoCheckout", "ThanhToan.aspx");
         }
     }
 }

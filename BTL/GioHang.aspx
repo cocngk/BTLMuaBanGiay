@@ -10,6 +10,11 @@
     <div class="cart-page-shell">
     <h1 class="cart-page-title">Giỏ hàng của bạn</h1>
 
+    <!-- Hai Panel rỗng/có hàng nằm TRONG UpdatePanel: đổi Visible khi async
+         postback mới được đẩy về client, nếu ngoài thì xoá dòng cuối cứ để lại bảng rỗng. -->
+    <asp:UpdatePanel ID="updCart" runat="server" UpdateMode="Conditional">
+        <ContentTemplate>
+
     <asp:Panel ID="pnlEmptyCart" runat="server">
         <div class="cart-empty-box">
             <div class="cart-empty-icon"><i class="fa-solid fa-bag-shopping"></i></div>
@@ -19,8 +24,6 @@
     </asp:Panel>
 
     <asp:Panel ID="pnlCartHasItems" runat="server">
-        <asp:UpdatePanel ID="updCart" runat="server" UpdateMode="Conditional">
-            <ContentTemplate>
         <div class="cart-layout">
             <div class="cart-table-card">
                 <table class="cart-table">
@@ -36,7 +39,7 @@
                     <tbody>
                         <asp:Repeater ID="rptCart" runat="server" OnItemCommand="rptCart_ItemCommand">
                             <ItemTemplate>
-                                <tr class="cart-row" data-price='<%# Convert.ToDecimal(Eval("Price")).ToString(System.Globalization.CultureInfo.InvariantCulture) %>'>
+                                <tr class="cart-row" data-price='<%# Convert.ToDecimal(Eval("Price")).ToString(System.Globalization.CultureInfo.InvariantCulture) %>' data-max='<%# Eval("Max") %>'>
                                     <td>
                                         <asp:HiddenField ID="hfKey" runat="server" Value='<%# Eval("Id") + "|" + Eval("Size") %>' />
                                         <div class="item-info">
@@ -49,7 +52,7 @@
                                     </td>
                                     <td class="item-price"><%# string.Format("{0:N0}đ", Eval("Price")) %></td>
                                     <td>
-                                        <asp:TextBox ID="txtQuantity" runat="server" Text='<%# Eval("Quantity") %>' CssClass="qty-input js-qty" TextMode="Number" min="1"></asp:TextBox>
+                                        <asp:TextBox ID="txtQuantity" runat="server" Text='<%# Eval("Quantity") %>' CssClass="qty-input js-qty" TextMode="Number" min="1" max='<%# Eval("Max") %>' title='Tối đa <%# Eval("Max") %> đôi trong tồn kho'></asp:TextBox>
                                     </td>
                                     <td class="item-price line-total"><%# string.Format("{0:N0}đ", Convert.ToDecimal(Eval("Price")) * Convert.ToInt32(Eval("Quantity"))) %></td>
                                     <td>
@@ -90,9 +93,9 @@
                 <asp:Button ID="btnGoToCheckout" runat="server" Text="TIẾN HÀNH THANH TOÁN &rarr;" OnClick="btnGoToCheckout_Click" CssClass="btn-checkout" />
             </div>
         </div>
-            </ContentTemplate>
-        </asp:UpdatePanel>
     </asp:Panel>
+        </ContentTemplate>
+    </asp:UpdatePanel>
 </div>
 
     <script type="text/javascript">
@@ -100,13 +103,36 @@
             function fmt(n) {
                 return n.toLocaleString('vi-VN') + 'đ';
             }
+            function maxOf(row) {
+                var m = parseInt(row.getAttribute('data-max'), 10);
+                return isNaN(m) || m < 1 ? 1 : m;
+            }
+            // Trần số lượng = tồn kho còn lại của cả sản phẩm (mọi size).
+            // Báo 1 lần mỗi lần chạm trần để người dùng hiểu vì sao bị cắt.
+            var lastCapMsg = null;
+            function capQty(row, qty) {
+                var max = maxOf(row);
+                if (qty > max) {
+                    if (lastCapMsg !== max) {
+                        lastCapMsg = max;
+                        if (typeof showToast === 'function') {
+                            showToast('Tối đa ' + max + ' đôi cho sản phẩm này (tồn kho còn lại).', 'info');
+                        }
+                    }
+                    return max;
+                }
+                lastCapMsg = null;
+                return qty < 1 ? 1 : qty;
+            }
             function recalc() {
                 var total = 0;
                 document.querySelectorAll('.cart-row').forEach(function (row) {
                     var price = parseFloat(row.getAttribute('data-price')) || 0;
                     var input = row.querySelector('.js-qty');
                     var qty = parseInt(input ? input.value : '1', 10);
-                    if (isNaN(qty) || qty < 1) qty = 1;
+                    if (isNaN(qty)) qty = 1;
+                    qty = capQty(row, qty);
+                    if (input && parseInt(input.value, 10) !== qty) input.value = qty;
                     total += price * qty;
                     var cell = row.querySelector('.line-total');
                     if (cell) cell.textContent = fmt(price * qty);
@@ -126,12 +152,11 @@
             }
             document.querySelectorAll('.js-qty').forEach(function (input) {
                 input.addEventListener('input', function () {
-                    if (input.value !== '' && parseInt(input.value, 10) < 1) input.value = '1';
+                    // Để ô trống lúc đang gõ, recalc() sẽ chuẩn hoá lại.
                     recalc();
                     scheduleSave();
                 });
                 input.addEventListener('change', function () {
-                    if (input.value === '' || parseInt(input.value, 10) < 1) input.value = '1';
                     recalc();
                     scheduleSave();
                 });

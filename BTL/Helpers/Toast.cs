@@ -37,6 +37,17 @@ namespace ShoeStore.Helpers
             Show(page, key, message, "info");
         }
 
+        /// <summary>
+        /// Chuyển trang bằng script thay vì Response.Redirect.
+        /// Bắt buộc khi nút nằm trong UpdatePanel: async postback là XHR,
+        /// Response.Redirect bị XHR đi theo nên trình duyệt không đổi trang.
+        /// </summary>
+        public static void Navigate(Page page, string key, string url)
+        {
+            string safeUrl = HttpUtility.JavaScriptStringEncode(url);
+            Register(page, key, "window.location.href='" + safeUrl + "';");
+        }
+
         public static void ShowAndRedirect(Page page, string key, string message, string type, string url)
         {
             string safeMessage = HttpUtility.JavaScriptStringEncode(message);

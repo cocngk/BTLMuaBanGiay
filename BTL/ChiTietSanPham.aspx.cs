@@ -67,7 +67,7 @@ namespace ShoeStore
                     }
 
                     // Tồn kho
-                    hfMaxQty.Value = Math.Max(product.Stock, 1).ToString();
+                    hfMaxQty.Value = MaxBuyable(product).ToString();
                     if (product.Stock <= 0)
                     {
                         litStock.Text = "<span class=\"stock-pill out\">Hết hàng</span>";
@@ -141,10 +141,22 @@ namespace ShoeStore
                 : product.FirstSize();
         }
 
+        /// <summary>
+        /// Số đơn vị còn mua được của sản phẩm này: tồn kho trừ phần đã có trong giỏ
+        /// (cộng mọi size). Dùng chung một luật với trang giỏ hàng qua Cart.RemainingToBuy
+        /// để nút +/- ở đây không cho thêm quá hàng tồn.
+        /// </summary>
+        private int MaxBuyable(ProductItem product)
+        {
+            Cart cart = new SessionCartStore(Session).Load();
+            int remaining = cart.RemainingToBuy(product.Id, product.Stock, null);
+            return remaining > 0 ? remaining : 1;
+        }
+
         private int ResolveQty(ProductItem product)
         {
             int qty = int.TryParse(txtQuantity.Text, out int q) ? (q > 0 ? q : 1) : 1;
-            return Math.Min(qty, Math.Max(product.Stock, 1));
+            return Cart.ClampQty(qty, MaxBuyable(product));
         }
 
         protected void btnAddToCart_Click(object sender, EventArgs e)
