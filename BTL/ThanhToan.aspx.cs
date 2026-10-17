@@ -53,7 +53,9 @@ namespace ShoeStore
                 pnlEmpty.Visible = false;
                 pnlCheckout.Visible = true;
 
-                rptSummary.DataSource = cart;
+                // Cart khong cai IEnumerable nen khong bind truc tiep, phai lay Lines
+                // giong trang GioHang, neu khong se nem ArgumentException.
+                rptSummary.DataSource = cart.Lines.ToList();
                 rptSummary.DataBind();
 
                 decimal total = cart.SubTotal();
