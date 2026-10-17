@@ -33,8 +33,10 @@
                     ErrorMessage="Vui lòng nhập mật khẩu." CssClass="field-error" Display="Dynamic" />
             </div>
 
-            <asp:CustomValidator ID="cvLoginSummary" runat="server" CssClass="field-error" Display="Dynamic"
-                OnServerValidate="cvLoginSummary_ServerValidate" />
+            <asp:Panel ID="pnlFormError" runat="server" Visible="false" CssClass="form-error-banner">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <asp:Literal ID="litFormError" runat="server" />
+            </asp:Panel>
 
             <asp:Button ID="btnLogin" runat="server" Text="Đăng Nhập" CssClass="btn-pink-submit" OnClick="btnLogin_Click" />
 

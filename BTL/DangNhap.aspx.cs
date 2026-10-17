@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ShoeStore.Helpers;
@@ -27,16 +28,14 @@ namespace ShoeStore
 
             if (account == null)
             {
-                cvLoginSummary.ErrorMessage = "Tài khoản chưa được đăng ký! Vui lòng đăng ký tài khoản mới.";
-                cvLoginSummary.IsValid = false;
+                ShowFormError("Tài khoản chưa được đăng ký! Vui lòng đăng ký tài khoản mới.");
                 return;
             }
 
-            // 3. Kiem tra mat khau
-            if (account.Password != password)
+            // 3. Kiem tra mat khau — so bang hash, khong so bang chuoi goc
+            if (!PasswordHasher.Verify(password, account.PasswordSalt, account.PasswordHash))
             {
-                cvLoginSummary.ErrorMessage = "Sai mật khẩu! Vui lòng kiểm tra lại.";
-                cvLoginSummary.IsValid = false;
+                ShowFormError("Sai mật khẩu! Vui lòng kiểm tra lại.");
                 return;
             }
 
@@ -71,9 +70,11 @@ namespace ShoeStore
             }
         }
 
-        protected void cvLoginSummary_ServerValidate(object source, ServerValidateEventArgs args)
+        /// <summary>Băng lỗi chung của form — thay cho việc mượn CustomValidator làm băng.</summary>
+        private void ShowFormError(string message)
         {
-            args.IsValid = true;
+            litFormError.Text = HttpUtility.HtmlEncode(message);
+            pnlFormError.Visible = true;
         }
 
     }

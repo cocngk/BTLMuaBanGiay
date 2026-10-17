@@ -80,8 +80,10 @@
                 </div>
             </div>
 
-            <asp:CustomValidator ID="cvServerCheck" runat="server" CssClass="field-error" Display="Dynamic"
-                OnServerValidate="cvServerCheck_ServerValidate" />
+            <asp:Panel ID="pnlFormError" runat="server" Visible="false" CssClass="form-error-banner">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <asp:Literal ID="litFormError" runat="server" />
+            </asp:Panel>
 
             <script type="text/javascript">
                 // Live-check trùng tài khoản khi gõ (server vẫn chốt lúc submit)
@@ -90,18 +92,22 @@
                     var emailInput = document.getElementById('<%= txtEmail.ClientID %>');
                     var timer = null;
                     function checkLive() {
-                        var cv = document.getElementById('<%= cvServerCheck.ClientID %>');
-                        if (!cv) return;
+                        var box = document.getElementById('<%= pnlFormError.ClientID %>');
+                        if (!box) return;
                         var u = userInput ? userInput.value.trim() : '';
                         var m = emailInput ? emailInput.value.trim() : '';
-                        if (u.length < 3 && m === '') { cv.style.display = 'none'; return; }
+                        if (u.length < 3 && m === '') { box.style.display = 'none'; return; }
                         if (typeof PageMethods === 'undefined') return;
                         PageMethods.CheckDuplicate(u, m, function (res) {
                             var msgs = [];
                             if (res && res.userTaken) msgs.push('Tên đăng nhập đã tồn tại! Vui lòng chọn tên khác.');
                             if (res && res.emailTaken) msgs.push('Email này đã được đăng ký!');
-                            if (msgs.length > 0) { cv.textContent = msgs.join(' '); cv.style.display = 'block'; }
-                            else { cv.style.display = 'none'; }
+                            if (msgs.length > 0) {
+                                var icon = box.querySelector('i');
+                                box.textContent = msgs.join(' ');
+                                if (icon) box.insertBefore(icon, box.firstChild);
+                                box.style.display = 'flex';
+                            } else { box.style.display = 'none'; }
                         });
                     }
                     function schedule() { clearTimeout(timer); timer = setTimeout(checkLive, 500); }

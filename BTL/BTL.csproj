@@ -99,6 +99,7 @@
     <Compile Include="Data\SessionOrderStore.cs" />
     <Compile Include="Data\SessionCartStore.cs" />
     <Compile Include="Helpers\AuthHelper.cs" />
+    <Compile Include="Helpers\PasswordHasher.cs" />
     <Compile Include="Helpers\Money.cs" />
     <Compile Include="Helpers\Toast.cs" />
     <Compile Include="Models\Cart.cs" />

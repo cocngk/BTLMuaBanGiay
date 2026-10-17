@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ShoeStore.Helpers;
@@ -31,26 +32,17 @@ namespace ShoeStore
 
             if (AuthHelper.UsernameExists(username))
             {
-                cvServerCheck.ErrorMessage = "Tên đăng nhập đã tồn tại! Vui lòng chọn tên khác.";
-                cvServerCheck.IsValid = false;
+                ShowFormError("Tên đăng nhập đã tồn tại! Vui lòng chọn tên khác.");
                 return;
             }
 
             if (AuthHelper.EmailExists(email))
             {
-                cvServerCheck.ErrorMessage = "Email này đã được đăng ký!";
-                cvServerCheck.IsValid = false;
+                ShowFormError("Email này đã được đăng ký!");
                 return;
             }
-            // 8. Luu tai khoan moi
-            UserAccount account = new UserAccount
-            {
-                FullName = fullName,
-                Username = username,
-                Email = email,
-                Phone = phone,
-                Password = password
-            };
+            // 8. Luu tai khoan moi — mat khau duoc bam ngay, khong luu ban tho
+            UserAccount account = MemoryUserStore.NewUser(fullName, username, email, phone, password);
             AuthHelper.Add(account);
 
             // 9. Dang nhap ngay sau khi dang ky
@@ -62,9 +54,11 @@ namespace ShoeStore
                 "TrangChu.aspx");
         }
 
-        protected void cvServerCheck_ServerValidate(object source, ServerValidateEventArgs args)
+        /// <summary>Băng lỗi chung của form — thay cho việc mượn CustomValidator làm băng.</summary>
+        private void ShowFormError(string message)
         {
-            args.IsValid = true;
+            litFormError.Text = HttpUtility.HtmlEncode(message);
+            pnlFormError.Visible = true;
         }
 
         [System.Web.Services.WebMethod]

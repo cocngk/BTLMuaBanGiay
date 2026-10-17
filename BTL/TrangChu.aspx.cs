@@ -26,11 +26,8 @@ namespace ShoeStore
         // BẤM NÚT "KHÁM PHÁ NGAY" TRÊN HERO BANNER
         protected void btnHeroDiscover_Click(object sender, EventArgs e)
         {
-            if (!RequireLogin("Vui lòng đăng nhập hoặc đăng ký tài khoản để khám phá cửa hàng!"))
-            {
-                return;
-            }
-
+            // Xem danh mục không cần đăng nhập — chỉ mua mới cần. Trước đây nút này
+            // chặn đăng nhập trong khi trang Sản phẩm vẫn cho xem thoải mái.
             Response.Redirect("SanPham.aspx");
         }
 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -12,7 +12,10 @@ namespace ShoeStore.Helpers
         public string Username { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
-        public string Password { get; set; }
+
+        /// <summary>Không bao giờ lưu mật khẩu thô — xem PasswordHasher.</summary>
+        public string PasswordHash { get; set; }
+        public string PasswordSalt { get; set; }
 
         /// <summary>Tên hiển thị duy nhất một chỗ (trước rải ở 2 trang).</summary>
         public string DisplayName
@@ -37,15 +40,32 @@ namespace ShoeStore.Helpers
     {
         private const string AppKey = "UserList";
 
+        /// <summary>Sinh tài khoản đã băm mật khẩu — dùng cho cả seed lẫn đăng ký.</summary>
+        public static UserAccount NewUser(string fullName, string username, string email, string phone, string plainPassword)
+        {
+            string salt = PasswordHasher.NewSalt();
+            return new UserAccount
+            {
+                FullName = fullName,
+                Username = username,
+                Email = email,
+                Phone = phone,
+                PasswordSalt = salt,
+                PasswordHash = PasswordHasher.Hash(plainPassword, salt)
+            };
+        }
+
         public List<UserAccount> GetAll()
         {
             var users = HttpContext.Current.Application[AppKey] as List<UserAccount>;
             if (users == null)
             {
+                // Mật khẩu thô chỉ xuất hiện đúng ở chỗ seed này, vào là được
+                // băm ngay — không có UserAccount nào giữ bản thô.
                 users = new List<UserAccount>
                 {
-                    new UserAccount { FullName = "Nguyễn Văn A", Username = "admin", Email = "admin@sneakerx.com", Phone = "0987654321", Password = "123" },
-                    new UserAccount { FullName = "Khách Hàng Demo", Username = "sneakerx", Email = "demo@sneakerx.com", Phone = "0912345678", Password = "123" }
+                    NewUser("Nguyễn Văn A", "admin", "admin@sneakerx.com", "0987654321", "123"),
+                    NewUser("Khách Hàng Demo", "sneakerx", "demo@sneakerx.com", "0912345678", "123")
                 };
                 HttpContext.Current.Application[AppKey] = users;
             }
@@ -79,7 +99,7 @@ namespace ShoeStore.Helpers
 
     /// <summary>
     /// Demo-only auth (was triplicated in SiteMaster / DangNhap / DangKy).
-    /// Passwords are plaintext — never use as-is outside this school project.
+    /// Kho vẫn là bộ nhớ trong Application; khi thêm database chỉ thay MemoryUserStore.
     /// </summary>
     public static class AuthHelper
     {

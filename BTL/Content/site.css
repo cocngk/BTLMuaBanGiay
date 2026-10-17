@@ -565,6 +565,27 @@
             }
         }
 
+        /* Băng lỗi chung của form (đăng nhập, đăng ký) — thay cho việc mượn
+           CustomValidator làm băng rồi phải giữ một handler ServerValidate rỗng. */
+        .form-error-banner {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 10px;
+            padding: 12px 15px;
+            color: #b91c1c;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .form-error-banner i {
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
         /* Lỗi validation hiển thị dưới ô nhập — dùng chung cho mọi trang */
         .field-error {
             display: block;
