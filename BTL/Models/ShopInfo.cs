@@ -62,7 +62,11 @@ namespace ShoeStore.Models
             };
         }
 
-        /// <summary>Các trang trong site — footer là chỗ tự nhiên cho những trang không lên header.</summary>
+        /// <summary>
+        /// Các trang trong site. Không kèm Thanh toán: đó là bước trong phễu, vào
+        /// từ menu khi giỏ trống chỉ ra trang trống — đường đi hợp lý là qua nút
+        /// thanh toán ở trang Giỏ hàng.
+        /// </summary>
         public static List<FooterLink> PageLinks()
         {
             return new List<FooterLink>
@@ -70,7 +74,6 @@ namespace ShoeStore.Models
                 new FooterLink { Title = "Sản phẩm", Url = "SanPham.aspx" },
                 new FooterLink { Title = "Tin tức", Url = "TinTuc.aspx" },
                 new FooterLink { Title = "Tư vấn", Url = "TuVan.aspx" },
-                new FooterLink { Title = "Thanh toán", Url = "ThanhToan.aspx" },
                 new FooterLink { Title = "Giỏ hàng", Url = "GioHang.aspx" }
             };
         }
