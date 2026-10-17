@@ -11,7 +11,6 @@ namespace ShoeStore
 {
     public partial class SanPham : ShopPage
     {
-
         private const int PageSize = 6;
 
         public int CurrentPage
@@ -32,15 +31,15 @@ namespace ShoeStore
             FilterAndBindProducts();
         }
 
+        /// <summary>
+        /// Lọc vẫn phải postback: giá trị nằm trong control nên server cần đọc
+        /// chúng mới dựng được URL. Phân trang thì không — nó chỉ đổi số trang
+        /// nên render thành link, bấm là đi thẳng không tốn vòng postback.
+        /// </summary>
         protected void btnFilter_Click(object sender, EventArgs e)
         {
             CatalogQuery q = CatalogQuery.FromControls(txtStoreSearch, cblBrands, rblPriceRange, hfSelectedSize, ddlSort, 1);
-            Response.Redirect(q.ToUrl());
-        }
-
-        protected void btnResetFilter_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("SanPham.aspx");
+            Redirect(q.ToUrl());
         }
 
         private void FilterAndBindProducts()
@@ -52,53 +51,44 @@ namespace ShoeStore
             PagedResult<ProductItem> paged = Paging.Paginate(q.Apply(ProductStore.GetAll()), q.Page, PageSize);
             CurrentPage = paged.Page;
 
-            if (paged.Items.Count > 0)
-            {
-                pnlNoResults.Visible = false;
-                rptAllProducts.Visible = true;
-                pnlPagination.Visible = paged.TotalPages > 1;
-
-                rptAllProducts.DataSource = paged.Items;
-                rptAllProducts.DataBind();
-
-                List<int> pages = Enumerable.Range(1, paged.TotalPages).ToList();
-                rptPages.DataSource = pages;
-                rptPages.DataBind();
-
-                btnPrevPage.CssClass = CurrentPage == 1 ? "page-link-custom disabled" : "page-link-custom";
-                btnNextPage.CssClass = CurrentPage == paged.TotalPages ? "page-link-custom disabled" : "page-link-custom";
-            }
-            else
+            if (paged.Items.Count == 0)
             {
                 rptAllProducts.Visible = false;
                 pnlNoResults.Visible = true;
                 pnlPagination.Visible = false;
+                return;
             }
+
+            pnlNoResults.Visible = false;
+            rptAllProducts.Visible = true;
+            pnlPagination.Visible = paged.TotalPages > 1;
+
+            rptAllProducts.DataSource = paged.Items;
+            rptAllProducts.DataBind();
+
+            BindPageLinks(q, paged.TotalPages);
         }
 
-        protected void rptPages_ItemCommand(object source, RepeaterCommandEventArgs e)
+        private void BindPageLinks(CatalogQuery q, int totalPages)
         {
-            if (e.CommandName == "Page")
-            {
-                CatalogQuery q = CatalogQuery.FromRequest(Request.QueryString);
-                int page;
-                q.Page = (int.TryParse(Convert.ToString(e.CommandArgument), out page) && page > 0) ? page : 1;
-                Response.Redirect(q.ToUrl());
-            }
-        }
+            rptPages.DataSource = Enumerable.Range(1, totalPages)
+                .Select(n => new
+                {
+                    Number = n,
+                    Url = q.ToUrl("SanPham.aspx", n),
+                    Css = n == CurrentPage ? "page-link-custom active" : "page-link-custom"
+                }).ToList();
+            rptPages.DataBind();
 
-        protected void btnPrevPage_Click(object sender, EventArgs e)
-        {
-            CatalogQuery q = CatalogQuery.FromRequest(Request.QueryString);
-            q.Page = Math.Max(q.Page - 1, 1);
-            Response.Redirect(q.ToUrl());
-        }
+            bool hasPrev = CurrentPage > 1;
+            lnkPrevPage.NavigateUrl = q.ToUrl("SanPham.aspx", CurrentPage - 1);
+            lnkPrevPage.CssClass = hasPrev ? "page-link-custom" : "page-link-custom disabled";
+            lnkPrevPage.Attributes["onclick"] = hasPrev ? "" : "return false;";
 
-        protected void btnNextPage_Click(object sender, EventArgs e)
-        {
-            CatalogQuery q = CatalogQuery.FromRequest(Request.QueryString);
-            q.Page = q.Page + 1;
-            Response.Redirect(q.ToUrl());
+            bool hasNext = CurrentPage < totalPages;
+            lnkNextPage.NavigateUrl = q.ToUrl("SanPham.aspx", CurrentPage + 1);
+            lnkNextPage.CssClass = hasNext ? "page-link-custom" : "page-link-custom disabled";
+            lnkNextPage.Attributes["onclick"] = hasNext ? "" : "return false;";
         }
 
         protected void rptAllProducts_ItemCommand(object source, RepeaterCommandEventArgs e)
@@ -124,9 +114,8 @@ namespace ShoeStore
             {
                 // Gộp vào giỏ hiện có (không xóa giỏ cũ) rồi sang thanh toán
                 CartStore.AddOrMerge(selected.Id, selected.Name, selected.Price, selectedSize, 1, selected.ImageUrl, selected.Stock);
-                Response.Redirect("ThanhToan.aspx");
+                Redirect("ThanhToan.aspx");
             }
         }
-
     }
 }

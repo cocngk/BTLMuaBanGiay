@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -101,15 +101,20 @@ namespace ShoeStore.Data
             if (sort.Items.FindByValue(Sort) != null) sort.SelectedValue = Sort;
         }
 
-        public string ToUrl(string page = "SanPham.aspx")
+        /// <summary>
+        /// pageNumber ghi đè số trang khi cần dựng link tới một trang khác mà vẫn
+        /// giữ nguyên bộ lọc — dùng cho phân trang, không cần postback.
+        /// </summary>
+        public string ToUrl(string page = "SanPham.aspx", int? pageNumber = null)
         {
+            int pageNo = pageNumber ?? Page;
             List<string> parts = new List<string>();
             if (!string.IsNullOrEmpty(Keyword)) parts.Add("search=" + HttpUtility.UrlEncode(Keyword));
             if (Brands.Count > 0) parts.Add("brand=" + HttpUtility.UrlEncode(string.Join(",", Brands)));
             if (!string.IsNullOrEmpty(PriceRange) && PriceRange != PriceBuckets.All) parts.Add("price=" + HttpUtility.UrlEncode(PriceRange));
             if (!string.IsNullOrEmpty(Size)) parts.Add("size=" + HttpUtility.UrlEncode(Size));
             if (!string.IsNullOrEmpty(Sort) && Sort != "Default") parts.Add("sort=" + HttpUtility.UrlEncode(Sort));
-            if (Page > 1) parts.Add("page=" + Page);
+            if (pageNo > 1) parts.Add("page=" + pageNo);
             return page + (parts.Count > 0 ? "?" + string.Join("&", parts) : "");
         }
 

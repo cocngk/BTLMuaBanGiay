@@ -193,7 +193,7 @@ namespace ShoeStore
                 // Gộp vào giỏ hiện có (không xóa giỏ cũ) rồi sang thanh toán
                 string size = ResolveSize(product);
                 CartStore.AddOrMerge(product.Id, product.Name, product.Price, size, ResolveQty(product), product.ImageUrl, product.Stock);
-                Response.Redirect("ThanhToan.aspx");
+                Redirect("ThanhToan.aspx");
             }
         }
 

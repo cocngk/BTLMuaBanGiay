@@ -22,6 +22,16 @@ namespace ShoeStore
         }
 
         /// <summary>
+        /// Chuyển trang theo kiểu sạch: endResponse = false rồi CompleteRequest,
+        /// để không ném ThreadAbortException giữa chừng handler.
+        /// </summary>
+        protected void Redirect(string url)
+        {
+            Response.Redirect(url, false);
+            Context.ApplicationInstance.CompleteRequest();
+        }
+
+        /// <summary>
         /// Chặn trang khi khách chưa đăng nhập. Trả false kèm toast + mở form đăng nhập
         /// để phía gọi return ngay, thay vì tự lặp lại if (!IsLoggedIn) ở từng trang.
         /// </summary>

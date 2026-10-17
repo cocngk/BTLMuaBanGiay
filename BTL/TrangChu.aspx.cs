@@ -28,7 +28,7 @@ namespace ShoeStore
         {
             // Xem danh mục không cần đăng nhập — chỉ mua mới cần. Trước đây nút này
             // chặn đăng nhập trong khi trang Sản phẩm vẫn cho xem thoải mái.
-            Response.Redirect("SanPham.aspx");
+            Redirect("SanPham.aspx");
         }
 
         // BẤM NÚT DẤU CỘNG Ở CÁC SẢN PHẨM TRANG CHỦ

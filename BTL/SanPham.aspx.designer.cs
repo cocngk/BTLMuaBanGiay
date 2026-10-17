@@ -50,14 +50,6 @@ namespace ShoeStore
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnApplyFilter;
 
-        /// <summary>
-        /// btnResetFilter control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnResetFilter;
 
         /// <summary>
         /// txtStoreSearch control.
@@ -122,14 +114,6 @@ namespace ShoeStore
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl pnlPagination;
 
-        /// <summary>
-        /// btnPrevPage control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnPrevPage;
 
         /// <summary>
         /// rptPages control.
@@ -141,12 +125,22 @@ namespace ShoeStore
         protected global::System.Web.UI.WebControls.Repeater rptPages;
 
         /// <summary>
-        /// btnNextPage control.
+        /// lnkPrevPage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnNextPage;
+        protected global::System.Web.UI.WebControls.HyperLink lnkPrevPage;
+
+        /// <summary>
+        /// lnkNextPage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkNextPage;
+
     }
 }

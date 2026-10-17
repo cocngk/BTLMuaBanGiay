@@ -49,7 +49,7 @@
             </div>
 
             <asp:Button ID="btnApplyFilter" runat="server" Text="Áp Dụng Bộ Lọc" CssClass="btn-apply-filter" OnClick="btnFilter_Click" />
-            <asp:Button ID="btnResetFilter" runat="server" Text="Xóa bộ lọc" CssClass="btn-reset-filter" OnClick="btnResetFilter_Click" />
+            <a href="SanPham.aspx" class="btn-reset-filter">Xóa bộ lọc</a>
         </aside>
 
         <!-- KHU VỰC HIỂN THỊ SẢN PHẨM -->
@@ -96,15 +96,13 @@
 
             <!-- THANH PHÂN TRANG -->
             <div class="pagination-container" id="pnlPagination" runat="server">
-                <asp:LinkButton ID="btnPrevPage" runat="server" CssClass="page-link-custom" OnClick="btnPrevPage_Click">&laquo; Trước</asp:LinkButton>
-                <asp:Repeater ID="rptPages" runat="server" OnItemCommand="rptPages_ItemCommand">
+                <asp:HyperLink ID="lnkPrevPage" runat="server" CssClass="page-link-custom">&laquo; Trước</asp:HyperLink>
+                <asp:Repeater ID="rptPages" runat="server">
                     <ItemTemplate>
-                        <asp:LinkButton ID="btnPage" runat="server" CommandName="Page" CommandArgument='<%# Container.DataItem %>' CssClass='<%# Convert.ToInt32(Container.DataItem) == CurrentPage ? "page-link-custom active" : "page-link-custom" %>'>
-                            <%# Container.DataItem %>
-                        </asp:LinkButton>
+                        <a href='<%# Eval("Url") %>' class='<%# Eval("Css") %>'><%# Eval("Number") %></a>
                     </ItemTemplate>
                 </asp:Repeater>
-                <asp:LinkButton ID="btnNextPage" runat="server" CssClass="page-link-custom" OnClick="btnNextPage_Click">Sau &raquo;</asp:LinkButton>
+                <asp:HyperLink ID="lnkNextPage" runat="server" CssClass="page-link-custom">Sau &raquo;</asp:HyperLink>
             </div>
         </div>
     </div>
