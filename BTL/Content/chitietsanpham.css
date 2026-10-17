@@ -1,4 +1,4 @@
-.detail-container {
+﻿.detail-container {
             max-width: 1100px;
             margin: 30px auto;
             padding: 0 20px;
@@ -209,24 +209,6 @@
             transform: scale(1.8);
         }
 
-        .thumb-strip {
-            display: flex;
-            gap: 10px;
-            margin-top: 12px;
-        }
-
-        .thumb-img {
-            width: 72px;
-            height: 72px;
-            object-fit: cover;
-            border-radius: 12px;
-            border: 2px solid transparent;
-            cursor: pointer;
-            background: var(--tint);
-        }
-
-        .thumb-img.active { border-color: var(--brand); }
-
         .zoom-hint {
             font-size: 12px;
             color: var(--muted);
@@ -244,17 +226,6 @@
         }
 
         .sku-text { font-size: 12px; color: var(--muted); }
-
-        .rating-row { display: flex; align-items: center; gap: 8px; }
-
-        .stars { color: #f5a623; font-size: 15px; letter-spacing: 2px; }
-
-        .review-count-link {
-            font-size: 13px;
-            color: var(--brand-text);
-            font-weight: 700;
-            text-decoration: none;
-        }
 
         .price-row {
             display: flex;
@@ -358,6 +329,10 @@
             margin-left: 6px;
         }
 
+        .btn-wishlist-detail:focus {
+            outline: 2px solid var(--brand-tint);
+        }
+
         .btn-wishlist-detail.active {
             background: var(--brand);
             color: #fff;
@@ -397,49 +372,7 @@
             line-height: 1.9;
         }
 
-        .review-summary {
-            display: flex;
-            gap: 24px;
-            align-items: center;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-        }
 
-        .review-score { font-size: 40px; font-weight: 800; color: var(--heading); }
-        .review-score span { font-size: 16px; color: var(--muted); font-weight: 600; }
-
-        .review-bars { flex: 1; min-width: 220px; }
-
-        .review-bar-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--muted);
-            margin-bottom: 4px;
-        }
-
-        .review-bar {
-            flex: 1;
-            height: 8px;
-            background: var(--tint);
-            border-radius: 6px;
-            overflow: hidden;
-        }
-
-        .review-fill { height: 100%; background: #f5a623; border-radius: 6px; }
-
-        .review-item {
-            border-top: 1px solid var(--border);
-            padding: 14px 0;
-            font-size: 14px;
-            color: var(--body);
-            line-height: 1.7;
-        }
-
-        .review-user { margin-bottom: 6px; color: var(--heading); }
-        .review-user i { color: var(--muted); }
-        .review-stars { color: #f5a623; font-size: 13px; margin-left: 8px; }
 
         .notfound-back-link {
             color: var(--brand);

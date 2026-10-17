@@ -1,4 +1,5 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using ShoeStore.Models;
 
 namespace ShoeStore.Data
@@ -26,6 +27,27 @@ namespace ShoeStore.Data
                 new ProductItem { Id = 11, Name = "Converse Run Star Hike", Brand = "Converse", Description = "Đế răng cưa hầm hố tôn dáng ấn tượng.", Price = 2450000, Stock = 10, Sizes = "38,39,40,41", ImageUrl = "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=400", IsHot = false },
                 new ProductItem { Id = 12, Name = "Vans Sk8-Hi Reissue", Brand = "Vans", Description = "Giày cổ cao bảo vệ cổ chân thể thao năng động.", Price = 2100000, Stock = 10, Sizes = "39,40,41,42", ImageUrl = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=400", IsHot = true }
             };
+        }
+
+        /// <summary>
+        /// Sản phẩm liên quan: ưu tiên cùng thương hiệu, thiếu thì lấp từ phần còn lại.
+        /// Trước đây trang chi tiết tự sắp bằng OrderByDescending(p =&gt; p.Brand == ...) —
+        /// xếp theo bool để đẩy cùng brand lên đầu, khó đọc và dễ sai khi thêm quy tắc.
+        /// </summary>
+        public static List<ProductItem> RelatedTo(ProductItem product, int count)
+        {
+            if (product == null || count <= 0)
+            {
+                return new List<ProductItem>();
+            }
+
+            List<ProductItem> others = GetAll().Where(p => p.Id != product.Id).ToList();
+
+            return others.Where(p => p.Brand == product.Brand)
+                .Concat(others.Where(p => p.Brand != product.Brand))
+                .OrderBy(p => p.Id)
+                .Take(count)
+                .ToList();
         }
     }
 }

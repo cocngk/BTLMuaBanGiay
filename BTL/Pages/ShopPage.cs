@@ -21,6 +21,12 @@ namespace ShoeStore
             get { return new SessionCartStore(Session); }
         }
 
+        /// <summary>Seam cho danh sách yêu thích — cùng kiểu với CartStore.</summary>
+        protected SessionWishlistStore Wishlist
+        {
+            get { return new SessionWishlistStore(Session); }
+        }
+
         /// <summary>
         /// Chuyển trang theo kiểu sạch: endResponse = false rồi CompleteRequest,
         /// để không ném ThreadAbortException giữa chừng handler.

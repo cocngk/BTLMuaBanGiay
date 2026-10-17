@@ -104,23 +104,7 @@ namespace ShoeStore
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal litSku;
 
-        /// <summary>
-        /// litRatingStars control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litRatingStars;
 
-        /// <summary>
-        /// litReviewCount control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litReviewCount;
 
         /// <summary>
         /// pnlDiscount control.
@@ -176,23 +160,7 @@ namespace ShoeStore
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hfMaxQty;
 
-        /// <summary>
-        /// rptThumbs control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptThumbs;
 
-        /// <summary>
-        /// litAvgScore control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litAvgScore;
 
         /// <summary>
         /// rptRelated control.
@@ -256,5 +224,14 @@ namespace ShoeStore
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal litDescription;
+        /// <summary>
+        /// btnWishlist control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnWishlist;
+
     }
 }

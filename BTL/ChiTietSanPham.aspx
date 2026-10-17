@@ -25,16 +25,7 @@
                     <div class="zoom-wrap" id="zoomWrap">
                         <asp:Image ID="imgProduct" runat="server" CssClass="product-main-img" />
                     </div>
-                    <div class="thumb-strip">
-                        <asp:Repeater ID="rptThumbs" runat="server">
-                            <ItemTemplate>
-                                <img src='<%# Eval("Url") %>' alt='<%# Eval("Alt") %>'
-                                     class='<%# (int)Eval("Index") == 0 ? "thumb-img active" : "thumb-img" %>'
-                                     onclick="swapMainImage(this)" />
-                            </ItemTemplate>
-                        </asp:Repeater>
-                    </div>
-                    <p class="zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i> Di chuột vào ảnh để phóng to, bấm ảnh nhỏ để đổi góc xem</p>
+                    <p class="zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i> Di chuột vào ảnh để phóng to</p>
                 </div>
 
                 <div class="product-info-box">
@@ -42,10 +33,6 @@
                     <h1 class="product-title-large"><asp:Literal ID="litName" runat="server" Mode="Encode"></asp:Literal></h1>
                     <div class="detail-meta-row">
                         <span class="sku-text">Mã SP: <asp:Literal ID="litSku" runat="server" Mode="Encode"></asp:Literal></span>
-                        <span class="rating-row">
-                            <span class="stars"><asp:Literal ID="litRatingStars" runat="server" Mode="Encode"></asp:Literal></span>
-                            <a href="#danh-gia" class="review-count-link"><asp:Literal ID="litReviewCount" runat="server" Mode="Encode"></asp:Literal> đánh giá</a>
-                        </span>
                     </div>
                     <div class="price-row">
                         <span class="product-price-large"><asp:Literal ID="litPrice" runat="server" Mode="Encode"></asp:Literal></span>
@@ -90,7 +77,7 @@
                         <button type="button" class="qty-step-btn" onclick="stepQty(-1)">−</button>
                         <asp:TextBox ID="txtQuantity" runat="server" Text="1" TextMode="Number" min="1" max='<%= hfMaxQty.Value %>' CssClass="qty-input-detail js-qty-detail"></asp:TextBox>
                         <button type="button" class="qty-step-btn" onclick="stepQty(1)">+</button>
-                        <button type="button" id="btnWishlist" class="btn-wishlist-detail" title="Thêm vào yêu thích" onclick="toggleWishlist(this)"><i class="fa-regular fa-heart"></i></button>
+                        <asp:Button ID="btnWishlist" runat="server" CssClass="btn-wishlist-detail" Text="&#9825;" ToolTip="Thêm vào yêu thích" OnClick="btnWishlist_Click" CausesValidation="false" />
                     </div>
 
                     <div class="detail-action-buttons">
@@ -117,28 +104,6 @@
                     <li><b>Phù hợp:</b> Đi học, đi chơi, chạy bộ nhẹ mỗi ngày</li>
                     <li><b>Bảo hành:</b> 6 tháng (bong keo, lỗi chỉ may)</li>
                 </ul>
-            </div>
-
-            <div class="product-desc-box" id="danh-gia">
-                <h3 class="desc-title">Đánh Giá Từ Khách Hàng</h3>
-                <div class="review-summary">
-                    <div class="review-score"><asp:Literal ID="litAvgScore" runat="server" Mode="Encode" Text="4.5"></asp:Literal><span>/5</span></div>
-                    <div class="review-bars">
-                        <div class="review-bar-row"><span>5★</span><div class="review-bar"><div class="review-fill" style="width:70%"></div></div></div>
-                        <div class="review-bar-row"><span>4★</span><div class="review-bar"><div class="review-fill" style="width:20%"></div></div></div>
-                        <div class="review-bar-row"><span>3★</span><div class="review-bar"><div class="review-fill" style="width:7%"></div></div></div>
-                        <div class="review-bar-row"><span>2★</span><div class="review-bar"><div class="review-fill" style="width:2%"></div></div></div>
-                        <div class="review-bar-row"><span>1★</span><div class="review-bar"><div class="review-fill" style="width:1%"></div></div></div>
-                    </div>
-                </div>
-                <div class="review-item">
-                    <div class="review-user"><i class="fa-solid fa-circle-user"></i> <b>Minh Anh</b> <span class="review-stars">★★★★★</span></div>
-                    <p>Giày êm, đi cả ngày không đau chân. Size chuẩn, shop giao nhanh 2 ngày đã nhận được.</p>
-                </div>
-                <div class="review-item">
-                    <div class="review-user"><i class="fa-solid fa-circle-user"></i> <b>Quốc Bảo</b> <span class="review-stars">★★★★☆</span></div>
-                    <p>Màu đẹp như hình, đế hơi cứng lúc mới mang nhưng 1 tuần là êm. Đáng tiền trong tầm giá.</p>
-                </div>
             </div>
 
             <div class="section-container">
@@ -213,22 +178,9 @@
         }
         bindDetailQty();
 
-        function toggleWishlist(btn) {
-            var icon = btn.querySelector('i');
-            var active = btn.classList.toggle('active');
-            icon.className = active ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
-        }
-
         function toggleSizeGuide() {
             var box = document.getElementById('sizeGuideBox');
             box.style.display = (box.style.display === 'none') ? 'block' : 'none';
-        }
-
-        function swapMainImage(thumb) {
-            var main = document.getElementById('<%= imgProduct.ClientID %>');
-            main.src = thumb.src.replace('w=200', 'w=1200');
-            document.querySelectorAll('.thumb-img').forEach(function (t) { t.classList.remove('active'); });
-            thumb.classList.add('active');
         }
 
         // Zoom theo vị trí chuột

@@ -96,6 +96,7 @@
     <Compile Include="Data\ProductStore.cs" />
     <Compile Include="Data\BlogStore.cs" />
     <Compile Include="Data\CatalogQuery.cs" />
+    <Compile Include="Data\SessionWishlistStore.cs" />
     <Compile Include="Data\SessionOrderStore.cs" />
     <Compile Include="Data\SessionCartStore.cs" />
     <Compile Include="Helpers\AuthHelper.cs" />
