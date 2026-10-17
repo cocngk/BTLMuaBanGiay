@@ -41,6 +41,9 @@
                         <asp:ListItem Value="Size">Tư vấn chọn Size giày chuẩn</asp:ListItem>
                         <asp:ListItem Value="Model">Tư vấn kiểu dáng / Thương hiệu</asp:ListItem>
                         <asp:ListItem Value="Order">Thắc mắc về đơn hàng & Vận chuyển</asp:ListItem>
+                        <asp:ListItem Value="Return">Chính sách đổi trả</asp:ListItem>
+                        <asp:ListItem Value="Warranty">Bảo hành sản phẩm</asp:ListItem>
+                        <asp:ListItem Value="Payment">Thanh toán & bảo mật</asp:ListItem>
                         <asp:ListItem Value="Other">Vấn đề khác</asp:ListItem>
                     </asp:DropDownList>
                 </div>

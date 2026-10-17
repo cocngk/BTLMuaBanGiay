@@ -1,4 +1,4 @@
-.consult-container {
+﻿.consult-container {
             max-width: 1100px;
             margin: 40px auto;
             padding: 0 20px;
@@ -150,10 +150,3 @@
             font-size: 20px;
         }
 
-        .field-error {
-            display: block;
-            color: #dc2626;
-            font-size: 12px;
-            font-weight: 600;
-            margin-top: 8px;
-        }

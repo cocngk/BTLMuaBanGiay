@@ -14,8 +14,13 @@ namespace ShoeStore
             if (!IsPostBack)
             {
                 AuthHelper.GetUsers();
-                BindMenu();
             }
+
+            // Repeater khong giu item qua postback: bind o MOI lan render,
+            // neu chi bind lan !IsPostBack thi menu/footer bien mat sau
+            // khi bam nut (them gio, luu so luong, dang ky nhan tin...).
+            BindMenu();
+            BindFooter();
 
             CheckLoginState();
         }
@@ -66,6 +71,32 @@ namespace ShoeStore
 
             if (cartIcon != null) cartIcon.Attributes["class"] = "cart-icon-btn";
             if (pageName.Contains("giohang") && cartIcon != null) cartIcon.Attributes["class"] = "cart-icon-btn active";
+        }
+
+        private void BindFooter()
+        {
+            rptSocial.DataSource = Models.ShopInfo.SocialLinks();
+            rptSocial.DataBind();
+
+            rptFooterPages.DataSource = Models.ShopInfo.PageLinks();
+            rptFooterPages.DataBind();
+
+            rptFooterPolicies.DataSource = Models.ShopInfo.PolicyLinks();
+            rptFooterPolicies.DataBind();
+
+            rptPartners.DataSource = Models.ShopInfo.Partners();
+            rptPartners.DataBind();
+        }
+
+        protected void btnNewsletter_Click(object sender, EventArgs e)
+        {
+            // Button co ValidationGroup nen khong kich hoat loi cua cac form
+            // khac tren trang (form dang nhap, dang ky, tu van...).
+            if (!Page.IsValid) return;
+
+            txtNewsletterEmail.Text = "";
+            Toast.Success(this, "NewsletterToast",
+                "Đăng ký thành công! Chúng tôi sẽ gửi tin khuyến mãi tới bạn.");
         }
 
         protected void btnLogout_Click(object sender, EventArgs e)

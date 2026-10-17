@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using ShoeStore.Helpers;
 using ShoeStore.Models;
 
@@ -9,6 +10,20 @@ namespace ShoeStore
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!IsPostBack) SelectTopicFromQuery();
+        }
+
+        /// <summary>
+        /// Footer tro toi TuVan.aspx?topic=... nen chon san chu de de nguoi dung
+        /// khong phai tu dong lai.
+        /// </summary>
+        private void SelectTopicFromQuery()
+        {
+            string topic = Request.QueryString["topic"];
+            if (string.IsNullOrEmpty(topic)) return;
+
+            ListItem match = ddlTopic.Items.FindByValue(topic);
+            if (match != null) ddlTopic.SelectedValue = match.Value;
         }
 
         protected void btnSubmitConsult_Click(object sender, EventArgs e)
