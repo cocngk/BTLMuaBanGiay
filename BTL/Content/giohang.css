@@ -1,4 +1,10 @@
-.cart-page-title {
+.cart-page-shell {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .cart-page-title {
             font-size: 28px;
             font-weight: 800;
             color: var(--heading);
@@ -7,23 +13,31 @@
 
         .cart-empty-box {
             background: var(--panel);
-            border-radius: 15px;
-            padding: 50px 20px;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 60px 20px;
             text-align: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             margin-top: 20px;
         }
 
         .cart-empty-icon {
-            font-size: 50px;
-            color: var(--border);
-            margin-bottom: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 96px;
+            height: 96px;
+            border-radius: var(--radius-circle);
+            background: var(--brand-tint);
+            color: var(--brand);
+            font-size: 38px;
+            margin-bottom: 20px;
         }
 
         .cart-empty-text {
             font-size: 16px;
             color: var(--muted);
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .btn-continue {
@@ -54,9 +68,39 @@
             }
         }
 
+        @media (max-width: 600px) {
+            .cart-page-shell {
+                padding: 0 14px;
+            }
+
+            .cart-page-title {
+                font-size: 22px;
+            }
+
+            .cart-empty-box {
+                padding: 40px 16px;
+            }
+
+            .cart-empty-icon {
+                width: 76px;
+                height: 76px;
+                font-size: 30px;
+            }
+
+            .cart-table-card {
+                padding: 18px;
+                overflow-x: auto;
+            }
+
+            .cart-table {
+                min-width: 520px;
+            }
+        }
+
         .cart-table-card, .checkout-card {
             background: var(--panel);
-            border-radius: 15px;
+            border: 1px solid var(--border);
+            border-radius: 24px;
             padding: 25px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }

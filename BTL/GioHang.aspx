@@ -7,6 +7,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     
 
+    <div class="cart-page-shell">
     <h1 class="cart-page-title">Giỏ hàng của bạn</h1>
 
     <asp:Panel ID="pnlEmptyCart" runat="server">
@@ -92,6 +93,7 @@
             </ContentTemplate>
         </asp:UpdatePanel>
     </asp:Panel>
+</div>
 
     <script type="text/javascript">
         function bindCartAuto() {
