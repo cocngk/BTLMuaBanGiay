@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ShoeStore.Data;
@@ -59,10 +58,9 @@ namespace ShoeStore
             {
                 item.IsActive = string.Equals(item.Url, pageName, StringComparison.OrdinalIgnoreCase);
             }
-            if (!items.Any(i => i.IsActive) && !pageName.Contains("giohang"))
-            {
-                items[0].IsActive = true;
-            }
+            // Khong ep muc nao active khi khong co muc nao khop: trang Thanh toan,
+            // Gio hang, Dang nhap... deu khong phai muc menu, to do Trang chu se
+            // to do sai.
             rptMenu.DataSource = items;
             rptMenu.DataBind();
 
