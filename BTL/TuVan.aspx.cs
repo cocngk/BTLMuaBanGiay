@@ -6,7 +6,7 @@ using ShoeStore.Models;
 
 namespace ShoeStore
 {
-    public partial class TuVan : System.Web.UI.Page
+    public partial class TuVan : ShopPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {

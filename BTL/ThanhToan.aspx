@@ -1,4 +1,5 @@
 ﻿<%@ Page Title="Thanh Toán" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="ThanhToan.aspx.cs" Inherits="ShoeStore.ThanhToan" %>
+<%@ Import Namespace="ShoeStore.Helpers" %>
 
 <asp:Content ID="HeadCss" ContentPlaceHolderID="HeadContent" runat="server">
     <link rel="stylesheet" href="Content/thanhtoan.css" />
@@ -28,14 +29,23 @@
                         <div class="form-group">
                             <label class="form-label">Họ và tên người nhận</label>
                             <asp:TextBox ID="txtName" runat="server" CssClass="form-control-pill" Placeholder="Nhập họ và tên"></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="reqName" runat="server" ControlToValidate="txtName"
+                                ErrorMessage="Vui lòng nhập họ tên người nhận." CssClass="field-error" Display="Dynamic" />
                         </div>
                         <div class="form-group">
                             <label class="form-label">Số điện thoại liên hệ</label>
                             <asp:TextBox ID="txtPhone" runat="server" CssClass="form-control-pill" Placeholder="Nhập số điện thoại"></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="reqPhone" runat="server" ControlToValidate="txtPhone"
+                                ErrorMessage="Vui lòng nhập số điện thoại." CssClass="field-error" Display="Dynamic" />
+                            <asp:RegularExpressionValidator ID="revPhone" runat="server" ControlToValidate="txtPhone"
+                                ValidationExpression="^[0-9]{9,11}$" ErrorMessage="Số điện thoại phải có từ 9 đến 11 chữ số."
+                                CssClass="field-error" Display="Dynamic" />
                         </div>
                         <div class="form-group">
                             <label class="form-label">Địa chỉ nhận hàng chi tiết</label>
                             <asp:TextBox ID="txtAddress" runat="server" CssClass="form-control-pill" TextMode="MultiLine" Rows="2" Placeholder="Số nhà, tên đường, phường/xã, quận/huyện..."></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="reqAddress" runat="server" ControlToValidate="txtAddress"
+                                ErrorMessage="Vui lòng nhập địa chỉ nhận hàng." CssClass="field-error" Display="Dynamic" />
                         </div>
                     </div>
 
@@ -62,7 +72,7 @@
                                             <div class="item-qty">Size: <%# Eval("Size") %> | SL: <%# Eval("Quantity") %></div>
                                         </div>
                                     </div>
-                                    <div class="item-price"><%# string.Format("{0:N0}đ", Convert.ToDecimal(Eval("Price")) * Convert.ToInt32(Eval("Quantity"))) %></div>
+                                    <div class="item-price"><%# Money.Format(Convert.ToDecimal(Eval("Price")) * Convert.ToInt32(Eval("Quantity"))) %></div>
                                 </div>
                             </ItemTemplate>
                         </asp:Repeater>

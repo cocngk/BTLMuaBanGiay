@@ -9,7 +9,7 @@ using ShoeStore.Models;
 
 namespace ShoeStore
 {
-    public partial class SanPham : System.Web.UI.Page
+    public partial class SanPham : ShopPage
     {
 
         private const int PageSize = 6;
@@ -103,10 +103,8 @@ namespace ShoeStore
 
         protected void rptAllProducts_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            if (!AuthHelper.IsLoggedIn())
+            if (!RequireLogin("Vui lòng đăng nhập hoặc đăng ký tài khoản để mua hàng!"))
             {
-                Toast.RequireLogin(this, "RequireLoginToast",
-                    "Vui lòng đăng nhập hoặc đăng ký tài khoản để mua hàng!");
                 return;
             }
 
@@ -119,13 +117,13 @@ namespace ShoeStore
 
             if (e.CommandName == "AddToCart")
             {
-                new SessionCartStore(Session).AddOrMerge(selected.Id, selected.Name, selected.Price, selectedSize, 1, selected.ImageUrl, selected.Stock);
+                CartStore.AddOrMerge(selected.Id, selected.Name, selected.Price, selectedSize, 1, selected.ImageUrl, selected.Stock);
                 Toast.Success(this, "AddToCartToast", "Đã thêm " + selected.Name + " vào giỏ hàng!");
             }
             else if (e.CommandName == "BuyNow")
             {
                 // Gộp vào giỏ hiện có (không xóa giỏ cũ) rồi sang thanh toán
-                new SessionCartStore(Session).AddOrMerge(selected.Id, selected.Name, selected.Price, selectedSize, 1, selected.ImageUrl, selected.Stock);
+                CartStore.AddOrMerge(selected.Id, selected.Name, selected.Price, selectedSize, 1, selected.ImageUrl, selected.Stock);
                 Response.Redirect("ThanhToan.aspx");
             }
         }

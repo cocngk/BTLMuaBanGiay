@@ -8,10 +8,8 @@ using ShoeStore.Models;
 
 namespace ShoeStore
 {
-    public partial class GioHang : System.Web.UI.Page
+    public partial class GioHang : ShopPage
     {
-        private SessionCartStore Store => new SessionCartStore(Session);
-
         private int LookupStock(int id)
         {
             ProductItem product = ProductStore.GetAll().FirstOrDefault(p => p.Id == id);
@@ -28,7 +26,7 @@ namespace ShoeStore
 
         private void LoadCartData()
         {
-            Cart cart = Store.Load();
+            Cart cart = CartStore.Load();
 
             if (cart.IsEmpty)
             {
@@ -55,8 +53,8 @@ namespace ShoeStore
                     }).ToList();
                 rptCart.DataBind();
 
-                litSubTotal.Text = string.Format("{0:N0}đ", cart.SubTotal());
-                litTotal.Text = string.Format("{0:N0}đ", cart.SubTotal());
+                litSubTotal.Text = Money.Format(cart.SubTotal());
+                litTotal.Text = Money.Format(cart.SubTotal());
             }
         }
 
@@ -84,10 +82,10 @@ namespace ShoeStore
                     // thao tác lưu. Đọc luôn giá trị đang được gõ trong form rồi mới xoá.
                     FlushPendingQuantities();
 
-                    Cart cart = Store.Load();
+                    Cart cart = CartStore.Load();
                     if (cart.Remove(id, size))
                     {
-                        Store.Save(cart);
+                        CartStore.Save(cart);
                         LoadCartData();
                         Toast.Info(this, "ToastDelete", "Đã xóa sản phẩm khỏi giỏ hàng!");
                     }
@@ -110,7 +108,7 @@ namespace ShoeStore
         /// </summary>
         private void FlushPendingQuantities()
         {
-            Cart cart = Store.Load();
+            Cart cart = CartStore.Load();
             if (cart.IsEmpty) return;
 
             if (rptCart.Items.Count == 0)
@@ -145,15 +143,13 @@ namespace ShoeStore
                 changed = true;
             }
 
-            if (changed) Store.Save(cart);
+            if (changed) CartStore.Save(cart);
         }
 
         protected void btnGoToCheckout_Click(object sender, EventArgs e)
         {
-            if (!AuthHelper.IsLoggedIn())
+            if (!RequireLogin("Vui lòng đăng nhập để tiến hành thanh toán!"))
             {
-                Toast.RequireLogin(this, "RequireLoginCheckoutToast",
-                    "Vui lòng đăng nhập để tiến hành thanh toán!");
                 return;
             }
 

@@ -96,8 +96,10 @@
     <Compile Include="Data\ProductStore.cs" />
     <Compile Include="Data\BlogStore.cs" />
     <Compile Include="Data\CatalogQuery.cs" />
+    <Compile Include="Data\SessionOrderStore.cs" />
     <Compile Include="Data\SessionCartStore.cs" />
     <Compile Include="Helpers\AuthHelper.cs" />
+    <Compile Include="Helpers\Money.cs" />
     <Compile Include="Helpers\Toast.cs" />
     <Compile Include="Models\Cart.cs" />
     <Compile Include="Models\CartItem.cs" />
@@ -107,6 +109,8 @@
     <Compile Include="Models\ShopInfo.cs" />
     <Compile Include="Models\FooterLink.cs" />
     <Compile Include="Models\SocialLink.cs" />
+    <Compile Include="Models\Order.cs" />
+    <Compile Include="Pages\ShopPage.cs" />
     <Compile Include="Models\ProductItem.cs" />
     <Compile Include="ChiTietSanPham.aspx.cs">
       <DependentUpon>ChiTietSanPham.aspx</DependentUpon>

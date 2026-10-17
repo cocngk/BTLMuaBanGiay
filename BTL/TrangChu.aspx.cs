@@ -7,7 +7,7 @@ using ShoeStore.Models;
 
 namespace ShoeStore
 {
-    public partial class TrangChu : System.Web.UI.Page
+    public partial class TrangChu : ShopPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -26,10 +26,8 @@ namespace ShoeStore
         // BẤM NÚT "KHÁM PHÁ NGAY" TRÊN HERO BANNER
         protected void btnHeroDiscover_Click(object sender, EventArgs e)
         {
-            if (!AuthHelper.IsLoggedIn())
+            if (!RequireLogin("Vui lòng đăng nhập hoặc đăng ký tài khoản để khám phá cửa hàng!"))
             {
-                Toast.RequireLogin(this, "HomeHeroRequireLogin",
-                    "Vui lòng đăng nhập hoặc đăng ký tài khoản để khám phá cửa hàng!");
                 return;
             }
 
@@ -42,10 +40,8 @@ namespace ShoeStore
             if (e.CommandName == "QuickAdd")
             {
                 // 1. KIỂM TRA ĐĂNG NHẬP
-                if (!AuthHelper.IsLoggedIn())
+                if (!RequireLogin("Vui lòng đăng nhập hoặc đăng ký tài khoản để mua hàng!"))
                 {
-                    Toast.RequireLogin(this, "HomeRequireLoginToast",
-                        "Vui lòng đăng nhập hoặc đăng ký tài khoản để mua hàng!");
                     return;
                 }
 
@@ -56,7 +52,7 @@ namespace ShoeStore
                 if (selected != null)
                 {
                     string size = selected.FirstSize();
-                    new SessionCartStore(Session).AddOrMerge(selected.Id, selected.Name, selected.Price, size, 1, selected.ImageUrl, selected.Stock);
+                    CartStore.AddOrMerge(selected.Id, selected.Name, selected.Price, size, 1, selected.ImageUrl, selected.Stock);
                     Toast.Success(this, "HomeAddToCartSuccessToast",
                         "Đã thêm " + selected.Name + " (Size " + size + ") vào giỏ hàng!");
                 }

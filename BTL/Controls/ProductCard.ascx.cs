@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using ShoeStore.Helpers;
 using System.Web.UI;
 
 namespace ShoeStore
@@ -37,7 +38,7 @@ namespace ShoeStore
             imgThumb.AlternateText = ProductName ?? "";
             litCardName.Text = ProductName ?? "";
             litCardDesc.Text = Description ?? "";
-            litCardPrice.Text = string.Format("{0:N0}đ", Price);
+            litCardPrice.Text = Money.Format(Price);
             pnlHot.Visible = IsHot;
 
             btnQuickAdd.Visible = (ActionMode == CardActionMode.QuickAdd);

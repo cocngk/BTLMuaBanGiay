@@ -10,7 +10,7 @@ using ShoeStore.Models;
 
 namespace ShoeStore
 {
-    public partial class DangKy : System.Web.UI.Page
+    public partial class DangKy : ShopPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {

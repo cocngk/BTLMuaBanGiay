@@ -7,7 +7,7 @@ using ShoeStore.Models;
 
 namespace ShoeStore
 {
-    public partial class TinTuc : System.Web.UI.Page
+    public partial class TinTuc : ShopPage
     {
         // ĐÃ ĐIỀU CHỈNH: 3 BÀI VIẾT / TRANG
         private const int PageSize = 3;

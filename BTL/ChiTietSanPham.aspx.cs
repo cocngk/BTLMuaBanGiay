@@ -10,7 +10,7 @@ using ShoeStore.Models;
 
 namespace ShoeStore
 {
-    public partial class ChiTietSanPham : System.Web.UI.Page
+    public partial class ChiTietSanPham : ShopPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -41,7 +41,7 @@ namespace ShoeStore
                     litName.Text = product.Name;
                     litBreadcrumb.Text = product.Name;
                     litSku.Text = "SNK-" + product.Id.ToString("D4");
-                    litPrice.Text = string.Format("{0:N0}đ", product.Price);
+                    litPrice.Text = Money.Format(product.Price);
                     litDescription.Text = product.Description + " Được làm từ chất liệu cao cấp, độ bền hoàn hảo và thiết kế tối ưu nâng tầm phong cách thời trang năng động cho bạn.";
 
                     // SEO: title + meta description theo sản phẩm
@@ -61,7 +61,7 @@ namespace ShoeStore
                     if (product.OldPrice.HasValue && product.OldPrice.Value > product.Price)
                     {
                         pnlDiscount.Visible = true;
-                        litOldPrice.Text = string.Format("{0:N0}đ", product.OldPrice.Value);
+                        litOldPrice.Text = Money.Format(product.OldPrice.Value);
                         int pct = (int)Math.Round((1 - product.Price / product.OldPrice.Value) * 100);
                         litDiscountPct.Text = "-" + pct + "%";
                     }
@@ -148,7 +148,7 @@ namespace ShoeStore
         /// </summary>
         private int MaxBuyable(ProductItem product)
         {
-            Cart cart = new SessionCartStore(Session).Load();
+            Cart cart = CartStore.Load();
             int remaining = cart.RemainingToBuy(product.Id, product.Stock, null);
             return remaining > 0 ? remaining : 1;
         }
@@ -161,10 +161,8 @@ namespace ShoeStore
 
         protected void btnAddToCart_Click(object sender, EventArgs e)
         {
-            if (!AuthHelper.IsLoggedIn())
+            if (!RequireLogin("Vui lòng đăng nhập hoặc đăng ký tài khoản để mua hàng!"))
             {
-                Toast.RequireLogin(this, "RequireLoginDetailToast",
-                    "Vui lòng đăng nhập hoặc đăng ký tài khoản để mua hàng!");
                 return;
             }
 
@@ -174,7 +172,7 @@ namespace ShoeStore
             if (product != null)
             {
                 string size = ResolveSize(product);
-                new SessionCartStore(Session).AddOrMerge(product.Id, product.Name, product.Price, size, ResolveQty(product), product.ImageUrl, product.Stock);
+                CartStore.AddOrMerge(product.Id, product.Name, product.Price, size, ResolveQty(product), product.ImageUrl, product.Stock);
                 Toast.Success(this, "DetailToastSuccess",
                     "Đã thêm " + product.Name + " (Size " + size + ") vào giỏ hàng!");
             }
@@ -182,10 +180,8 @@ namespace ShoeStore
 
         protected void btnBuyNow_Click(object sender, EventArgs e)
         {
-            if (!AuthHelper.IsLoggedIn())
+            if (!RequireLogin("Vui lòng đăng nhập để tiến hành thanh toán!"))
             {
-                Toast.RequireLogin(this, "RequireLoginBuyNowToast",
-                    "Vui lòng đăng nhập để tiến hành thanh toán!");
                 return;
             }
 
@@ -196,7 +192,7 @@ namespace ShoeStore
             {
                 // Gộp vào giỏ hiện có (không xóa giỏ cũ) rồi sang thanh toán
                 string size = ResolveSize(product);
-                new SessionCartStore(Session).AddOrMerge(product.Id, product.Name, product.Price, size, ResolveQty(product), product.ImageUrl, product.Stock);
+                CartStore.AddOrMerge(product.Id, product.Name, product.Price, size, ResolveQty(product), product.ImageUrl, product.Stock);
                 Response.Redirect("ThanhToan.aspx");
             }
         }

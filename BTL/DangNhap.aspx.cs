@@ -9,7 +9,7 @@ using ShoeStore.Models;
 
 namespace ShoeStore
 {
-    public partial class DangNhap : System.Web.UI.Page
+    public partial class DangNhap : ShopPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {

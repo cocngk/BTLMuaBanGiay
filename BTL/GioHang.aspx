@@ -1,4 +1,5 @@
 ﻿<%@ Page Title="Giỏ Hàng" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="GioHang.aspx.cs" Inherits="ShoeStore.GioHang" %>
+<%@ Import Namespace="ShoeStore.Helpers" %>
 
 <asp:Content ID="HeadCss" ContentPlaceHolderID="HeadContent" runat="server">
     <link rel="stylesheet" href="Content/giohang.css" />
@@ -50,11 +51,11 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="item-price"><%# string.Format("{0:N0}đ", Eval("Price")) %></td>
+                                    <td class="item-price"><%# Money.Format(Convert.ToDecimal(Eval("Price"))) %></td>
                                     <td>
                                         <asp:TextBox ID="txtQuantity" runat="server" Text='<%# Eval("Quantity") %>' CssClass="qty-input js-qty" TextMode="Number" min="1" max='<%# Eval("Max") %>' title='Tối đa <%# Eval("Max") %> đôi trong tồn kho'></asp:TextBox>
                                     </td>
-                                    <td class="item-price line-total"><%# string.Format("{0:N0}đ", Convert.ToDecimal(Eval("Price")) * Convert.ToInt32(Eval("Quantity"))) %></td>
+                                    <td class="item-price line-total"><%# Money.Format(Convert.ToDecimal(Eval("Price")) * Convert.ToInt32(Eval("Quantity"))) %></td>
                                     <td>
                                         <asp:LinkButton ID="btnRemove" runat="server" CommandName="Remove" CommandArgument='<%# Eval("Id") + "|" + Eval("Size") %>' CssClass="btn-delete">
                                             <i class="fa-solid fa-trash-can"></i>
@@ -100,9 +101,6 @@
 
     <script type="text/javascript">
         function bindCartAuto() {
-            function fmt(n) {
-                return n.toLocaleString('vi-VN') + 'đ';
-            }
             function maxOf(row) {
                 var m = parseInt(row.getAttribute('data-max'), 10);
                 return isNaN(m) || m < 1 ? 1 : m;
@@ -135,12 +133,12 @@
                     if (input && parseInt(input.value, 10) !== qty) input.value = qty;
                     total += price * qty;
                     var cell = row.querySelector('.line-total');
-                    if (cell) cell.textContent = fmt(price * qty);
+                    if (cell) cell.textContent = formatMoney(price * qty);
                 });
                 var sub = document.getElementById('subTotalValue');
                 var tot = document.getElementById('totalValue');
-                if (sub) sub.textContent = fmt(total);
-                if (tot) tot.textContent = fmt(total);
+                if (sub) sub.textContent = formatMoney(total);
+                if (tot) tot.textContent = formatMoney(total);
             }
             var timer = null;
             function scheduleSave() {

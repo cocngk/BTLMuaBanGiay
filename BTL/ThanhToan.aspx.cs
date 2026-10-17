@@ -1,8 +1,5 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Web;
 using System.Web.UI;
 using ShoeStore.Data;
 using ShoeStore.Helpers;
@@ -10,26 +7,16 @@ using ShoeStore.Models;
 
 namespace ShoeStore
 {
-    public partial class ThanhToan : System.Web.UI.Page
+    public partial class ThanhToan : ShopPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["Username"] == null)
+            if (!RequireLogin("Vui lòng đăng nhập để tiếp tục thanh toán!"))
             {
-                string script = @"
-                    showToast('Vui lòng đăng nhập để tiếp tục thanh toán!', 'error');
-                    setTimeout(function() {
-                        window.location.href = 'DangNhap.aspx';
-                    }, 1800);
-                ";
-
-                ClientScript.RegisterStartupScript(
-                    this.GetType(),
-                    "RequireLogin",
-                    script,
-                    true
-                );
-
+                // Không đăng nhập thì không hiện form thanh toán; toast + form
+                // đăng nhập lo phần còn lại.
+                pnlEmpty.Visible = false;
+                pnlCheckout.Visible = false;
                 return;
             }
 
@@ -41,74 +28,62 @@ namespace ShoeStore
 
         private void LoadOrderSummary()
         {
-            Cart cart = new SessionCartStore(Session).Load();
+            Cart cart = CartStore.Load();
 
             if (cart.IsEmpty)
             {
-                pnlEmpty.Visible = true;
-                pnlCheckout.Visible = false;
+                ShowEmpty();
+                return;
             }
-            else
-            {
-                pnlEmpty.Visible = false;
-                pnlCheckout.Visible = true;
 
-                // Cart khong cai IEnumerable nen khong bind truc tiep, phai lay Lines
-                // giong trang GioHang, neu khong se nem ArgumentException.
-                rptSummary.DataSource = cart.Lines.ToList();
-                rptSummary.DataBind();
+            pnlEmpty.Visible = false;
+            pnlCheckout.Visible = true;
 
-                decimal total = cart.SubTotal();
+            // Cart khong cai IEnumerable nen khong bind truc tiep, phai lay Lines
+            // giong trang GioHang, neu khong se nem ArgumentException.
+            rptSummary.DataSource = cart.Lines.ToList();
+            rptSummary.DataBind();
 
-                litSubTotal.Text = string.Format("{0:N0}đ", total);
-                litTotal.Text = string.Format("{0:N0}đ", total);
-            }
+            litSubTotal.Text = Money.Format(cart.SubTotal());
+            litTotal.Text = Money.Format(cart.SubTotal());
+        }
+
+        private void ShowEmpty()
+        {
+            pnlEmpty.Visible = true;
+            pnlCheckout.Visible = false;
         }
 
         protected void btnConfirmCheckout_Click(object sender, EventArgs e)
         {
-            OrderInput order = new OrderInput
+            // Sai định dạng thì lỗi đã hiện ngay dưới từng ô, ở đây chỉ chặn lại.
+            if (!Page.IsValid) return;
+
+            Cart cart = CartStore.Load();
+            if (cart.IsEmpty)
             {
+                ShowEmpty();
+                return;
+            }
+
+            Order order = new Order
+            {
+                Code = Order.NewCode(),
+                CreatedAt = DateTime.Now,
                 CustomerName = txtName.Text.Trim(),
                 Phone = txtPhone.Text.Trim(),
                 Address = txtAddress.Text.Trim(),
-                PaymentMethod = rblPaymentMethod.SelectedValue
+                PaymentMethod = rblPaymentMethod.SelectedValue,
+                Lines = OrderLine.FromCart(cart.Lines)
             };
 
-            string error = OrderValidator.Validate(order);
-            if (error != null)
-            {
-                Toast.Show(this, "Toast_" + Guid.NewGuid().ToString("N"), error, "error");
-                return;
-            }
+            new SessionOrderStore(Session).Save(order);
+            CartStore.Clear();
 
-            Cart cart = new SessionCartStore(Session).Load();
-
-            if (cart.IsEmpty)
-            {
-                Toast.Show(this, "Toast_" + Guid.NewGuid().ToString("N"),
-                    "Giỏ hàng đang trống. Vui lòng chọn sản phẩm trước!", "error");
-                return;
-            }
-
-            new SessionCartStore(Session).Clear();
-
-            string methodText = rblPaymentMethod.SelectedItem != null
-                ? rblPaymentMethod.SelectedItem.Text
-                : "Thanh toán khi nhận hàng (COD)";
-            string script = @"
-                showToast('Đặt hàng thành công! " + methodText.Replace("'", "\\'") + @"', 'success');
-                setTimeout(function() {
-                    window.location.href = 'TrangChu.aspx';
-                }, 2000);
-            ";
-
-            ClientScript.RegisterStartupScript(
-                this.GetType(),
-                "CheckoutSuccess",
-                script,
-                true
-            );
+            Toast.ShowAndRedirect(this, "CheckoutSuccess_" + Guid.NewGuid().ToString("N"),
+                "Đặt hàng thành công! Mã đơn " + order.Code + ". Chúng tôi sẽ gọi lại để xác nhận.",
+                "success",
+                "TrangChu.aspx");
         }
     }
 }

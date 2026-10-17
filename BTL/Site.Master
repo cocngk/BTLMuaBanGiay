@@ -222,6 +222,9 @@
                 return true;
             }
 
+            // Sinh tu Helpers.Money nen client va server luon hien cung khu giá.
+            <%= Money.JsFormatter %>
+
             function showToast(message, type) {
                 type = type || 'error';
 
