@@ -78,6 +78,10 @@
     <Content Include="TrangChu.aspx" />
     <Content Include="TuVan.aspx" />
     <Content Include="Controls\SearchBox.ascx" />
+    <Content Include="Content\vendor\fontawesome\css\*.css" />
+    <Content Include="Content\vendor\fontawesome\webfonts\*.woff2" />
+    <Content Include="Content\fonts\fonts.css" />
+    <Content Include="Content\fonts\*.woff2" />
     <Content Include="Content\images\products\*.jpg" />
     <Content Include="Content\images\blogs\*.jpg" />
     <Content Include="Content\product-card.css" />
