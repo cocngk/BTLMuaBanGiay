@@ -41,3 +41,4 @@ Toàn bộ ảnh trong `Content/images/` được tải về từ [Unsplash](htt
 
 * Site cần chạy khi không có mạng (demo trên máy cục bộ), nên ảnh **được tải về lưu trong repo** thay vì hotlink. Điều khoản API của Unsplash khuyến nghị dùng URL trực tiếp và không lưu lại ảnh — nếu muốn tuân thủ tuyệt đối thì đổi các đường dẫn trong `ProductStore`/`BlogStore` về URL gốc và bỏ thư mục `Content/images`, đổi lại site sẽ phụ thuộc mạng.
 * Ảnh trong thư viện là ảnh chụp giày thật của tác giả, **không phải đúng mẫu ghi trong tên sản phẩm** — danh mục dùng ảnh minh hoạ theo thương hiệu, tương tự phần lớn site bán hàng dùng ảnh stock.
+* Cả 20 ảnh trong thư viện đã báo lượt tải qua `track_download` của Unsplash API.
