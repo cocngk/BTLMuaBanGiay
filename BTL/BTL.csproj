@@ -121,7 +121,7 @@
     <Compile Include="Models\SocialLink.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Pages\ShopPage.cs" />
-    <Compile Include="Models\ProductImage.cs" />
+    <Compile Include="Models\ProductColourway.cs" />
     <Compile Include="Models\ProductItem.cs" />
     <Compile Include="ChiTietSanPham.aspx.cs">
       <DependentUpon>ChiTietSanPham.aspx</DependentUpon>

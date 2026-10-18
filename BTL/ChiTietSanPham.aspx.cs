@@ -33,7 +33,7 @@ namespace ShoeStore
                     pnlNotFound.Visible = false;
 
                     imgProduct.ImageUrl = ResolveUrl(product.LargeImageUrl());
-                    BindGallery(product);
+                    BindColourways(product);
                     imgProduct.AlternateText = product.Name;
                     litBrand.Text = product.Brand;
                     lnkViewAllRelated.NavigateUrl = "SanPham.aspx?brand=" + Server.UrlEncode(product.Brand);
@@ -108,22 +108,24 @@ namespace ShoeStore
         }
 
         /// <summary>
-        /// Dựng dải thumbnail từ dữ liệu. Chỉ hiện khi sản phẩm thật sự có nhiều
-        /// góc nhìn — không dựng ảnh giả chỉ để lấp chỗ.
+        /// Dựng dải chọn màu từ dữ liệu. Chỉ hiện khi sản phẩm thật sự có từ hai
+        /// màu trở lên — không dựng màu giả chỉ để lấp chỗ.
         /// </summary>
-        private void BindGallery(ProductItem product)
+        private void BindColourways(ProductItem product)
         {
-            if (product.Gallery == null || product.Gallery.Count < 2)
+            if (product.Colourways == null || product.Colourways.Count < 2)
             {
-                pnlGallery.Visible = false;
+                pnlColourways.Visible = false;
                 return;
             }
 
-            pnlGallery.Visible = true;
-            rptThumbs.DataSource = product.Gallery
-                .Select((g, i) => new { Small = g.Small, Large = g.Large, Alt = product.Name + " — góc " + (i + 1) })
+            pnlColourways.Visible = true;
+            rptColourways.DataSource = product.Colourways
+                .Select((c, i) => new { Name = c.Name, Small = c.Small, Large = c.Large,
+                                        Active = i == 0 ? " colourway-chip active" : " colourway-chip",
+                                        Alt = product.Name + " — màu " + c.Name })
                 .ToList();
-            rptThumbs.DataBind();
+            rptColourways.DataBind();
         }
 
         /// <summary>Title và meta description lấy theo sản phẩm đang xem.</summary>

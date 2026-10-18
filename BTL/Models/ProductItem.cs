@@ -31,10 +31,11 @@ namespace ShoeStore.Models
         public string ImageUrlLarge { get; set; }
 
         /// <summary>
-        /// Các góc nhìn trong thư viện ảnh (view 1 là ảnh chính). Rỗng thì trang
-        /// chi tiết chỉ hiện một ảnh — đừng dựng ảnh giả chỉ để lấp chỗ trống.
+        /// Các màu của sản phẩm (màu đầu tiên là màu đang hiển thị, và cũng
+        /// chính là ImageUrlLarge). Rỗng thì trang chi tiết chỉ hiện một ảnh —
+        /// đừng dựng ảnh giả chỉ để lấp chỗ trống.
         /// </summary>
-        public List<ProductImage> Gallery { get; set; }
+        public List<ProductColourway> Colourways { get; set; }
 
         /// <summary>Ảnh lớn có sẵn không — nếu không thì dùng ảnh nhỏ.</summary>
         public string LargeImageUrl()

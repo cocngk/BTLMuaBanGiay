@@ -25,18 +25,20 @@
                     <div class="zoom-wrap" id="zoomWrap">
                         <asp:Image ID="imgProduct" runat="server" CssClass="product-main-img" />
                     </div>
-                    <asp:Panel ID="pnlGallery" runat="server" Visible="false" CssClass="thumb-strip">
-                        <asp:Repeater ID="rptThumbs" runat="server">
+                    <asp:Panel ID="pnlColourways" runat="server" Visible="false" CssClass="colourway-row">
+                        <span class="colourway-label">Màu sắc:</span>
+                        <asp:Repeater ID="rptColourways" runat="server">
                             <ItemTemplate>
-                                <img src='<%# ResolveUrl(Eval("Small").ToString()) %>'
-                                     data-large='<%# ResolveUrl(Eval("Large").ToString()) %>'
-                                     alt='<%# Eval("Alt") %>'
-                                     class='<%# Container.ItemIndex == 0 ? "thumb-img active" : "thumb-img" %>'
-                                     onclick="swapMainImage(this)" />
+                                <button type="button" class='<%# Eval("Active") %>'
+                                        data-large='<%# ResolveUrl(Eval("Large").ToString()) %>'
+                                        onclick="swapMainImage(this)">
+                                    <img src='<%# ResolveUrl(Eval("Small").ToString()) %>' alt='<%# Eval("Alt") %>' />
+                                    <span class="colourway-name"><%# Eval("Name") %></span>
+                                </button>
                             </ItemTemplate>
                         </asp:Repeater>
                     </asp:Panel>
-                    <p class="zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i> Di chuột vào ảnh để phóng to, bấm ảnh nhỏ để đổi góc nhìn</p>
+                    <p class="zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i> Di chuột vào ảnh để phóng to, bấm một màu để đổi ảnh</p>
                 </div>
 
                 <div class="product-info-box">
@@ -194,13 +196,13 @@
             box.style.display = (box.style.display === 'none') ? 'block' : 'none';
         }
 
-        function swapMainImage(thumb) {
+        function swapMainImage(chip) {
             var main = document.getElementById('<%= imgProduct.ClientID %>');
-            var large = thumb.getAttribute('data-large');
+            var large = chip.getAttribute('data-large');
             if (!main || !large) return;
             main.src = large;
-            document.querySelectorAll('.thumb-img').forEach(function (t) { t.classList.remove('active'); });
-            thumb.classList.add('active');
+            document.querySelectorAll('.colourway-chip').forEach(function (c) { c.classList.remove('active'); });
+            chip.classList.add('active');
         }
 
         // Zoom theo vị trí chuột
