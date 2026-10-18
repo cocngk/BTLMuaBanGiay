@@ -55,8 +55,15 @@ namespace ShoeStore
                         litDiscountPct.Text = "-" + pct + "%";
                     }
 
-                    // Tồn kho
-                    hfMaxQty.Value = MaxBuyable(product).ToString();
+                    // Tồn kho.
+                    //
+                    // Số in ra là số lớn nhất còn mua được (tồn kho trừ phần đã
+                    // có trong giỏ), đúng số mà ô số lượng dùng. Trước đây in
+                    // product.Stock nên khi giỏ đã có sẵn hàng, pill báo "còn 5
+                    // đôi" trong khi ô số lượng chỉ cho thêm tới 2 — hai số
+                    // khác nhau cho cùng một sự thật, ngay trên một màn hình.
+                    int canBuy = MaxBuyable(product);
+                    hfMaxQty.Value = canBuy.ToString();
                     if (product.Stock <= 0)
                     {
                         litStock.Text = "<span class=\"stock-pill out\">Hết hàng</span>";
@@ -66,7 +73,10 @@ namespace ShoeStore
                     }
                     else if (product.Stock <= 5)
                     {
-                        litStock.Text = "<span class=\"stock-pill low\">Sắp hết hàng — chỉ còn " + product.Stock + " đôi</span>";
+                        // Ngưỡng "sắp hết" xét theo tồn kho của shop, không theo
+                        // số còn mua được — nếu không, mỗi lần thêm vào giỏ thì
+                        // pill lại đổi màu, đọc như thông báo lỗi.
+                        litStock.Text = "<span class=\"stock-pill low\">Sắp hết hàng — chỉ còn " + canBuy + " đôi</span>";
                     }
                     else
                     {
