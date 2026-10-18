@@ -2,6 +2,7 @@
 <%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="ShoeStore.SiteMaster" %>
 <%@ Register Src="~/Controls/SearchBox.ascx" TagPrefix="uc" TagName="SearchBox" %>
 <%@ Import Namespace="ShoeStore.Models" %>
+<%@ Import Namespace="ShoeStore.Helpers" %>
 
 <!DOCTYPE html>
 <html>
