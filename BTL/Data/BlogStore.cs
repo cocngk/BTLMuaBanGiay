@@ -17,7 +17,7 @@ namespace ShoeStore.Data
                     Date = "12/10/2026",
                     Views = 1250,
                     Category = "Mẹo chọn Size giày",
-                    ImageUrl = "Content/images/blogs/blog-1.jpg"
+                    ImageUrl = "~/Content/images/blogs/blog-1.jpg"
                 },
                 new BlogItem {
                     Id = 2,
@@ -26,7 +26,7 @@ namespace ShoeStore.Data
                     Date = "11/10/2026",
                     Views = 980,
                     Category = "Phối đồ thời trang",
-                    ImageUrl = "Content/images/blogs/blog-2.jpg"
+                    ImageUrl = "~/Content/images/blogs/blog-2.jpg"
                 },
                 new BlogItem {
                     Id = 3,
@@ -35,7 +35,7 @@ namespace ShoeStore.Data
                     Date = "09/10/2026",
                     Views = 870,
                     Category = "Hướng dẫn vệ sinh",
-                    ImageUrl = "Content/images/blogs/blog-3.jpg"
+                    ImageUrl = "~/Content/images/blogs/blog-3.jpg"
                 },
                 new BlogItem {
                     Id = 4,
@@ -44,7 +44,7 @@ namespace ShoeStore.Data
                     Date = "05/10/2026",
                     Views = 760,
                     Category = "Xu hướng Sneaker 2026",
-                    ImageUrl = "Content/images/blogs/blog-4.jpg"
+                    ImageUrl = "~/Content/images/blogs/blog-4.jpg"
                 },
                 new BlogItem {
                     Id = 5,
@@ -53,7 +53,7 @@ namespace ShoeStore.Data
                     Date = "01/10/2026",
                     Views = 640,
                     Category = "Xu hướng Sneaker 2026",
-                    ImageUrl = "Content/images/blogs/blog-5.jpg"
+                    ImageUrl = "~/Content/images/blogs/blog-5.jpg"
                 },
                 new BlogItem {
                     Id = 6,
@@ -62,7 +62,7 @@ namespace ShoeStore.Data
                     Date = "28/09/2026",
                     Views = 520,
                     Category = "Hướng dẫn vệ sinh",
-                    ImageUrl = "Content/images/blogs/blog-6.jpg"
+                    ImageUrl = "~/Content/images/blogs/blog-6.jpg"
                 },
                 new BlogItem {
                     Id = 7,
@@ -71,7 +71,7 @@ namespace ShoeStore.Data
                     Date = "25/09/2026",
                     Views = 410,
                     Category = "Phối đồ thời trang",
-                    ImageUrl = "Content/images/blogs/blog-7.jpg"
+                    ImageUrl = "~/Content/images/blogs/blog-7.jpg"
                 }
             };
         }

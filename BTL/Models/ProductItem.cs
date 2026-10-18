@@ -19,7 +19,9 @@ namespace ShoeStore.Models
         public int Stock { get; set; } = 10;
         public string Sizes { get; set; }
         /// <summary>
-        /// Đường dẫn tương đối (không có dấu ~) để trang dùng ResolveUrl khi hiển thị.
+        /// Đường dẫn bắt đầu bằng ~ để ResolveUrl() luôn ra gốc ứng dụng.
+        /// Không có ~ thì ResolveUrl bên trong UserControl sẽ ghép vào /Controls/ — 
+        /// đó chính là lý do ảnh trong card từng hỏng.
         /// Trước đây đường dẫn là URL của Unsplash và trang chi tiết tự đổi kích
         /// cỡ bằng Replace("w=400", "w=1200") — thứ chỉ chạy được với URL online.
         /// </summary>
