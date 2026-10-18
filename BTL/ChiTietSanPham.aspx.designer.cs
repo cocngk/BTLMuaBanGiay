@@ -69,6 +69,15 @@ namespace ShoeStore
         protected global::System.Web.UI.WebControls.Image imgProduct;
 
         /// <summary>
+        /// imgSecondary control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image imgSecondary;
+
+        /// <summary>
         /// litBrand control.
         /// </summary>
         /// <remarks>
@@ -234,22 +243,13 @@ namespace ShoeStore
         protected global::System.Web.UI.WebControls.Button btnWishlist;
 
         /// <summary>
-        /// pnlGallery control.
+        /// pnlSecondary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlGallery;
-
-        /// <summary>
-        /// rptThumbs control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptThumbs;
+        protected global::System.Web.UI.WebControls.Panel pnlSecondary;
 
     }
 }

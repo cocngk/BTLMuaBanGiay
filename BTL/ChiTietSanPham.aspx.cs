@@ -33,7 +33,7 @@ namespace ShoeStore
                     pnlNotFound.Visible = false;
 
                     imgProduct.ImageUrl = ResolveUrl(product.LargeImageUrl());
-                    BindGallery(product);
+                    BindSecondaryImage(product);
                     imgProduct.AlternateText = product.Name;
                     litBrand.Text = product.Brand;
                     lnkViewAllRelated.NavigateUrl = "SanPham.aspx?brand=" + Server.UrlEncode(product.Brand);
@@ -108,22 +108,26 @@ namespace ShoeStore
         }
 
         /// <summary>
-        /// Dựng dải thumbnail từ dữ liệu. Chỉ hiện khi sản phẩm thật sự có nhiều
-        /// góc nhìn — không dựng ảnh giả chỉ để lấp chỗ.
+        /// Dựng ảnh phụ nằm ngay dưới ảnh chính.
+        ///
+        /// Trước đây là dải thumbnail + swapMainImage để đổi ảnh chính. Cách đó
+        /// hàm ý "sản phẩm có nhiều góc nhìn", nhưng ảnh là ảnh chụp tự nhiên,
+        /// mỗi đôi chỉ một góc duy nhất — dải ảnh nhỏ với hai ảnh gần giống nhau
+        /// trông như thiếu ảnh hơn là như chọn được góc khác. Bỏ hẳn dải, đặt
+        /// ảnh phụ thành khối riêng ngay dưới ảnh chính.
         /// </summary>
-        private void BindGallery(ProductItem product)
+        private void BindSecondaryImage(ProductItem product)
         {
             if (product.Gallery == null || product.Gallery.Count < 2)
             {
-                pnlGallery.Visible = false;
+                pnlSecondary.Visible = false;
                 return;
             }
 
-            pnlGallery.Visible = true;
-            rptThumbs.DataSource = product.Gallery
-                .Select((g, i) => new { Small = g.Small, Large = g.Large, Alt = product.Name + " — góc " + (i + 1) })
-                .ToList();
-            rptThumbs.DataBind();
+            ProductImage second = product.Gallery[1];
+            imgSecondary.ImageUrl = ResolveUrl(second.Large);
+            imgSecondary.AlternateText = product.Name + " — ảnh thứ hai";
+            pnlSecondary.Visible = true;
         }
 
         /// <summary>Title và meta description lấy theo sản phẩm đang xem.</summary>

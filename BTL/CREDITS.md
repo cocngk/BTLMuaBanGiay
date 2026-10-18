@@ -8,7 +8,7 @@ Toàn bộ ảnh trong `Content/images/` được tải về từ [Unsplash](htt
 
 ## Thư viện ảnh (`gallery/`)
 
-22 ảnh, mỗi ảnh hai cỡ: 800px dùng cho ảnh lớn, 240px dùng cho ảnh nhỏ.
+22 ảnh, mỗi ảnh một cỡ 800px dùng cho khung ảnh lớn ở trang chi tiết.
 
 | File | Tác giả | Trang ảnh |
 |---|---|---|
@@ -44,6 +44,7 @@ Toàn bộ ảnh trong `Content/images/` được tải về từ [Unsplash](htt
 ## Lưu ý
 
 * **Ảnh đã đúng với tên sản phẩm.** Danh mục cũ gắn ảnh theo hãng rồi đặt tên theo hãng, nên nhiều trang hiện ảnh của hãng khác — ví dụ "Puma Suede Classic" lại dùng ảnh Nike, "Adidas Forum Low White" dùng ảnh New Balance, và hai ảnh đại diện thực chất là **dây nhảy dụng cụ** chứ không phải giày. Danh mục hiện tại chỉ dùng những hãng có ảnh thật tương ứng (Nike, Converse, Vans, New Balance) cộng dòng sản phẩm của chính shop (SneakerX) cho những ảnh không có logo. Trước khi chọn ảnh phải xem tải về: trường `description` của API thường ghi sai (có ảnh được mô tả là "product photography" nhưng thực tế chụp cả tay người).
-* **Mỗi sản phẩm có 2 góc ảnh, không phải 3.** 12 sản phẩm × 3 góc cần 36 ảnh sạch, hiện chỉ tìm được 22; thiếu 14 ảnh thì sẽ phải dùng lại ảnh của sản phẩm khác và lộ ra ngay. Thiếu một ảnh đã lọc bỏ vì có tay người cầm giày.
+* **Mỗi sản phẩm có 2 góc ảnh, không phải 3.** 12 sản phẩm × 3 góc cần 36 ảnh sạch, hiện chỉ tìm được 22. Quan trọng hơn con số: ảnh Unsplash là ảnh chụp tự nhiên, **mỗi đôi chỉ có một góc duy nhất**, không có bộ 3 góc như ảnh sản phẩm chụp studio — nên tìm thêm cũng không giải quyết được, ba ảnh của cùng một đôi AF1 trắng vẫn giống nhau. Vì vậy trang chi tiết đã bỏ dải thumbnail và hàm `swapMainImage` (trước đó hàm ý "chọn được góc khác"), thay bằng ảnh phụ nằm ngay dưới ảnh chính. Xem `BindSecondaryImage` trong `ChiTietSanPham.aspx.cs`.
+* **Loại bỏ trong lúc dọn:** 22 file ảnh nhỏ 240px (`*-t.jpg`) vốn chỉ phục vụ dải thumbnail, cùng trường `ProductImage.Small` — không còn chỗ nào đọc tới.
 * Site cần chạy khi không có mạng (demo trên máy cục bộ), nên ảnh **được tải về lưu trong repo** thay vì hotlink. Điều khoản API của Unsplash khuyến nghị dùng URL trực tiếp và không lưu lại ảnh — nếu muốn tuân thủ tuyệt đối thì đổi các đường dẫn trong `ProductStore`/`BlogStore` về URL gốc và bỏ thư mục `Content/images`, đổi lại site sẽ phụ thuộc mạng.
 * Tất cả ảnh đã dùng đều đã báo lượt tải qua `track_download` của Unsplash API.
