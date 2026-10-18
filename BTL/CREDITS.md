@@ -2,11 +2,13 @@
 
 Toàn bộ ảnh trong `Content/images/` được tải về từ [Unsplash](https://unsplash.com) để site chạy được khi offline. Theo điều khoản API của Unsplash, mỗi ảnh đã dùng đều cần ghi rõ tác giả.
 
-## Ảnh đại diện sản phẩm (`products/`, `hero/`)
+## Ảnh đại diện sản phẩm (`products/`)
 
-Ảnh ghép trong `ProductStore` và `trangchu.css`, tải theo mẫu `?w=400` và `?w=1200`.
+12 ảnh chính, tải ở hai cỡ `?w=400` (`-sm`) và `?w=1200` (`-lg`). Chúng nằm trong cùng bộ ảnh với thư viện bên dưới.
 
 ## Thư viện ảnh (`gallery/`)
+
+22 ảnh, mỗi ảnh hai cỡ: 800px dùng cho ảnh lớn, 240px dùng cho ảnh nhỏ.
 
 | File | Tác giả | Trang ảnh |
 |---|---|---|
@@ -20,16 +22,18 @@ Toàn bộ ảnh trong `Content/images/` được tải về từ [Unsplash](htt
 | `b11` | Rachael Ren | [Ueu_6ZrVb80](https://unsplash.com/photos/black-converse-all-star-high-top-shoes-Ueu_6ZrVb80) |
 | `u11` | Ricardo vivona | [87W1itKmMdw](https://unsplash.com/photos/blue-and-white-high-top-sneakers-87W1itKmMdw) |
 | `u05` | Hipkicks | [HcqA34-uWo4](https://unsplash.com/photos/black-and-white-low-top-sneakers-HcqA34-uWo4) |
-| `u13` | Luis Felipe Lins | [8mK-YvyOcSE](https://unsplash.com/photos/white-nike-air-force-1-high-8mK-YvyOcSE) |
 | `u01` | Artem Bondarchuk | [XPBYi4K8vFI](https://unsplash.com/photos/white-and-red-nike-athletic-shoe-XPBYi4K8vFI) |
 | `u04` | Artem Bondarchuk | [vbdIgnfzrdg](https://unsplash.com/photos/white-black-and-red-nike-athletic-shoes-vbdIgnfzrdg) |
 | `u21` | Pedro Chosco | [7W2MeUBGh80](https://unsplash.com/photos/a-pair-of-yellow-and-black-tennis-shoes-7W2MeUBGh80) |
 | `u07` | Josh Marshall | [PcI3V1VbbrU](https://unsplash.com/photos/unpaired-white-nike-low-top-shoe-PcI3V1VbbrU) |
 | `u15` | Oskar Hagberg | [1mMIpisWzn8](https://unsplash.com/photos/a-red-shoe-on-a-black-background-1mMIpisWzn8) |
-| `n06` | kushal bajracharya | [sTlD1IYOvKc](https://unsplash.com/photos/person-holding-blue-and-white-nike-athletic-shoe-sTlD1IYOvKc) |
 | `n04` | yogesh kumar | [-iNq63c2vt8](https://unsplash.com/photos/white-nike-air-force-1-shoe--iNq63c2vt8) |
 | `n00` | LoboStudio Hamburg | [4lf8mVuZESQ](https://unsplash.com/photos/pair-of-brown-leather-lace-up-shoes-on-white-surface-4lf8mVuZESQ) |
 | `n05` | Alexandra Gorn | [CJ6SJO_yR5w](https://unsplash.com/photos/pair-of-shoes-and-white-box-near-plant-CJ6SJO_yR5w) |
+| `v01` | Max Petrunin | [A4fETzh_wlo](https://unsplash.com/photos/a-pair-of-purple-shoes-A4fETzh_wlo) |
+| `v02` | Yasmin Dangor | [tuDtWCfsEy8](https://unsplash.com/photos/person-wearing-white-and-green-low-top-sneakers-tuDtWCfsEy8) |
+| `v03` | Liming Wang | [qhyHWZTN9O4](https://unsplash.com/photos/a-pair-of-white-shoes-sitting-on-top-of-a-wooden-floor-qhyHWZTN9O4) |
+| `v05` | Sayan Majhi | [ujTqgoBjfOU](https://unsplash.com/photos/a-black-and-white-photo-of-a-laptop-keyboard-headphones-and-a-ujTqgoBjfOU) |
 
 ## Ảnh bài viết (`blogs/`)
 
@@ -39,6 +43,7 @@ Toàn bộ ảnh trong `Content/images/` được tải về từ [Unsplash](htt
 
 ## Lưu ý
 
+* **Ảnh đã đúng với tên sản phẩm.** Danh mục cũ gắn ảnh theo hãng rồi đặt tên theo hãng, nên nhiều trang hiện ảnh của hãng khác — ví dụ "Puma Suede Classic" lại dùng ảnh Nike, "Adidas Forum Low White" dùng ảnh New Balance, và hai ảnh đại diện thực chất là **dây nhảy dụng cụ** chứ không phải giày. Danh mục hiện tại chỉ dùng những hãng có ảnh thật tương ứng (Nike, Converse, Vans, New Balance) cộng dòng sản phẩm của chính shop (SneakerX) cho những ảnh không có logo. Trước khi chọn ảnh phải xem tải về: trường `description` của API thường ghi sai (có ảnh được mô tả là "product photography" nhưng thực tế chụp cả tay người).
+* **Mỗi sản phẩm có 2 góc ảnh, không phải 3.** 12 sản phẩm × 3 góc cần 36 ảnh sạch, hiện chỉ tìm được 22; thiếu 14 ảnh thì sẽ phải dùng lại ảnh của sản phẩm khác và lộ ra ngay. Thiếu một ảnh đã lọc bỏ vì có tay người cầm giày.
 * Site cần chạy khi không có mạng (demo trên máy cục bộ), nên ảnh **được tải về lưu trong repo** thay vì hotlink. Điều khoản API của Unsplash khuyến nghị dùng URL trực tiếp và không lưu lại ảnh — nếu muốn tuân thủ tuyệt đối thì đổi các đường dẫn trong `ProductStore`/`BlogStore` về URL gốc và bỏ thư mục `Content/images`, đổi lại site sẽ phụ thuộc mạng.
-* Ảnh trong thư viện là ảnh chụp giày thật của tác giả, **không phải đúng mẫu ghi trong tên sản phẩm** — danh mục dùng ảnh minh hoạ theo thương hiệu, tương tự phần lớn site bán hàng dùng ảnh stock.
-* Cả 20 ảnh trong thư viện đã báo lượt tải qua `track_download` của Unsplash API.
+* Tất cả ảnh đã dùng đều đã báo lượt tải qua `track_download` của Unsplash API.

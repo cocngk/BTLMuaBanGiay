@@ -39,8 +39,8 @@ namespace ShoeStore.Data
                 },
                 new BlogItem {
                     Id = 4,
-                    Title = "Lịch sử ra đời của dòng giày Jordan huyền thoại",
-                    Summary = "Cùng nhìn lại chặng đường hơn 30 năm phát triển của đế chế Air Jordan đình đám thế giới.",
+                    Title = "Vì sao dòng giày da trắng lại bền màu hơn mẫu khác",
+                    Summary = "Cách chọn đôi giày da trắng ít bị bong màu, dễ lau chùi và giữ được vẻ sạch lâu dài.",
                     Date = "05/10/2026",
                     Views = 760,
                     Category = "Xu hướng Sneaker 2026",

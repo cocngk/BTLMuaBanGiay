@@ -14,14 +14,7 @@
         <aside class="filter-sidebar">
             <div class="filter-group">
                 <div class="filter-title"><i class="fa-solid fa-filter"></i> Thương hiệu</div>
-                <asp:CheckBoxList ID="cblBrands" runat="server" CssClass="custom-filter-list">
-                    <asp:ListItem Value="Nike">Nike</asp:ListItem>
-                    <asp:ListItem Value="Adidas">Adidas</asp:ListItem>
-                    <asp:ListItem Value="Jordan">Jordan</asp:ListItem>
-                    <asp:ListItem Value="Puma">Puma</asp:ListItem>
-                    <asp:ListItem Value="Converse">Converse</asp:ListItem>
-                    <asp:ListItem Value="Vans">Vans</asp:ListItem>
-                </asp:CheckBoxList>
+                <asp:CheckBoxList ID="cblBrands" runat="server" CssClass="custom-filter-list" />
             </div>
 
             <div class="filter-group">

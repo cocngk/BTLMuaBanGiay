@@ -65,7 +65,7 @@
 
                     <div class="faq-item">
                         <div class="faq-question"><i class="fa-solid fa-circle-dot"></i> Làm sao để chọn đúng Size giày khi mua Online?</div>
-                        <div class="faq-answer">Bạn chỉ cần đo chiều dài bàn chân từ gót đến ngón dài nhất. Hãy gửi số đo cho chúng tôi để nhân viên tư vấn bảng Size chuẩn từng thương hiệu (Nike, Adidas, Jordan có form khác nhau).</div>
+                        <div class="faq-answer">Bạn chỉ cần đo chiều dài bàn chân từ gót đến ngón dài nhất. Hãy gửi số đo cho chúng tôi để nhân viên tư vấn bảng Size chuẩn từng thương hiệu (Nike, Converse, Vans có form khác nhau).</div>
                     </div>
 
                     <div class="faq-item">

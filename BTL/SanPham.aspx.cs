@@ -19,6 +19,25 @@ namespace ShoeStore
             set { ViewState["CurrentPage"] = value; }
         }
 
+        /// <summary>
+        /// Danh sách thương hiệu lấy thẳng từ dữ liệu thay vì ghi cứng trong
+        /// markup — trước đây cùng một danh sách nằm ở hai nơi nên thêm hay bỏ
+        /// một hãng phải sửa cả hai, dễ lệch.
+        ///
+        /// Bind trong OnInit chứ không phải Page_Load: ListControl khôi phục
+        /// lựa chọn từ dữ liệu postback ở giai đoạn LoadPostData, tức là trước
+        /// Page_Load. Đợi tới Page_Load mới thêm item thì lựa chọn đã bị mất.
+        /// </summary>
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            cblBrands.Items.Clear();
+            foreach (string brand in ProductFacets.Brands())
+            {
+                cblBrands.Items.Add(new ListItem(brand, brand));
+            }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
