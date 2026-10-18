@@ -25,7 +25,18 @@
                     <div class="zoom-wrap" id="zoomWrap">
                         <asp:Image ID="imgProduct" runat="server" CssClass="product-main-img" />
                     </div>
-                    <p class="zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i> Di chuột vào ảnh để phóng to</p>
+                    <asp:Panel ID="pnlGallery" runat="server" Visible="false" CssClass="thumb-strip">
+                        <asp:Repeater ID="rptThumbs" runat="server">
+                            <ItemTemplate>
+                                <img src='<%# ResolveUrl(Eval("Small").ToString()) %>'
+                                     data-large='<%# ResolveUrl(Eval("Large").ToString()) %>'
+                                     alt='<%# Eval("Alt") %>'
+                                     class='<%# Container.ItemIndex == 0 ? "thumb-img active" : "thumb-img" %>'
+                                     onclick="swapMainImage(this)" />
+                            </ItemTemplate>
+                        </asp:Repeater>
+                    </asp:Panel>
+                    <p class="zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i> Di chuột vào ảnh để phóng to, bấm ảnh nhỏ để đổi góc nhìn</p>
                 </div>
 
                 <div class="product-info-box">
@@ -181,6 +192,15 @@
         function toggleSizeGuide() {
             var box = document.getElementById('sizeGuideBox');
             box.style.display = (box.style.display === 'none') ? 'block' : 'none';
+        }
+
+        function swapMainImage(thumb) {
+            var main = document.getElementById('<%= imgProduct.ClientID %>');
+            var large = thumb.getAttribute('data-large');
+            if (!main || !large) return;
+            main.src = large;
+            document.querySelectorAll('.thumb-img').forEach(function (t) { t.classList.remove('active'); });
+            thumb.classList.add('active');
         }
 
         // Zoom theo vị trí chuột

@@ -83,6 +83,8 @@
     <Content Include="Content\fonts\fonts.css" />
     <Content Include="Content\fonts\*.woff2" />
     <Content Include="Content\images\products\*.jpg" />
+    <Content Include="Content\images\gallery\*.jpg" />
+    <Content Include="Content\images\hero\*.jpg" />
     <Content Include="Content\images\blogs\*.jpg" />
     <Content Include="Content\product-card.css" />
     <Content Include="Content\charm-tokens.css" />
@@ -119,6 +121,7 @@
     <Compile Include="Models\SocialLink.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Pages\ShopPage.cs" />
+    <Compile Include="Models\ProductImage.cs" />
     <Compile Include="Models\ProductItem.cs" />
     <Compile Include="ChiTietSanPham.aspx.cs">
       <DependentUpon>ChiTietSanPham.aspx</DependentUpon>

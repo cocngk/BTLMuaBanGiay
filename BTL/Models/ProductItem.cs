@@ -30,6 +30,12 @@ namespace ShoeStore.Models
         /// <summary>Ảnh lớn cho trang chi tiết (ảnh phóng to 1.8×), mặc định lấy luôn ảnh nhỏ.</summary>
         public string ImageUrlLarge { get; set; }
 
+        /// <summary>
+        /// Các góc nhìn trong thư viện ảnh (view 1 là ảnh chính). Rỗng thì trang
+        /// chi tiết chỉ hiện một ảnh — đừng dựng ảnh giả chỉ để lấp chỗ trống.
+        /// </summary>
+        public List<ProductImage> Gallery { get; set; }
+
         /// <summary>Ảnh lớn có sẵn không — nếu không thì dùng ảnh nhỏ.</summary>
         public string LargeImageUrl()
         {
