@@ -78,6 +78,8 @@
     <Content Include="TrangChu.aspx" />
     <Content Include="TuVan.aspx" />
     <Content Include="Controls\SearchBox.ascx" />
+    <Content Include="Content\images\products\*.jpg" />
+    <Content Include="Content\images\blogs\*.jpg" />
     <Content Include="Content\product-card.css" />
     <Content Include="Content\charm-tokens.css" />
     <Content Include="Content\site.css" />

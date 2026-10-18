@@ -32,8 +32,7 @@ namespace ShoeStore
                     pnlProductDetail.Visible = true;
                     pnlNotFound.Visible = false;
 
-                    string mainUrl = product.ImageUrl.Replace("w=400", "w=1200");
-                    imgProduct.ImageUrl = mainUrl;
+                    imgProduct.ImageUrl = ResolveUrl(product.LargeImageUrl());
                     imgProduct.AlternateText = product.Name;
                     litBrand.Text = product.Brand;
                     lnkViewAllRelated.NavigateUrl = "SanPham.aspx?brand=" + Server.UrlEncode(product.Brand);

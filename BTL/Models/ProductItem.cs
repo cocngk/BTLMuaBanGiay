@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,7 +18,21 @@ namespace ShoeStore.Models
         public decimal? OldPrice { get; set; }
         public int Stock { get; set; } = 10;
         public string Sizes { get; set; }
+        /// <summary>
+        /// Đường dẫn tương đối (không có dấu ~) để trang dùng ResolveUrl khi hiển thị.
+        /// Trước đây đường dẫn là URL của Unsplash và trang chi tiết tự đổi kích
+        /// cỡ bằng Replace("w=400", "w=1200") — thứ chỉ chạy được với URL online.
+        /// </summary>
         public string ImageUrl { get; set; }
+
+        /// <summary>Ảnh lớn cho trang chi tiết (ảnh phóng to 1.8×), mặc định lấy luôn ảnh nhỏ.</summary>
+        public string ImageUrlLarge { get; set; }
+
+        /// <summary>Ảnh lớn có sẵn không — nếu không thì dùng ảnh nhỏ.</summary>
+        public string LargeImageUrl()
+        {
+            return string.IsNullOrEmpty(ImageUrlLarge) ? ImageUrl : ImageUrlLarge;
+        }
         public bool IsHot { get; set; }
 
         /// <summary>Single source for "which size if none chosen". Replaces magic "40" scattered in pages.</summary>

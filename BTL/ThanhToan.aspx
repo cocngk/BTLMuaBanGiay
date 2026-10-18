@@ -66,7 +66,7 @@
                             <ItemTemplate>
                                 <div class="order-item">
                                     <div class="item-info">
-                                        <img src='<%# Eval("ImageUrl") %>' class="item-img" />
+                                        <img src='<%# ResolveUrl((string)Eval("ImageUrl")) %>' class="item-img" />
                                         <div>
                                             <div class="item-name"><%# Eval("Name") %></div>
                                             <div class="item-qty">Size: <%# Eval("Size") %> | SL: <%# Eval("Quantity") %></div>

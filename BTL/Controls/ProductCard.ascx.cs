@@ -34,7 +34,7 @@ namespace ShoeStore
             lnkImage.HRef = detailUrl;
             lnkName.HRef = detailUrl;
 
-            imgThumb.ImageUrl = ImageUrl;
+            imgThumb.ImageUrl = ResolveUrl(ImageUrl);
             imgThumb.AlternateText = ProductName ?? "";
             litCardName.Text = ProductName ?? "";
             litCardDesc.Text = Description ?? "";

@@ -33,7 +33,7 @@ namespace ShoeStore
             var all = BlogStore.GetAll();
 
             BlogItem featured = all.First();
-            imgHero.ImageUrl = featured.ImageUrl;
+            imgHero.ImageUrl = ResolveUrl(featured.ImageUrl);
             imgHero.AlternateText = featured.Title;
             litHeroCategory.Text = featured.Category;
             litHeroTitle.Text = featured.Title;

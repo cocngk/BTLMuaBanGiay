@@ -30,7 +30,7 @@
                     <asp:Repeater ID="rptBlogs" runat="server">
                         <ItemTemplate>
                             <div class="blog-card">
-                                <img src='<%# Eval("ImageUrl") %>' class="blog-thumb" />
+                                <img src='<%# ResolveUrl((string)Eval("ImageUrl")) %>' class="blog-thumb" />
                                 <div class="blog-body">
                                     <div class="news-meta">
                                         <span><i class="fa-regular fa-calendar"></i> <%# Eval("Date") %></span>
@@ -76,7 +76,7 @@
                     <asp:Repeater ID="rptPopular" runat="server">
                         <ItemTemplate>
                             <div class="popular-news-item">
-                                <img src='<%# Eval("ImageUrl") %>' class="popular-news-img" alt='<%# Eval("Title") %>' />
+                                <img src='<%# ResolveUrl((string)Eval("ImageUrl")) %>' class="popular-news-img" alt='<%# Eval("Title") %>' />
                                 <div>
                                     <div class="popular-news-title"><%# Eval("Title") %></div>
                                     <span style="font-size:11px; color:var(--muted);"><%# Eval("Date") %></span>

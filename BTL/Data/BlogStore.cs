@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ShoeStore.Models;
 
 namespace ShoeStore.Data
@@ -17,7 +17,7 @@ namespace ShoeStore.Data
                     Date = "12/10/2026",
                     Views = 1250,
                     Category = "Mẹo chọn Size giày",
-                    ImageUrl = "https://images.unsplash.com/photo-1512374382149-233c42b6a83b?q=80&w=800"
+                    ImageUrl = "Content/images/blogs/blog-1.jpg"
                 },
                 new BlogItem {
                     Id = 2,
@@ -26,7 +26,7 @@ namespace ShoeStore.Data
                     Date = "11/10/2026",
                     Views = 980,
                     Category = "Phối đồ thời trang",
-                    ImageUrl = "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=400"
+                    ImageUrl = "Content/images/blogs/blog-2.jpg"
                 },
                 new BlogItem {
                     Id = 3,
@@ -35,7 +35,7 @@ namespace ShoeStore.Data
                     Date = "09/10/2026",
                     Views = 870,
                     Category = "Hướng dẫn vệ sinh",
-                    ImageUrl = "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?q=80&w=400"
+                    ImageUrl = "Content/images/blogs/blog-3.jpg"
                 },
                 new BlogItem {
                     Id = 4,
@@ -44,7 +44,7 @@ namespace ShoeStore.Data
                     Date = "05/10/2026",
                     Views = 760,
                     Category = "Xu hướng Sneaker 2026",
-                    ImageUrl = "https://images.unsplash.com/photo-1556906781-9a412961c28c?q=80&w=400"
+                    ImageUrl = "Content/images/blogs/blog-4.jpg"
                 },
                 new BlogItem {
                     Id = 5,
@@ -53,7 +53,7 @@ namespace ShoeStore.Data
                     Date = "01/10/2026",
                     Views = 640,
                     Category = "Xu hướng Sneaker 2026",
-                    ImageUrl = "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=400"
+                    ImageUrl = "Content/images/blogs/blog-5.jpg"
                 },
                 new BlogItem {
                     Id = 6,
@@ -62,7 +62,7 @@ namespace ShoeStore.Data
                     Date = "28/09/2026",
                     Views = 520,
                     Category = "Hướng dẫn vệ sinh",
-                    ImageUrl = "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=400"
+                    ImageUrl = "Content/images/blogs/blog-6.jpg"
                 },
                 new BlogItem {
                     Id = 7,
@@ -71,7 +71,7 @@ namespace ShoeStore.Data
                     Date = "25/09/2026",
                     Views = 410,
                     Category = "Phối đồ thời trang",
-                    ImageUrl = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=400"
+                    ImageUrl = "Content/images/blogs/blog-7.jpg"
                 }
             };
         }

@@ -44,7 +44,7 @@
                                     <td>
                                         <asp:HiddenField ID="hfKey" runat="server" Value='<%# Eval("Id") + "|" + Eval("Size") %>' />
                                         <div class="item-info">
-                                            <img src='<%# Eval("ImageUrl") %>' class="item-img" />
+                                            <img src='<%# ResolveUrl((string)Eval("ImageUrl")) %>' class="item-img" />
                                             <div>
                                                 <div class="item-name"><%# Eval("Name") %></div>
                                                 <div class="item-size">Size: <%# Eval("Size") %></div>
