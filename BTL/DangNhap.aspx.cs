@@ -43,7 +43,7 @@ namespace ShoeStore
             AuthHelper.SignIn(account);
 
             Toast.ShowAndRedirect(this, "LoginSuccess_" + Guid.NewGuid().ToString("N"),
-                "Dang nhap thanh cong! Dang chuyen den trang chu...",
+                "Đăng nhập thành công! Đang chuyển đến trang chủ...",
                 "success",
                 "TrangChu.aspx");
         }
