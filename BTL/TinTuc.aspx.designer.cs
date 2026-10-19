@@ -39,7 +39,7 @@ namespace ShoeStore
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnNewsPrev;
+        protected global::System.Web.UI.WebControls.HyperLink btnNewsPrev;
 
         /// <summary>
         /// rptNewsPages control.
@@ -57,7 +57,7 @@ namespace ShoeStore
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnNewsNext;
+        protected global::System.Web.UI.WebControls.HyperLink btnNewsNext;
         /// <summary>
         /// imgHero control.
         /// </summary>

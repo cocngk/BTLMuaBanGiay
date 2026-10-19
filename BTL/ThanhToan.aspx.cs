@@ -4,6 +4,7 @@ using System.Web.UI;
 using ShoeStore.Data;
 using ShoeStore.Helpers;
 using ShoeStore.Models;
+using ShoeStore.Services;
 
 namespace ShoeStore
 {
@@ -59,29 +60,29 @@ namespace ShoeStore
             // Sai định dạng thì lỗi đã hiện ngay dưới từng ô, ở đây chỉ chặn lại.
             if (!Page.IsValid) return;
 
-            Cart cart = CartStore.Load();
-            if (cart.IsEmpty)
+            OrderResult result = new OrderIntake(CartStore, new SessionOrderStore(Session))
+                .Place(new OrderInput
+                {
+                    CustomerName = txtName.Text.Trim(),
+                    Phone = txtPhone.Text.Trim(),
+                    Address = txtAddress.Text.Trim(),
+                    PaymentMethod = rblPaymentMethod.SelectedValue
+                });
+
+            if (result.IsEmptyCart)
             {
                 ShowEmpty();
                 return;
             }
 
-            Order order = new Order
+            if (!result.IsPlaced)
             {
-                Code = Order.NewCode(),
-                CreatedAt = DateTime.Now,
-                CustomerName = txtName.Text.Trim(),
-                Phone = txtPhone.Text.Trim(),
-                Address = txtAddress.Text.Trim(),
-                PaymentMethod = rblPaymentMethod.SelectedValue,
-                Lines = OrderLine.FromCart(cart.Lines)
-            };
+                Toast.Info(this, result.Error);
+                return;
+            }
 
-            new SessionOrderStore(Session).Save(order);
-            CartStore.Clear();
-
-            Toast.ShowAndRedirect(this, "CheckoutSuccess_" + Guid.NewGuid().ToString("N"),
-                "Đặt hàng thành công! Mã đơn " + order.Code + ". Chúng tôi sẽ gọi lại để xác nhận.",
+            Toast.ShowAndRedirect(this,
+                "Đặt hàng thành công! Mã đơn " + result.Order.Code + ". Chúng tôi sẽ gọi lại để xác nhận.",
                 "success",
                 "TrangChu.aspx");
         }

@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System;
+using System.Web;
 using System.Web.UI;
 
 namespace ShoeStore.Helpers
@@ -62,20 +63,26 @@ namespace ShoeStore.Helpers
             return null;
         }
 
-        public static void Show(Control page, string key, string message, string type)
+        /// <summary>Key chỉ là chi tiết của RegisterStartupScript — caller không cần biết.</summary>
+        private static string NewKey()
+        {
+            return "toast_" + Guid.NewGuid().ToString("N");
+        }
+
+        public static void Show(Control page, string message, string type)
         {
             string safe = HttpUtility.JavaScriptStringEncode(message);
-            Register(page, key, "showToast('" + safe + "', '" + type + "');");
+            Register(page, NewKey(), "showToast('" + safe + "', '" + type + "');");
         }
 
-        public static void Success(Control page, string key, string message)
+        public static void Success(Control page, string message)
         {
-            Show(page, key, message, "success");
+            Show(page, message, "success");
         }
 
-        public static void Info(Control page, string key, string message)
+        public static void Info(Control page, string message)
         {
-            Show(page, key, message, "info");
+            Show(page, message, "info");
         }
 
         /// <summary>
@@ -83,13 +90,13 @@ namespace ShoeStore.Helpers
         /// Bắt buộc khi nút nằm trong UpdatePanel: async postback là XHR,
         /// Response.Redirect bị XHR đi theo nên trình duyệt không đổi trang.
         /// </summary>
-        public static void Navigate(Control page, string key, string url)
+        public static void Navigate(Control page, string url)
         {
             string safeUrl = HttpUtility.JavaScriptStringEncode(url);
-            Register(page, key, "window.location.href='" + safeUrl + "';");
+            Register(page, NewKey(), "window.location.href='" + safeUrl + "';");
         }
 
-        public static void ShowAndRedirect(Control page, string key, string message, string type, string url)
+        public static void ShowAndRedirect(Control page, string message, string type, string url)
         {
             string safeMessage = HttpUtility.JavaScriptStringEncode(message);
             string safeUrl = HttpUtility.JavaScriptStringEncode(url);
@@ -99,13 +106,13 @@ namespace ShoeStore.Helpers
                 "setTimeout(function() {" +
                 "window.location.href='" + safeUrl + "';" +
                 "}, 1200);";
-            Register(page, key, script);
+            Register(page, NewKey(), script);
         }
 
-        public static void RequireLogin(Control page, string key, string message)
+        public static void RequireLogin(Control page, string message)
         {
             string safe = HttpUtility.JavaScriptStringEncode(message);
-            Register(page, key, "showToast('" + safe + "', 'info'); openLoginModal();");
+            Register(page, NewKey(), "showToast('" + safe + "', 'info'); openLoginModal();");
         }
     }
 }

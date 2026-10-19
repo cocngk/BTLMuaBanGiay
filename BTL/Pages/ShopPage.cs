@@ -48,7 +48,7 @@ namespace ShoeStore
                 return true;
             }
 
-            Toast.RequireLogin(this, "RequireLoginGuard_" + Guid.NewGuid().ToString("N"), message);
+            Toast.RequireLogin(this, message);
             return false;
         }
     }

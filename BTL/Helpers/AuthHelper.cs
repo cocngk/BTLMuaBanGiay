@@ -38,7 +38,21 @@ namespace ShoeStore.Helpers
 
     public sealed class MemoryUserStore : IUserStore
     {
-        private const string AppKey = "UserList";
+        private readonly List<UserAccount> users;
+
+        /// <summary>Kho seed mặc định của app — bộ nhớ thuần, không side-effect lên Application.</summary>
+        public MemoryUserStore() : this(Seed())
+        {
+        }
+
+        /// <summary>
+        /// Cho phép truyền kho có sẵn. Test dựng store mà không cần HttpContext,
+        /// và hai test không dùng chung state.
+        /// </summary>
+        public MemoryUserStore(IEnumerable<UserAccount> users)
+        {
+            this.users = users != null ? new List<UserAccount>(users) : new List<UserAccount>();
+        }
 
         /// <summary>Sinh tài khoản đã băm mật khẩu — dùng cho cả seed lẫn đăng ký.</summary>
         public static UserAccount NewUser(string fullName, string username, string email, string phone, string plainPassword)
@@ -55,20 +69,21 @@ namespace ShoeStore.Helpers
             };
         }
 
+        /// <summary>
+        /// Dữ liệu demo. Mật khẩu thô chỉ xuất hiện đúng ở chỗ này,
+        /// vào là được băm ngay — không có UserAccount nào giữ bản thô.
+        /// </summary>
+        public static List<UserAccount> Seed()
+        {
+            return new List<UserAccount>
+            {
+                NewUser("Nguyễn Văn A", "admin", "admin@sneakerx.com", "0987654321", "123"),
+                NewUser("Khách Hàng Demo", "sneakerx", "demo@sneakerx.com", "0912345678", "123")
+            };
+        }
+
         public List<UserAccount> GetAll()
         {
-            var users = HttpContext.Current.Application[AppKey] as List<UserAccount>;
-            if (users == null)
-            {
-                // Mật khẩu thô chỉ xuất hiện đúng ở chỗ seed này, vào là được
-                // băm ngay — không có UserAccount nào giữ bản thô.
-                users = new List<UserAccount>
-                {
-                    NewUser("Nguyễn Văn A", "admin", "admin@sneakerx.com", "0987654321", "123"),
-                    NewUser("Khách Hàng Demo", "sneakerx", "demo@sneakerx.com", "0912345678", "123")
-                };
-                HttpContext.Current.Application[AppKey] = users;
-            }
             return users;
         }
 
@@ -99,16 +114,11 @@ namespace ShoeStore.Helpers
 
     /// <summary>
     /// Demo-only auth (was triplicated in SiteMaster / DangNhap / DangKy).
-    /// Kho vẫn là bộ nhớ trong Application; khi thêm database chỉ thay MemoryUserStore.
+    /// Kho là bộ nhớ thuần sau IUserStore; khi thêm database chỉ thay adapter.
     /// </summary>
     public static class AuthHelper
     {
         public static IUserStore Store { get; set; } = new MemoryUserStore();
-
-        public static List<UserAccount> GetUsers()
-        {
-            return Store.GetAll();
-        }
 
         public static UserAccount FindByUsernameOrEmail(string usernameOrEmail)
         {

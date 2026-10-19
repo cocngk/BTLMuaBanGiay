@@ -46,15 +46,13 @@
 
                 <!-- THANH PHÂN TRANG TIN TỨC -->
                 <div class="pagination-container" id="pnlNewsPagination" runat="server">
-                    <asp:LinkButton ID="btnNewsPrev" runat="server" CssClass="page-link-custom" OnClick="btnNewsPrev_Click">&laquo; Trước</asp:LinkButton>
-                    <asp:Repeater ID="rptNewsPages" runat="server" OnItemCommand="rptNewsPages_ItemCommand">
+                    <asp:HyperLink ID="btnNewsPrev" runat="server" CssClass="page-link-custom">&laquo; Trước</asp:HyperLink>
+                    <asp:Repeater ID="rptNewsPages" runat="server">
                         <ItemTemplate>
-                            <asp:LinkButton ID="btnPage" runat="server" CommandName="Page" CommandArgument='<%# Container.DataItem %>' CssClass='<%# Convert.ToInt32(Container.DataItem) == CurrentNewsPage ? "page-link-custom active" : "page-link-custom" %>'>
-                                <%# Container.DataItem %>
-                            </asp:LinkButton>
+                            <asp:HyperLink ID="btnPage" runat="server" NavigateUrl='<%# Eval("Url") %>' CssClass='<%# Eval("Css") %>'><%# Eval("Number") %></asp:HyperLink>
                         </ItemTemplate>
                     </asp:Repeater>
-                    <asp:LinkButton ID="btnNewsNext" runat="server" CssClass="page-link-custom" OnClick="btnNewsNext_Click">Sau &raquo;</asp:LinkButton>
+                    <asp:HyperLink ID="btnNewsNext" runat="server" CssClass="page-link-custom">Sau &raquo;</asp:HyperLink>
                 </div>
             </div>
 

@@ -11,11 +11,6 @@ namespace ShoeStore
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
-            {
-                AuthHelper.GetUsers();
-            }
-
             // Repeater khong giu item qua postback: bind o MOI lan render,
             // neu chi bind lan !IsPostBack thi menu/footer bien mat sau
             // khi bam nut (them gio, luu so luong, dang ky nhan tin...).
@@ -95,7 +90,7 @@ namespace ShoeStore
             if (!Page.IsValid) return;
 
             txtNewsletterEmail.Text = "";
-            Toast.Success(this, "NewsletterToast",
+            Toast.Success(this,
                 "Đăng ký thành công! Chúng tôi sẽ gửi tin khuyến mãi tới bạn.");
         }
 

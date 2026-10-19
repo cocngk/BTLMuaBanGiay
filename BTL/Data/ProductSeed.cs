@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using ShoeStore.Models;
 
 namespace ShoeStore.Data
 {
     /// <summary>
-    /// Single canonical mock catalog (was triplicated with diverging data).
-    /// Replace with real DB access when a database is introduced.
+    /// Dữ liệu seed của Catalog — implementation detail, không phải interface.
+    /// Chỉ Catalog đọc lớp này; khi có DB thì thay Catalog, seed biến mất.
     /// </summary>
-    public static class ProductStore
+    internal static class ProductSeed
     {
-        public static List<ProductItem> GetAll()
+        public static List<ProductItem> Items()
         {
             return new List<ProductItem>
             {
@@ -28,27 +27,6 @@ namespace ShoeStore.Data
                 new ProductItem { Id = 12, Name = "Common Projects Minimal", Brand = "Common Projects", Description = "Giày da trắng tối giản, thiết kế không logo phù hợp mọi phong cách.", Price = 3200000, Stock = 7, Sizes = "39,40,41,42", ImageUrl = "~/Content/images/products/commonprojects-12-sm.jpg", ImageUrlLarge = "~/Content/images/products/commonprojects-12-lg.jpg", Colourways = new List<ProductColourway> { new ProductColourway { Name = "Trắng", Small = "~/Content/images/products/commonprojects-12-sm.jpg", Large = "~/Content/images/products/commonprojects-12-lg.jpg" } }, IsHot = true }
 
             };
-        }
-
-        /// <summary>
-        /// Sản phẩm liên quan: ưu tiên cùng thương hiệu, thiếu thì lấp từ phần còn lại.
-        /// Trước đây trang chi tiết tự sắp bằng OrderByDescending(p =&gt; p.Brand == ...) —
-        /// xếp theo bool để đẩy cùng brand lên đầu, khó đọc và dễ sai khi thêm quy tắc.
-        /// </summary>
-        public static List<ProductItem> RelatedTo(ProductItem product, int count)
-        {
-            if (product == null || count <= 0)
-            {
-                return new List<ProductItem>();
-            }
-
-            List<ProductItem> others = GetAll().Where(p => p.Id != product.Id).ToList();
-
-            return others.Where(p => p.Brand == product.Brand)
-                .Concat(others.Where(p => p.Brand != product.Brand))
-                .OrderBy(p => p.Id)
-                .Take(count)
-                .ToList();
         }
     }
 }

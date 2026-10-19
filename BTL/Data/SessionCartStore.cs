@@ -36,10 +36,14 @@ namespace ShoeStore.Data
             session.Remove(Key);
         }
 
-        public void AddOrMerge(int id, string name, decimal price, string size, int qty, string imageUrl, int stock)
+        /// <summary>
+        /// Thêm một sản phẩm từ Catalog. Tồn kho do CartService đọc — caller
+        /// không còn phải tự đi tìm stock rồi truyền vào.
+        /// </summary>
+        public void AddProduct(ProductItem product, string size, int qty)
         {
             Cart cart = Load();
-            cart.AddOrMerge(id, name, price, size, qty, imageUrl, stock);
+            CartService.AddOrMerge(cart, product, size, qty);
             Save(cart);
         }
     }

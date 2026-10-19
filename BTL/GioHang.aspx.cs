@@ -10,12 +10,6 @@ namespace ShoeStore
 {
     public partial class GioHang : ShopPage
     {
-        private int LookupStock(int id)
-        {
-            ProductItem product = ProductStore.GetAll().FirstOrDefault(p => p.Id == id);
-            return product != null ? product.Stock : int.MaxValue;
-        }
-
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -38,19 +32,7 @@ namespace ShoeStore
                 pnlEmptyCart.Visible = false;
                 pnlCartHasItems.Visible = true;
 
-                rptCart.DataSource = cart.Lines
-                    .Select(l => new
-                    {
-                        l.Id,
-                        l.Name,
-                        l.Price,
-                        l.Size,
-                        l.ImageUrl,
-                        l.Quantity,
-                        // Luôn >= 1: nếu size khác đã chiếm hết tồn kho thì max="0"
-                        // sẽ làm trình duyệt từ chối mọi giá trị hợp lệ.
-                        Max = Math.Max(1, cart.RemainingToBuy(l.Id, LookupStock(l.Id), l.Size))
-                    }).ToList();
+                rptCart.DataSource = CartService.Lines(cart);
                 rptCart.DataBind();
 
                 litSubTotal.Text = Money.Format(cart.SubTotal());
@@ -87,7 +69,7 @@ namespace ShoeStore
                     {
                         CartStore.Save(cart);
                         LoadCartData();
-                        Toast.Info(this, "ToastDelete", "Đã xóa sản phẩm khỏi giỏ hàng!");
+                        Toast.Info(this, "Đã xóa sản phẩm khỏi giỏ hàng!");
                     }
                 }
             }
@@ -137,10 +119,9 @@ namespace ShoeStore
                 if (!int.TryParse(posted, out qty)) qty = 1;
 
                 CartItem line = cart.Lines.FirstOrDefault(c => c.Id == id && c.Size == size);
-                if (line != null && line.Quantity == qty) continue;
+                if (line == null) continue;
 
-                cart.SetQuantity(id, size, qty, LookupStock(id));
-                changed = true;
+                if (CartService.SetQuantity(cart, id, size, qty)) changed = true;
             }
 
             if (changed) CartStore.Save(cart);
@@ -156,7 +137,7 @@ namespace ShoeStore
             // Nút nằm trong UpdatePanel nên postback là async: Response.Redirect bị
             // XHR đi theo và trình duyệt không đổi trang. Phải chuyển bằng script.
             FlushPendingQuantities();
-            Toast.Navigate(this, "GoCheckout", "ThanhToan.aspx");
+            Toast.Navigate(this, "ThanhToan.aspx");
         }
     }
 }

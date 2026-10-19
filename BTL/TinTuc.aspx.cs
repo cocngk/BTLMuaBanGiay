@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using ShoeStore.Data;
 using ShoeStore.Models;
 
@@ -9,23 +7,17 @@ namespace ShoeStore
 {
     public partial class TinTuc : ShopPage
     {
-        // ĐÃ ĐIỀU CHỈNH: 3 BÀI VIẾT / TRANG
+        // 3 BÀI VIẾT / TRANG
         private const int PageSize = 3;
 
-        public int CurrentNewsPage
-        {
-            get { return ViewState["CurrentNewsPage"] != null ? (int)ViewState["CurrentNewsPage"] : 1; }
-            set { ViewState["CurrentNewsPage"] = value; }
-        }
+        public int CurrentNewsPage { get; private set; }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
-            {
-                CurrentNewsPage = 1;
-                BindStaticSections();
-                LoadBlogs();
-            }
+            // Trang là link thật (?page=N) nên mỗi lần mở đều bind lại toàn bộ —
+            // sidebar không còn biến mất sau khi đổi trang như thời ViewState.
+            BindStaticSections();
+            LoadBlogs();
         }
 
         private void BindStaticSections()
@@ -52,43 +44,33 @@ namespace ShoeStore
 
         private void LoadBlogs()
         {
-            PagedResult<BlogItem> paged = Paging.Paginate(BlogStore.GetAll(), CurrentNewsPage, PageSize);
+            int page = Paging.PageFromQuery(Request.QueryString["page"]);
+            PagedResult<BlogItem> paged = Paging.Paginate(BlogStore.GetAll(), page, PageSize);
             CurrentNewsPage = paged.Page;
 
             rptBlogs.DataSource = paged.Items;
             rptBlogs.DataBind();
 
-            rptNewsPages.DataSource = Enumerable.Range(1, paged.TotalPages).ToList();
+            rptNewsPages.DataSource = Enumerable.Range(1, paged.TotalPages)
+                .Select(n => new
+                {
+                    Number = n,
+                    Url = Paging.PageUrl("TinTuc.aspx", n),
+                    Css = n == CurrentNewsPage ? "page-link-custom active" : "page-link-custom"
+                }).ToList();
             rptNewsPages.DataBind();
 
             pnlNewsPagination.Visible = paged.TotalPages > 1;
 
-            btnNewsPrev.CssClass = CurrentNewsPage == 1 ? "page-link-custom disabled" : "page-link-custom";
-            btnNewsNext.CssClass = CurrentNewsPage == paged.TotalPages ? "page-link-custom disabled" : "page-link-custom";
-        }
+            bool hasPrev = CurrentNewsPage > 1;
+            btnNewsPrev.NavigateUrl = Paging.PageUrl("TinTuc.aspx", hasPrev ? CurrentNewsPage - 1 : CurrentNewsPage);
+            btnNewsPrev.CssClass = hasPrev ? "page-link-custom" : "page-link-custom disabled";
+            btnNewsPrev.Attributes["onclick"] = hasPrev ? "" : "return false;";
 
-        protected void rptNewsPages_ItemCommand(object source, RepeaterCommandEventArgs e)
-        {
-            if (e.CommandName == "Page")
-            {
-                CurrentNewsPage = Convert.ToInt32(e.CommandArgument);
-                LoadBlogs();
-            }
-        }
-
-        protected void btnNewsPrev_Click(object sender, EventArgs e)
-        {
-            if (CurrentNewsPage > 1)
-            {
-                CurrentNewsPage--;
-                LoadBlogs();
-            }
-        }
-
-        protected void btnNewsNext_Click(object sender, EventArgs e)
-        {
-            CurrentNewsPage++;
-            LoadBlogs();
+            bool hasNext = CurrentNewsPage < paged.TotalPages;
+            btnNewsNext.NavigateUrl = Paging.PageUrl("TinTuc.aspx", hasNext ? CurrentNewsPage + 1 : CurrentNewsPage);
+            btnNewsNext.CssClass = hasNext ? "page-link-custom" : "page-link-custom disabled";
+            btnNewsNext.Attributes["onclick"] = hasNext ? "" : "return false;";
         }
     }
 }

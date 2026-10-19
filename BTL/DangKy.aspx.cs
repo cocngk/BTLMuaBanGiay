@@ -48,7 +48,7 @@ namespace ShoeStore
             // 9. Dang nhap ngay sau khi dang ky
             AuthHelper.SignIn(account);
 
-            Toast.ShowAndRedirect(this, "RegisterSuccess_" + Guid.NewGuid().ToString("N"),
+            Toast.ShowAndRedirect(this,
                 "Đăng ký thành công! Bạn đã đăng nhập.",
                 "success",
                 "TrangChu.aspx");

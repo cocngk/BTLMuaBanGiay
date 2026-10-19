@@ -38,7 +38,7 @@ namespace ShoeStore
             if (!OrderValidator.IsValidPhone(phone))
             {
                 // Phòng client bị bypass: báo lại bằng toast rồi dừng
-                Toast.Info(this, "Toast_" + Guid.NewGuid().ToString("N"),
+                Toast.Info(this,
                     "Số điện thoại phải có từ 9 đến 11 chữ số!");
                 return;
             }
@@ -49,7 +49,7 @@ namespace ShoeStore
             txtContent.Text = "";
 
             // Thông báo thành công, nêu rõ chủ đề đã chọn
-            Toast.Success(this, "Toast_" + Guid.NewGuid().ToString("N"),
+            Toast.Success(this,
                 "Cảm ơn " + name + "! Yêu cầu '" + topic + "' đã được gửi đi. Đội ngũ SneakerX sẽ liên hệ lại trong thời gian sớm nhất.");
         }
     }

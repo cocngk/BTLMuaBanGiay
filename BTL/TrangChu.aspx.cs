@@ -19,7 +19,7 @@ namespace ShoeStore
 
         private void LoadHomeProducts()
         {
-            rptProducts.DataSource = ProductStore.GetAll().Take(4).ToList();
+            rptProducts.DataSource = Catalog.Featured(4);
             rptProducts.DataBind();
         }
 
@@ -44,13 +44,13 @@ namespace ShoeStore
 
                 // 2. THÊM SẢN PHẨM VÀO GIỎ HÀNG (size đầu tiên có sẵn, key gồm Id + Size)
                 int productId = Convert.ToInt32(e.CommandArgument);
-                ProductItem selected = ProductStore.GetAll().FirstOrDefault(p => p.Id == productId);
+                ProductItem selected = Catalog.Find(productId);
 
                 if (selected != null)
                 {
                     string size = selected.FirstSize();
-                    CartStore.AddOrMerge(selected.Id, selected.Name, selected.Price, size, 1, selected.ImageUrl, selected.Stock);
-                    Toast.Success(this, "HomeAddToCartSuccessToast",
+                    CartStore.AddProduct(selected, size, 1);
+                    Toast.Success(this,
                         "Đã thêm " + selected.Name + " (Size " + size + ") vào giỏ hàng!");
                 }
             }

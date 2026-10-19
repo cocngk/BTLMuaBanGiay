@@ -19,6 +19,16 @@ namespace ShoeStore
             set { ViewState["CurrentPage"] = value; }
         }
 
+        /// <summary>Adapter duy nhất map control của trang thành CatalogQuery.</summary>
+        private CatalogFilterControls FilterControls
+        {
+            get
+            {
+                return new CatalogFilterControls(
+                    txtStoreSearch, cblBrands, rblPriceRange, hfSelectedSize, ddlSort);
+            }
+        }
+
         /// <summary>
         /// Danh sách thương hiệu lấy thẳng từ dữ liệu thay vì ghi cứng trong
         /// markup — trước đây cùng một danh sách nằm ở hai nơi nên thêm hay bỏ
@@ -32,7 +42,7 @@ namespace ShoeStore
         {
             base.OnInit(e);
             cblBrands.Items.Clear();
-            foreach (string brand in ProductFacets.Brands())
+            foreach (string brand in Catalog.Brands())
             {
                 cblBrands.Items.Add(new ListItem(brand, brand));
             }
@@ -42,8 +52,8 @@ namespace ShoeStore
         {
             if (!IsPostBack)
             {
-                CatalogQuery q = CatalogQuery.FromRequest(Request.QueryString);
-                q.ApplyToControls(txtStoreSearch, cblBrands, rblPriceRange, hfSelectedSize, ddlSort);
+                CatalogQuery q = CatalogQuery.FromQuery(Request.QueryString);
+                FilterControls.Write(q);
                 CurrentPage = q.Page;
             }
 
@@ -57,17 +67,17 @@ namespace ShoeStore
         /// </summary>
         protected void btnFilter_Click(object sender, EventArgs e)
         {
-            CatalogQuery q = CatalogQuery.FromControls(txtStoreSearch, cblBrands, rblPriceRange, hfSelectedSize, ddlSort, 1);
+            CatalogQuery q = FilterControls.Read(1);
             Redirect(q.ToUrl());
         }
 
         private void FilterAndBindProducts()
         {
             CatalogQuery q = IsPostBack
-                ? CatalogQuery.FromControls(txtStoreSearch, cblBrands, rblPriceRange, hfSelectedSize, ddlSort, CurrentPage)
-                : CatalogQuery.FromRequest(Request.QueryString);
+                ? FilterControls.Read(CurrentPage)
+                : CatalogQuery.FromQuery(Request.QueryString);
 
-            PagedResult<ProductItem> paged = Paging.Paginate(q.Apply(ProductStore.GetAll()), q.Page, PageSize);
+            PagedResult<ProductItem> paged = Catalog.Search(q, PageSize);
             CurrentPage = paged.Page;
 
             if (paged.Items.Count == 0)
@@ -118,7 +128,7 @@ namespace ShoeStore
             }
 
             int productId = Convert.ToInt32(e.CommandArgument);
-            ProductItem selected = ProductStore.GetAll().FirstOrDefault(p => p.Id == productId);
+            ProductItem selected = Catalog.Find(productId);
 
             if (selected == null) return;
 
@@ -126,13 +136,13 @@ namespace ShoeStore
 
             if (e.CommandName == "AddToCart")
             {
-                CartStore.AddOrMerge(selected.Id, selected.Name, selected.Price, selectedSize, 1, selected.ImageUrl, selected.Stock);
-                Toast.Success(this, "AddToCartToast", "Đã thêm " + selected.Name + " vào giỏ hàng!");
+                CartStore.AddProduct(selected, selectedSize, 1);
+                Toast.Success(this, "Đã thêm " + selected.Name + " vào giỏ hàng!");
             }
             else if (e.CommandName == "BuyNow")
             {
                 // Gộp vào giỏ hiện có (không xóa giỏ cũ) rồi sang thanh toán
-                CartStore.AddOrMerge(selected.Id, selected.Name, selected.Price, selectedSize, 1, selected.ImageUrl, selected.Stock);
+                CartStore.AddProduct(selected, selectedSize, 1);
                 Redirect("ThanhToan.aspx");
             }
         }

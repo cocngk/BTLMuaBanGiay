@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
-using System.Web.UI.WebControls;
 using ShoeStore.Models;
 
 namespace ShoeStore.Data
@@ -32,25 +31,9 @@ namespace ShoeStore.Data
     }
 
     /// <summary>
-    /// Facet metadata derived from data (brands) or fixed vocabulary (sizes).
-    /// </summary>
-    public static class ProductFacets
-    {
-        public static readonly string[] Sizes = { "38", "39", "40", "41", "42", "43" };
-
-        public static List<string> Brands()
-        {
-            return ProductStore.GetAll()
-                .Select(p => p.Brand)
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .OrderBy(b => b)
-                .ToList();
-        }
-    }
-
-    /// <summary>
-    /// Single filter interface: parse (query) -> apply (controls) -> build URL.
-    /// Replaces the triple-tracked query/controls/ViewState contract.
+    /// Single filter interface: parse (query) -> apply (list) -> build URL.
+    /// Không biết control nào của trang: adapter ở Pages/CatalogFilterControls
+    /// mới là nơi duy nhất chạm TextBox/CheckBoxList.
     /// </summary>
     public class CatalogQuery
     {
@@ -61,7 +44,7 @@ namespace ShoeStore.Data
         public string Sort = "Default";
         public int Page = 1;
 
-        public static CatalogQuery FromRequest(NameValueCollection query)
+        public static CatalogQuery FromQuery(NameValueCollection query)
         {
             CatalogQuery f = new CatalogQuery();
             f.Keyword = query["search"] ?? "";
@@ -71,34 +54,8 @@ namespace ShoeStore.Data
             f.PriceRange = string.IsNullOrEmpty(query["price"]) ? PriceBuckets.All : query["price"];
             f.Size = query["size"] ?? "";
             f.Sort = string.IsNullOrEmpty(query["sort"]) ? "Default" : query["sort"];
-            int page;
-            f.Page = (int.TryParse(query["page"], out page) && page > 0) ? page : 1;
+            f.Page = Paging.PageFromQuery(query["page"]);
             return f;
-        }
-
-        public static CatalogQuery FromControls(TextBox keyword, CheckBoxList brands, RadioButtonList price, HiddenField size, DropDownList sort, int page)
-        {
-            return new CatalogQuery
-            {
-                Keyword = keyword.Text.Trim(),
-                Brands = brands.Items.Cast<ListItem>().Where(i => i.Selected).Select(i => i.Value).ToList(),
-                PriceRange = price.SelectedValue,
-                Size = size.Value,
-                Sort = sort.SelectedValue,
-                Page = page
-            };
-        }
-
-        public void ApplyToControls(TextBox keyword, CheckBoxList brands, RadioButtonList price, HiddenField size, DropDownList sort)
-        {
-            keyword.Text = Keyword;
-            foreach (ListItem item in brands.Items)
-            {
-                item.Selected = Brands.Contains(item.Value, StringComparer.OrdinalIgnoreCase);
-            }
-            if (price.Items.FindByValue(PriceRange) != null) price.SelectedValue = PriceRange;
-            size.Value = Size;
-            if (sort.Items.FindByValue(Sort) != null) sort.SelectedValue = Sort;
         }
 
         /// <summary>
@@ -146,7 +103,7 @@ namespace ShoeStore.Data
         }
     }
 
-    /// <summary>Shared paging (SanPham today, TinTuc when it binds data).</summary>
+    /// <summary>Kết quả phân trang dùng chung cho Catalog và Content.</summary>
     public class PagedResult<T>
     {
         public List<T> Items;
@@ -156,6 +113,19 @@ namespace ShoeStore.Data
 
     public static class Paging
     {
+        /// <summary>Số trang hợp lệ từ query string; mọi trang dùng chung một cách đọc.</summary>
+        public static int PageFromQuery(string raw)
+        {
+            int page;
+            return (int.TryParse(raw, out page) && page > 0) ? page : 1;
+        }
+
+        /// <summary>URL của trang N cho một danh sách không có bộ lọc.</summary>
+        public static string PageUrl(string page, int pageNumber)
+        {
+            return pageNumber > 1 ? page + "?page=" + pageNumber : page;
+        }
+
         public static PagedResult<T> Paginate<T>(IEnumerable<T> source, int page, int pageSize)
         {
             List<T> list = source.ToList();

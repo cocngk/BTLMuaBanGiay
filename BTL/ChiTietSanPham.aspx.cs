@@ -24,8 +24,7 @@ namespace ShoeStore
         {
             if (Request.QueryString["id"] != null && int.TryParse(Request.QueryString["id"], out int id))
             {
-                List<ProductItem> list = ProductStore.GetAll();
-                ProductItem product = list.FirstOrDefault(p => p.Id == id);
+                ProductItem product = Catalog.Find(id);
 
                 if (product != null)
                 {
@@ -90,8 +89,8 @@ namespace ShoeStore
                     rptSizes.DataSource = sizes.Select(s => new { Size = s }).ToList();
                     rptSizes.DataBind();
 
-                    // Sản phẩm liên quan: luật nằm trong ProductStore, trang chỉ lấy ra.
-                    rptRelated.DataSource = ProductStore.RelatedTo(product, 4);
+                    // Sản phẩm liên quan: luật nằm trong Catalog, trang chỉ lấy ra.
+                    rptRelated.DataSource = Catalog.RelatedTo(product.Id, 4);
                     rptRelated.DataBind();
 
                     RenderWishlist(product.Id);
@@ -172,9 +171,7 @@ namespace ShoeStore
         /// </summary>
         private int MaxBuyable(ProductItem product)
         {
-            Cart cart = CartStore.Load();
-            int remaining = cart.RemainingToBuy(product.Id, product.Stock, null);
-            return remaining > 0 ? remaining : 1;
+            return CartService.MaxBuyable(CartStore.Load(), product.Id);
         }
 
         private int ResolveQty(ProductItem product)
@@ -191,13 +188,13 @@ namespace ShoeStore
             }
 
             int id = Convert.ToInt32(Request.QueryString["id"]);
-            ProductItem product = ProductStore.GetAll().FirstOrDefault(p => p.Id == id);
+            ProductItem product = Catalog.Find(id);
 
             if (product != null)
             {
                 string size = ResolveSize(product);
-                CartStore.AddOrMerge(product.Id, product.Name, product.Price, size, ResolveQty(product), product.ImageUrl, product.Stock);
-                Toast.Success(this, "DetailToastSuccess",
+                CartStore.AddProduct(product, size, ResolveQty(product));
+                Toast.Success(this,
                     "Đã thêm " + product.Name + " (Size " + size + ") vào giỏ hàng!");
             }
         }
@@ -210,13 +207,13 @@ namespace ShoeStore
             }
 
             int id = Convert.ToInt32(Request.QueryString["id"]);
-            ProductItem product = ProductStore.GetAll().FirstOrDefault(p => p.Id == id);
+            ProductItem product = Catalog.Find(id);
 
             if (product != null)
             {
                 // Gộp vào giỏ hiện có (không xóa giỏ cũ) rồi sang thanh toán
                 string size = ResolveSize(product);
-                CartStore.AddOrMerge(product.Id, product.Name, product.Price, size, ResolveQty(product), product.ImageUrl, product.Stock);
+                CartStore.AddProduct(product, size, ResolveQty(product));
                 Redirect("ThanhToan.aspx");
             }
         }
