@@ -1,0 +1,140 @@
+/* Trang chính sách — chỉ dùng token Charm, không hardcode hex lẻ */
+
+.policy-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.policy-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.policy-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--brand);
+    margin-bottom: 8px;
+}
+
+.policy-subtitle {
+    font-size: 14px;
+    color: var(--body);
+    max-width: 660px;
+    margin: 0 auto;
+}
+
+/* Điều hướng nhanh giữa 5 mục */
+.policy-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 28px;
+}
+
+.policy-nav a {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 8px 16px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--body);
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.policy-nav a:hover {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: #fff;
+}
+
+.policy-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-panel);
+    padding: 26px 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 20px var(--card-shadow);
+    /* Header dinh (sticky) cao ~80px: neo phải chừa chỗ, nếu không tiêu đề bị che */
+    scroll-margin-top: 96px;
+}
+
+.policy-heading {
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--heading);
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.policy-heading i {
+    color: var(--brand);
+}
+
+.policy-list {
+    margin: 0;
+    padding-left: 20px;
+    color: var(--body);
+    font-size: 13.5px;
+    line-height: 1.75;
+}
+
+.policy-list li {
+    margin-bottom: 8px;
+}
+
+.policy-list strong {
+    color: var(--heading);
+}
+
+.policy-note {
+    margin-top: 14px;
+    background: var(--brand-tint);
+    border-left: 3px solid var(--brand);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 12.5px;
+    color: var(--brand-text);
+}
+
+.policy-cta {
+    background: var(--accent-band);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-panel);
+    padding: 20px 24px;
+    text-align: center;
+    font-size: 13.5px;
+    color: var(--body);
+}
+
+.policy-cta a {
+    color: var(--brand-text);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.policy-cta a:hover {
+    color: var(--brand-hover);
+}
+
+@media (max-width: 600px) {
+    .policy-card {
+        padding: 20px 18px;
+    }
+
+    .policy-title {
+        font-size: 22px;
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
+    }
+}

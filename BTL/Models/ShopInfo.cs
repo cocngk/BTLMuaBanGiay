@@ -79,18 +79,19 @@ namespace ShoeStore.Models
         }
 
         /// <summary>
-        /// Chính sách chưa có trang riêng nên trỏ về form tư vấn với đúng chủ đề,
-        /// thay vì để một liên kết chết.
+        /// Mỗi chính sách là một mục trên trang ChinhSach; footer trỏ thẳng tới
+        /// mục đó. Nhãn nói "chính sách" thì đích phải là văn bản chính sách,
+        /// không phải form tư vấn (form dành cho câu hỏi, không phải để đọc).
         /// </summary>
         public static List<FooterLink> PolicyLinks()
         {
             return new List<FooterLink>
             {
-                new FooterLink { Title = "Chính sách đổi trả", Url = "TuVan.aspx?topic=Return" },
-                new FooterLink { Title = "Bảo hành sản phẩm", Url = "TuVan.aspx?topic=Warranty" },
-                new FooterLink { Title = "Vận chuyển & giao hàng", Url = "TuVan.aspx?topic=Order" },
-                new FooterLink { Title = "Thanh toán & bảo mật", Url = "TuVan.aspx?topic=Payment" },
-                new FooterLink { Title = "Điều khoản sử dụng", Url = "TuVan.aspx?topic=Other" }
+                new FooterLink { Title = "Chính sách đổi trả", Url = "ChinhSach.aspx#doi-tra" },
+                new FooterLink { Title = "Bảo hành sản phẩm", Url = "ChinhSach.aspx#bao-hanh" },
+                new FooterLink { Title = "Vận chuyển & giao hàng", Url = "ChinhSach.aspx#van-chuyen" },
+                new FooterLink { Title = "Thanh toán & bảo mật", Url = "ChinhSach.aspx#thanh-toan" },
+                new FooterLink { Title = "Điều khoản sử dụng", Url = "ChinhSach.aspx#dieu-khoan" }
             };
         }
 

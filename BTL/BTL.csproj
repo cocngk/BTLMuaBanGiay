@@ -75,6 +75,7 @@
     <Content Include="SanPham.aspx" />
     <Content Include="ThanhToan.aspx" />
     <Content Include="TinTuc.aspx" />
+    <Content Include="ChinhSach.aspx" />
     <Content Include="TrangChu.aspx" />
     <Content Include="TuVan.aspx" />
     <Content Include="Controls\SearchBox.ascx" />
@@ -98,6 +99,7 @@
     <Content Include="Content\dangky.css" />
     <Content Include="Content\tintuc.css" />
     <Content Include="Content\tuvan.css" />
+    <Content Include="Content\chinhsach.css" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -127,6 +129,13 @@
     <Compile Include="Services\OrderIntake.cs" />
     <Compile Include="Models\ProductColourway.cs" />
     <Compile Include="Models\ProductItem.cs" />
+    <Compile Include="ChinhSach.aspx.cs">
+      <DependentUpon>ChinhSach.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ChinhSach.aspx.designer.cs">
+      <DependentUpon>ChinhSach.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ChiTietSanPham.aspx.cs">
       <DependentUpon>ChiTietSanPham.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
