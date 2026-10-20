@@ -24,21 +24,43 @@ namespace ShoeStore.Helpers
         }
     }
 
+    /// <summary>Kết quả thêm tài khoản. Store chỉ nói lý do; trang tự quyết chữ hiển thị.</summary>
+    public enum AddUserOutcome
+    {
+        Added,
+        UsernameTaken,
+        EmailTaken
+    }
+
     /// <summary>
     /// Seam kho người dùng: test thay MemoryUserStore riêng, không đụng Application thật.
     /// </summary>
     public interface IUserStore
     {
+        /// <summary>Bản sao tại thời điểm gọi — không phải list sống của kho.</summary>
         List<UserAccount> GetAll();
         UserAccount FindByUsernameOrEmail(string usernameOrEmail);
         bool UsernameExists(string username);
         bool EmailExists(string email);
-        void Add(UserAccount account);
+
+        /// <summary>
+        /// Kiểm tra trùng và thêm trong cùng một khóa. Gọi "kiểm tra" rồi "thêm" ở
+        /// phía ngoài thì hai request đồng thời vẫn lọt cả hai — nên cổng chặn phải
+        /// nằm gọn bên trong kho.
+        /// </summary>
+        AddUserOutcome TryAdd(UserAccount account);
     }
 
     public sealed class MemoryUserStore : IUserStore
     {
         private readonly List<UserAccount> users;
+
+        /// <summary>
+        /// Khóa cho mọi lần đọc/ghi. Application["UserList"] ngày trước được
+        /// HttpRuntime tự lock; kho thuần thì phải tự làm — List.Add không
+        /// thread-safe, hai request đăng ký cùng lúc có thể làm hỏng list.
+        /// </summary>
+        private readonly object gate = new object();
 
         /// <summary>Kho seed mặc định của app — bộ nhớ thuần, không side-effect lên Application.</summary>
         public MemoryUserStore() : this(Seed())
@@ -82,33 +104,66 @@ namespace ShoeStore.Helpers
             };
         }
 
+        /// <summary>
+        /// Trả bản sao chứ không trả list thật: người gọi duyệt list trong lúc
+        /// request khác đang Add sẽ ném "Collection was modified", và nếu trả
+        /// list thật thì họ ghi được mà không đi qua khóa.
+        /// </summary>
         public List<UserAccount> GetAll()
         {
-            return users;
+            lock (gate)
+            {
+                return new List<UserAccount>(users);
+            }
         }
 
         public UserAccount FindByUsernameOrEmail(string usernameOrEmail)
         {
-            return GetAll().FirstOrDefault(u =>
-                string.Equals(u.Username, usernameOrEmail, StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(u.Email, usernameOrEmail, StringComparison.OrdinalIgnoreCase));
+            lock (gate)
+            {
+                return users.FirstOrDefault(u =>
+                    string.Equals(u.Username, usernameOrEmail, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(u.Email, usernameOrEmail, StringComparison.OrdinalIgnoreCase));
+            }
         }
 
         public bool UsernameExists(string username)
         {
-            return GetAll().Any(u =>
-                string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase));
+            lock (gate)
+            {
+                return users.Any(u =>
+                    string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase));
+            }
         }
 
         public bool EmailExists(string email)
         {
-            return GetAll().Any(u =>
-                string.Equals(u.Email, email, StringComparison.OrdinalIgnoreCase));
+            lock (gate)
+            {
+                return users.Any(u =>
+                    string.Equals(u.Email, email, StringComparison.OrdinalIgnoreCase));
+            }
         }
 
-        public void Add(UserAccount account)
+        public AddUserOutcome TryAdd(UserAccount account)
         {
-            GetAll().Add(account);
+            lock (gate)
+            {
+                if (users.Any(u =>
+                    string.Equals(u.Username, account.Username, StringComparison.OrdinalIgnoreCase)))
+                {
+                    return AddUserOutcome.UsernameTaken;
+                }
+
+                if (users.Any(u =>
+                    string.Equals(u.Email, account.Email, StringComparison.OrdinalIgnoreCase)))
+                {
+                    return AddUserOutcome.EmailTaken;
+                }
+
+                users.Add(account);
+                return AddUserOutcome.Added;
+            }
         }
     }
 
@@ -135,9 +190,9 @@ namespace ShoeStore.Helpers
             return Store.EmailExists(email);
         }
 
-        public static void Add(UserAccount account)
+        public static AddUserOutcome TryAdd(UserAccount account)
         {
-            Store.Add(account);
+            return Store.TryAdd(account);
         }
 
         public static bool IsLoggedIn()

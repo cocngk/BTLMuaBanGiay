@@ -27,23 +27,22 @@ namespace ShoeStore
             string confirm = txtConfirm.Text;
 
             // Validators (required/regex/compare) đã chạy ở client + server.
-            // Chỉ còn kiểm tra trùng tài khoản ở đây.
+            // Trùng tài khoản thì để kho chặn: nó kiểm tra và thêm trong cùng một
+            // khóa. CheckDuplicate bên dưới chỉ là gợi ý tức thời cho người dùng.
             if (!Page.IsValid) return;
 
-            if (AuthHelper.UsernameExists(username))
-            {
-                ShowFormError("Tên đăng nhập đã tồn tại! Vui lòng chọn tên khác.");
-                return;
-            }
-
-            if (AuthHelper.EmailExists(email))
-            {
-                ShowFormError("Email này đã được đăng ký!");
-                return;
-            }
             // 8. Luu tai khoan moi — mat khau duoc bam ngay, khong luu ban tho
             UserAccount account = MemoryUserStore.NewUser(fullName, username, email, phone, password);
-            AuthHelper.Add(account);
+
+            switch (AuthHelper.TryAdd(account))
+            {
+                case AddUserOutcome.UsernameTaken:
+                    ShowFormError("Tên đăng nhập đã tồn tại! Vui lòng chọn tên khác.");
+                    return;
+                case AddUserOutcome.EmailTaken:
+                    ShowFormError("Email này đã được đăng ký!");
+                    return;
+            }
 
             // 9. Dang nhap ngay sau khi dang ky
             AuthHelper.SignIn(account);
