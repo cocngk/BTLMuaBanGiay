@@ -29,9 +29,9 @@ namespace ShoeStore
         public CardActionMode ActionMode { get; set; }
 
         /// <summary>Seam duy nhất tới danh sách yêu thích — không đụng Session[...] trực tiếp.</summary>
-        private SessionWishlistStore Wishlist
+        private WishlistStore Wishlist
         {
-            get { return new SessionWishlistStore(Session); }
+            get { return new WishlistStore(Session); }
         }
 
         protected override void OnDataBinding(EventArgs e)

@@ -13,18 +13,20 @@ namespace ShoeStore
     public class ShopPage : System.Web.UI.Page
     {
         /// <summary>
-        /// Seam duy nhất để đọc/ghi giỏ hàng — không ai đụng Session["Cart"] trực tiếp.
+        /// Seam duy nhất để đọc/ghi giỏ hàng — không ai đụng Session["Cart"] hay
+        /// Application["Carts"] trực tiếp. Store tự chọn chỗ lưu: Application theo
+        /// tài khoản khi đã đăng nhập, Session khi còn là khách.
         /// Đặt tên CartStore chứ không phải Cart để không che mất lớp Models.Cart.
         /// </summary>
-        protected SessionCartStore CartStore
+        protected CartStore CartStore
         {
-            get { return new SessionCartStore(Session); }
+            get { return new CartStore(Session); }
         }
 
         /// <summary>Seam cho danh sách yêu thích — cùng kiểu với CartStore.</summary>
-        protected SessionWishlistStore Wishlist
+        protected WishlistStore Wishlist
         {
-            get { return new SessionWishlistStore(Session); }
+            get { return new WishlistStore(Session); }
         }
 
         /// <summary>

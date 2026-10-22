@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.SessionState;
 using ShoeStore.Data;
 
 namespace ShoeStore.Helpers
@@ -225,14 +226,35 @@ namespace ShoeStore.Helpers
         /// </summary>
         public static string CurrentUserKey()
         {
-            object key = HttpContext.Current.Session["UserKey"];
+            return UserKeyOf(HttpContext.Current.Session);
+        }
+
+        /// <summary>
+        /// Cùng luật với CurrentUserKey nhưng đọc từ session truyền vào — để store
+        /// nhận session giả lập trong test vẫn biết chủ sở hữu là ai.
+        /// </summary>
+        public static string UserKeyOf(HttpSessionState session)
+        {
+            if (session == null)
+            {
+                return "";
+            }
+
+            object key = session["UserKey"];
             if (key != null && key.ToString().Length > 0)
             {
                 return key.ToString();
             }
-            return CurrentUserName();
+
+            object name = session["Username"];
+            return name != null ? name.ToString() : "";
         }
 
+        /// <summary>
+        /// Đăng nhập: ghi danh tính rồi gộp giỏ + tim mà khách vãng lai đã thêm trước
+        /// đó vào dữ liệu của tài khoản. Phải sau khi ghi UserKey, vì store chọn chỗ
+        /// lưu dựa trên UserKey.
+        /// </summary>
         public static void SignIn(UserAccount account)
         {
             if (account == null)
@@ -240,23 +262,28 @@ namespace ShoeStore.Helpers
                 return;
             }
 
-            HttpContext.Current.Session["Username"] = account.DisplayName;
-            HttpContext.Current.Session["UserKey"] = account.Username;
+            HttpSessionState session = HttpContext.Current.Session;
+            session["Username"] = account.DisplayName;
+            session["UserKey"] = account.Username;
+
+            new CartStore(session).MergeGuestIntoAccount();
+            new WishlistStore(session).MergeGuestIntoAccount();
         }
 
         /// <summary>
-        /// Đăng xuất sạch: xoá danh tính và cả giỏ hàng / danh sách yêu thích trong
-        /// session. Session gắn với trình duyệt chứ không gắn với tài khoản; nếu giữ
-        /// lại, người đăng nhập sau trên cùng máy sẽ thấy hàng của người trước và có
-        /// thể đặt luôn đơn đó dưới tên mình.
+        /// Đăng xuất: xoá danh tính và dọn bản giỏ / tim trong session. KHÔNG xoá dữ
+        /// liệu của tài khoản (nằm ở Application) — đăng nhập lại là có lại. Bản trong
+        /// session phải dọn vì nó thuộc về trình duyệt: để lại thì người đăng nhập sau
+        /// trên cùng máy thấy hàng của người trước và có thể đặt đơn đó dưới tên mình.
         /// </summary>
         public static void SignOut()
         {
-            HttpContext.Current.Session["Username"] = null;
-            HttpContext.Current.Session["UserKey"] = null;
+            HttpSessionState session = HttpContext.Current.Session;
+            session["Username"] = null;
+            session["UserKey"] = null;
 
-            new SessionCartStore(HttpContext.Current.Session).Clear();
-            new SessionWishlistStore(HttpContext.Current.Session).Clear();
+            new CartStore(session).ClearGuest();
+            new WishlistStore(session).ClearGuest();
         }
     }
 }

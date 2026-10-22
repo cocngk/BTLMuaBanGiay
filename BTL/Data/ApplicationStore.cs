@@ -7,7 +7,7 @@ using ShoeStore.Models;
 namespace ShoeStore.Data
 {
     /// <summary>
-    /// Cổng duy nhất chạm HttpApplicationState — cùng kiểu seam với SessionCartStore.
+    /// Cổng duy nhất chạm HttpApplicationState — cùng kiểu seam với CartStore (session).
     /// Trạng thái cấp ứng dụng dùng chung cho mọi phiên và sống qua các request,
     /// nên mọi thao tác đọc-sửa-ghi đều đi qua một khóa duy nhất.
     /// </summary>
@@ -17,6 +17,12 @@ namespace ShoeStore.Data
         public const string ProductsKey = "Products";
         public const string UsersKey = "UserList";
         public const string OrdersKey = "Orders";
+
+        /// <summary>Giỏ hàng của từng tài khoản: Dictionary&lt;UserKey, List&lt;CartItem&gt;&gt;.</summary>
+        public const string CartsKey = "Carts";
+
+        /// <summary>Danh sách yêu thích của từng tài khoản: Dictionary&lt;UserKey, HashSet&lt;int&gt;&gt;.</summary>
+        public const string WishlistsKey = "Wishlists";
 
         /// <summary>Khóa chung cho mọi read-modify-write trên Application.</summary>
         public static readonly object Gate = new object();
@@ -83,6 +89,18 @@ namespace ShoeStore.Data
                 if (!(state[OrdersKey] is List<Order>))
                 {
                     state[OrdersKey] = new List<Order>();
+                }
+
+                // Giỏ và tim của người đã đăng nhập — tách khỏi session để không mất
+                // khi đăng xuất. Khóa là khóa tài khoản, không phải phiên trình duyệt.
+                if (!(state[CartsKey] is Dictionary<string, List<CartItem>>))
+                {
+                    state[CartsKey] = new Dictionary<string, List<CartItem>>(StringComparer.OrdinalIgnoreCase);
+                }
+
+                if (!(state[WishlistsKey] is Dictionary<string, HashSet<int>>))
+                {
+                    state[WishlistsKey] = new Dictionary<string, HashSet<int>>(StringComparer.OrdinalIgnoreCase);
                 }
             }
         }

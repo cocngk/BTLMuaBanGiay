@@ -14,7 +14,7 @@ namespace ShoeStore
     {
         protected void Application_Start(object sender, EventArgs e)
         {
-            // Idempotent: ba kho này cũng tự nạp lazy nếu chưa có, nên gọi lại vô hại.
+            // Idempotent: các kho này cũng tự nạp lazy nếu chưa có, nên gọi lại vô hại.
             ApplicationStore.Initialize(Application);
         }
     }

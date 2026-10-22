@@ -7,7 +7,7 @@ namespace ShoeStore.Models
     /// <summary>
     /// Deep Cart domain module: owns lines (keyed by Id+Size), totals and
     /// stock clamping. Pure logic — no HttpContext, no Session — so this is
-    /// the unit-test surface. Persistence lives behind SessionCartStore.
+    /// the unit-test surface. Persistence lives behind Data.CartStore.
     /// </summary>
     public class Cart
     {

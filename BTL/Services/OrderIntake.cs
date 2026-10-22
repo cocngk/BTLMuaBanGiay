@@ -40,10 +40,10 @@ namespace ShoeStore.Services
     /// </summary>
     public sealed class OrderIntake
     {
-        private readonly SessionCartStore cartStore;
+        private readonly CartStore cartStore;
         private readonly IOrderStore orderStore;
 
-        public OrderIntake(SessionCartStore cartStore, IOrderStore orderStore)
+        public OrderIntake(CartStore cartStore, IOrderStore orderStore)
         {
             this.cartStore = cartStore;
             this.orderStore = orderStore;

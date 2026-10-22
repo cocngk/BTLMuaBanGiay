@@ -44,7 +44,7 @@ namespace ShoeStore
         private void UpdateCartBadge()
         {
             if (cartCount == null) return;
-            int total = new SessionCartStore(Session).Load().TotalQuantity();
+            int total = new CartStore(Session).Load().TotalQuantity();
             cartCount.Visible = total > 0;
             cartCount.InnerText = total > 99 ? "99+" : total.ToString();
         }
