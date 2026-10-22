@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using ShoeStore.Data;
 using ShoeStore.Models;
 
@@ -33,15 +35,15 @@ namespace ShoeStore.Services
 
     /// <summary>
     /// Deep Order intake module: một cửa vào, một phán quyết.
-    /// Nhận input + giỏ hiện tại, tự validate, tạo đơn, lưu và xoá giỏ.
+    /// Nhận input + giỏ hiện tại, tự validate, trừ kho, tạo đơn, lưu và xoá giỏ.
     /// Trang thanh toán không còn tự dựng Order hay tự quyết định luật hợp lệ.
     /// </summary>
     public sealed class OrderIntake
     {
         private readonly SessionCartStore cartStore;
-        private readonly SessionOrderStore orderStore;
+        private readonly IOrderStore orderStore;
 
-        public OrderIntake(SessionCartStore cartStore, SessionOrderStore orderStore)
+        public OrderIntake(SessionCartStore cartStore, IOrderStore orderStore)
         {
             this.cartStore = cartStore;
             this.orderStore = orderStore;
@@ -61,10 +63,25 @@ namespace ShoeStore.Services
                 return OrderResult.Invalid(error);
             }
 
+            // Tồn kho có thể đã giảm sau lúc thêm vào giỏ (người khác đặt trước).
+            // Trừ kho trước khi tạo đơn: thiếu hàng thì không đơn nào được ghi,
+            // nhờ vậy không có đơn "ma" trỏ vào món đã hết.
+            List<KeyValuePair<int, int>> wanted = cart.Lines
+                .Select(line => new KeyValuePair<int, int>(line.Id, line.Quantity))
+                .ToList();
+
+            if (!Catalog.TakeStock(wanted))
+            {
+                return OrderResult.Invalid(
+                    "Một sản phẩm trong giỏ đã hết hàng hoặc không đủ số lượng. Vui lòng kiểm tra lại giỏ hàng!");
+            }
+
             Order order = new Order
             {
-                Code = Order.NewCode(),
+                Code = NextOrderCode(),
                 CreatedAt = System.DateTime.Now,
+                Username = input.Username,
+                Status = Order.PendingStatus,
                 CustomerName = input.CustomerName,
                 Phone = input.Phone,
                 Address = input.Address,
@@ -76,6 +93,20 @@ namespace ShoeStore.Services
             cartStore.Clear();
 
             return OrderResult.Success(order);
+        }
+
+        /// <summary>
+        /// Mã đơn không được trùng: mã là thứ khách dùng để tra cứu, trùng nghĩa là
+        /// tra ra đơn của người khác. Thử lại có giới hạn thay vì vòng lặp vô hạn.
+        /// </summary>
+        private string NextOrderCode()
+        {
+            string code = Order.NewCode();
+            for (int attempt = 0; attempt < 10 && orderStore.FindByCode(code) != null; attempt++)
+            {
+                code = Order.NewCode();
+            }
+            return code;
         }
     }
 }

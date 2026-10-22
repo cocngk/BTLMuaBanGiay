@@ -60,9 +60,11 @@ namespace ShoeStore
             // Sai định dạng thì lỗi đã hiện ngay dưới từng ô, ở đây chỉ chặn lại.
             if (!Page.IsValid) return;
 
-            OrderResult result = new OrderIntake(CartStore, new SessionOrderStore(Session))
+            // Đơn lưu ở cấp ứng dụng: đóng trình duyệt hay đăng nhập máy khác vẫn tra được.
+            OrderResult result = new OrderIntake(CartStore, new ApplicationOrderStore())
                 .Place(new OrderInput
                 {
+                    Username = AuthHelper.CurrentUserKey(),
                     CustomerName = txtName.Text.Trim(),
                     Phone = txtPhone.Text.Trim(),
                     Address = txtAddress.Text.Trim(),
@@ -81,10 +83,11 @@ namespace ShoeStore
                 return;
             }
 
+            // Sang thẳng trang đơn hàng để khách thấy đơn vừa tạo, không phải tự đi tìm.
             Toast.ShowAndRedirect(this,
                 "Đặt hàng thành công! Mã đơn " + result.Order.Code + ". Chúng tôi sẽ gọi lại để xác nhận.",
                 "success",
-                "TrangChu.aspx");
+                "DonHang.aspx?code=" + Server.UrlEncode(result.Order.Code));
         }
     }
 }

@@ -4,8 +4,10 @@ using System.Web.SessionState;
 namespace ShoeStore.Data
 {
     /// <summary>
-    /// Danh sách yêu thích trong session. Cùng kiểu seam như SessionCartStore và
-    /// SessionOrderStore: khi thêm database chỉ thay lớp này.
+    /// Danh sách yêu thích trong session. Cùng kiểu seam như SessionCartStore:
+    /// khi thêm database chỉ thay lớp này.
+    /// Yêu thích phải riêng từng người nên không đưa vào Application (dùng chung
+    /// toàn site sẽ khiến khách A thấy tim của khách B).
     /// Trước đây nút tim trên trang chi tiết chỉ đổi màu icon, tải lại là mất.
     /// </summary>
     public sealed class SessionWishlistStore

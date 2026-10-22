@@ -1,0 +1,284 @@
+/* Đơn hàng của tôi — Charm: panel bo 24px, control pill, hairline border.
+   Coral chỉ dùng cho action / mã đơn / tổng tiền, không tô nền lớn. */
+
+.orders-shell {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 20px 20px;
+}
+
+.orders-header {
+    margin-bottom: 26px;
+}
+
+.orders-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--heading);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 8px;
+}
+
+.orders-title i {
+    color: var(--brand);
+    font-size: 22px;
+}
+
+.orders-subtitle {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 640px;
+}
+
+/* ---------- Tra cứu ---------- */
+.orders-lookup {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-panel);
+    padding: 18px 22px;
+    margin-bottom: 24px;
+}
+
+.orders-lookup-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+}
+
+.orders-lookup-label i {
+    color: var(--brand);
+}
+
+.orders-lookup-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.orders-input {
+    flex: 1 1 260px;
+    min-width: 0;
+    padding: 12px 18px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-pill);
+    background: var(--tint);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--heading);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.orders-input:focus {
+    border-color: var(--brand);
+    background: #fff;
+    box-shadow: 0 0 0 3px var(--brand-glow-soft);
+}
+
+.orders-btn {
+    border: none;
+    cursor: pointer;
+    background: var(--brand);
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 12px 26px;
+    border-radius: var(--radius-pill);
+    transition: background 0.2s;
+}
+
+.orders-btn:hover {
+    background: var(--brand-hover);
+}
+
+.orders-section-title {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--heading);
+    margin: 30px 0 14px;
+}
+
+/* ---------- Thẻ đơn hàng ---------- */
+.order-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-panel);
+    padding: 22px 24px;
+    margin-bottom: 16px;
+}
+
+.order-card-lookup {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px var(--brand-glow-soft);
+}
+
+.order-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.order-card-eyebrow {
+    margin: 0 0 4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.order-code {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--heading);
+}
+
+.order-status {
+    background: var(--brand-tint);
+    color: var(--brand-text);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+}
+
+.order-meta {
+    margin: 10px 0 0;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.order-lines {
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 14px 0 0;
+    border-top: 1px solid var(--border);
+}
+
+.order-line {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 7px 0;
+    font-size: 13.5px;
+    color: var(--body);
+}
+
+.order-line-name {
+    flex: 1 1 auto;
+    font-weight: 600;
+    color: var(--heading);
+}
+
+.order-line-size {
+    font-weight: 500;
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: 6px;
+}
+
+.order-line-qty {
+    color: var(--muted);
+}
+
+.order-line-price {
+    font-weight: 700;
+    color: var(--heading);
+    white-space: nowrap;
+}
+
+.order-total {
+    display: flex;
+    justify-content: flex-end;
+    align-items: baseline;
+    gap: 8px;
+    margin: 12px 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 13.5px;
+    color: var(--muted);
+}
+
+.order-total strong {
+    font-size: 17px;
+    color: var(--brand-text);
+}
+
+/* ---------- Trạng thái rỗng ---------- */
+.orders-empty {
+    text-align: center;
+    background: var(--panel);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-panel);
+    padding: 40px 24px;
+}
+
+.orders-empty-icon {
+    display: block;
+    font-size: 30px;
+    color: var(--border-strong);
+    margin-bottom: 12px;
+}
+
+.orders-empty-title {
+    margin: 0 0 6px;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--heading);
+}
+
+.orders-empty-text {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--muted);
+}
+
+.orders-empty-text a {
+    color: var(--brand-text);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+@media (max-width: 640px) {
+    .orders-shell {
+        padding: 26px 14px 10px;
+    }
+
+    .orders-title {
+        font-size: 22px;
+    }
+
+    .order-card {
+        padding: 18px;
+    }
+
+    .order-card-head {
+        flex-direction: column;
+    }
+
+    .order-line {
+        flex-wrap: wrap;
+    }
+
+    .order-line-price {
+        margin-left: auto;
+    }
+}

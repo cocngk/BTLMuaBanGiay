@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using ShoeStore.Data;
 
 namespace ShoeStore.Helpers
 {
@@ -173,7 +174,18 @@ namespace ShoeStore.Helpers
     /// </summary>
     public static class AuthHelper
     {
-        public static IUserStore Store { get; set; } = new MemoryUserStore();
+        private static IUserStore store;
+
+        /// <summary>
+        /// Kho mặc định là cấp ứng dụng (Application), không phải biến static của
+        /// lớp: tài khoản đăng ký ở phiên này phải còn khi phiên khác mở ra.
+        /// Tạo lazy vì Application chỉ có khi đang chạy trong pipeline ASP.NET.
+        /// </summary>
+        public static IUserStore Store
+        {
+            get { return store ?? (store = new ApplicationUserStore()); }
+            set { store = value; }
+        }
 
         public static UserAccount FindByUsernameOrEmail(string usernameOrEmail)
         {
@@ -206,14 +218,36 @@ namespace ShoeStore.Helpers
             return name != null ? name.ToString() : "";
         }
 
+        /// <summary>
+        /// Khóa định danh bền của người đang đăng nhập — dùng để gắn đơn hàng với
+        /// chủ sở hữu. Không dùng tên hiển thị: hai tài khoản có thể trùng họ tên.
+        /// Phiên cũ (trước khi có khóa riêng) rơi về tên hiển thị để không mất đơn.
+        /// </summary>
+        public static string CurrentUserKey()
+        {
+            object key = HttpContext.Current.Session["UserKey"];
+            if (key != null && key.ToString().Length > 0)
+            {
+                return key.ToString();
+            }
+            return CurrentUserName();
+        }
+
         public static void SignIn(UserAccount account)
         {
-            HttpContext.Current.Session["Username"] = account != null ? account.DisplayName : "";
+            if (account == null)
+            {
+                return;
+            }
+
+            HttpContext.Current.Session["Username"] = account.DisplayName;
+            HttpContext.Current.Session["UserKey"] = account.Username;
         }
 
         public static void SignOut()
         {
             HttpContext.Current.Session["Username"] = null;
+            HttpContext.Current.Session["UserKey"] = null;
         }
     }
 }

@@ -72,6 +72,10 @@
                         <asp:Literal ID="litUsername" runat="server"></asp:Literal>
                     </span>
 
+                    <a href="DonHang.aspx" class="btn-logout-icon" title="Đơn hàng của tôi">
+                        <i class="fa-solid fa-receipt"></i>
+                    </a>
+
                     <asp:LinkButton
                         ID="btnLogout"
                         runat="server"

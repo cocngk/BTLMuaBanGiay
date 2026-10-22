@@ -15,6 +15,9 @@ namespace ShoeStore.Models
     /// <summary>Order intake: one object in, one verdict out.</summary>
     public class OrderInput
     {
+        /// <summary>Khóa tài khoản đang đặt — OrderIntake ghi vào đơn để lọc về sau.</summary>
+        public string Username { get; set; }
+
         public string CustomerName { get; set; }
         public string Phone { get; set; }
         public string Address { get; set; }
