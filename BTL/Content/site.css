@@ -533,22 +533,6 @@
             margin: 0;
         }
 
-        .footer-credits {
-            margin-top: 6px !important;
-            font-size: 11px;
-            opacity: 0.85;
-        }
-
-        .footer-credits a {
-            color: inherit;
-            text-decoration: underline;
-        }
-
-        .footer-credits code {
-            font-family: var(--font-mono);
-            font-size: 10px;
-        }
-
         @media (max-width: 980px) {
             .footer-inner {
                 grid-template-columns: 1fr 1fr;

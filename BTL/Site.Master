@@ -190,10 +190,6 @@
 
             <div class="footer-bottom">
                 <p>&copy; <%= ShopInfo.CurrentYear %> <%= ShopInfo.BrandName %>. Tất cả quyền được bảo lưu.</p>
-                <p class="footer-credits">
-                    Ảnh minh hoạ từ <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a>
-                    &middot; danh sách tác giả trong <code>CREDITS.md</code>
-                </p>
             </div>
         </footer>
 
