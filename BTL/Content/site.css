@@ -428,99 +428,6 @@
             color: var(--brand);
         }
 
-        /* Dải đăng ký nhận tin */
-        .footer-newsletter {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px 30px;
-            display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 28px;
-            align-items: center;
-        }
-
-        .footer-newsletter-copy p {
-            color: var(--muted);
-            line-height: 1.6;
-            margin: 0;
-        }
-
-        .footer-newsletter-form {
-            position: relative;
-        }
-
-        .footer-newsletter-input {
-            width: 100%;
-            padding: 12px 132px 12px 18px;
-            border-radius: var(--radius-pill);
-            border: 1px solid var(--border);
-            background: var(--panel);
-            font-family: var(--font-body);
-            font-size: 13px;
-            color: var(--heading);
-        }
-
-        .footer-newsletter-input:focus {
-            outline: 2px solid var(--brand-tint);
-            border-color: var(--brand);
-        }
-
-        .footer-newsletter-btn {
-            position: absolute;
-            right: 5px;
-            top: 5px;
-            height: 34px;
-            padding: 0 20px;
-            border: none;
-            border-radius: var(--radius-pill);
-            background: var(--brand);
-            color: #fff;
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            font-family: var(--font-body);
-            transition: 0.25s;
-        }
-
-        .footer-newsletter-btn:hover {
-            background: var(--brand-hover);
-        }
-
-        .footer-newsletter-form .field-error {
-            margin-top: 8px;
-        }
-
-        /* Dải đơn vị thanh toán & vận chuyển */
-        .footer-partners {
-            border-top: 1px solid var(--border);
-            padding: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-partners-label {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--muted);
-            margin-right: 6px;
-        }
-
-        .footer-partner {
-            padding: 6px 13px;
-            border-radius: 8px;
-            background: var(--panel);
-            border: 1px solid var(--border);
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--body);
-            letter-spacing: 0.02em;
-        }
-
         .footer-bottom {
             border-top: 1px solid var(--border);
             padding: 16px 20px;
@@ -538,11 +445,6 @@
                 grid-template-columns: 1fr 1fr;
                 gap: 30px;
             }
-
-            .footer-newsletter {
-                grid-template-columns: 1fr;
-                gap: 14px;
-            }
         }
 
         @media (max-width: 600px) {
@@ -550,14 +452,6 @@
                 grid-template-columns: 1fr;
                 padding: 34px 16px 24px;
                 text-align: left;
-            }
-
-            .footer-newsletter {
-                padding: 0 16px 24px;
-            }
-
-            .footer-partners {
-                padding: 18px 16px;
             }
 
             .footer-social {

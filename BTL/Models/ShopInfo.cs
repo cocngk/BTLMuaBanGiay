@@ -94,13 +94,5 @@ namespace ShoeStore.Models
                 new FooterLink { Title = "Điều khoản sử dụng", Url = "ChinhSach.aspx#dieu-khoan" }
             };
         }
-
-        public static List<string> Partners()
-        {
-            return new List<string>
-            {
-                "COD", "MoMo", "VNPay", "ZaloPay", "ViettelPost", "Giao Hàng Nhanh"
-            };
-        }
     }
 }

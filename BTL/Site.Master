@@ -161,33 +161,6 @@
                 </div>
             </div>
 
-            <div class="footer-newsletter">
-                <div class="footer-newsletter-copy">
-                    <h4 class="footer-heading">Nhận tin khuyến mãi</h4>
-                    <p>Giảm giá theo mùa và thông báo hàng về sớm nhất, không spam.</p>
-                </div>
-                <div class="footer-newsletter-form">
-                    <asp:TextBox ID="txtNewsletterEmail" runat="server" CssClass="footer-newsletter-input"
-                        TextMode="Email" placeholder="Email của bạn" />
-                    <asp:RequiredFieldValidator ID="reqNewsletterEmail" runat="server" ControlToValidate="txtNewsletterEmail"
-                        ErrorMessage="Vui lòng nhập email." CssClass="field-error" Display="Dynamic" ValidationGroup="Newsletter" />
-                    <asp:RegularExpressionValidator ID="revNewsletterEmail" runat="server" ControlToValidate="txtNewsletterEmail"
-                        ValidationExpression="^[^@\s]+@[^@\s]+\.[^@\s]+$" ErrorMessage="Email chưa đúng định dạng."
-                        CssClass="field-error" Display="Dynamic" ValidationGroup="Newsletter" />
-                    <asp:Button ID="btnNewsletter" runat="server" Text="Đăng ký" CssClass="footer-newsletter-btn"
-                        OnClick="btnNewsletter_Click" ValidationGroup="Newsletter" />
-                </div>
-            </div>
-
-            <div class="footer-partners">
-                <span class="footer-partners-label">Thanh toán &amp; vận chuyển</span>
-                <asp:Repeater ID="rptPartners" runat="server">
-                    <ItemTemplate>
-                        <span class="footer-partner"><%# Container.DataItem %></span>
-                    </ItemTemplate>
-                </asp:Repeater>
-            </div>
-
             <div class="footer-bottom">
                 <p>&copy; <%= ShopInfo.CurrentYear %> <%= ShopInfo.BrandName %>. Tất cả quyền được bảo lưu.</p>
             </div>

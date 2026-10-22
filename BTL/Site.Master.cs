@@ -78,20 +78,6 @@ namespace ShoeStore
 
             rptFooterPolicies.DataSource = Models.ShopInfo.PolicyLinks();
             rptFooterPolicies.DataBind();
-
-            rptPartners.DataSource = Models.ShopInfo.Partners();
-            rptPartners.DataBind();
-        }
-
-        protected void btnNewsletter_Click(object sender, EventArgs e)
-        {
-            // Button co ValidationGroup nen khong kich hoat loi cua cac form
-            // khac tren trang (form dang nhap, dang ky, tu van...).
-            if (!Page.IsValid) return;
-
-            txtNewsletterEmail.Text = "";
-            Toast.Success(this,
-                "Đăng ký thành công! Chúng tôi sẽ gửi tin khuyến mãi tới bạn.");
         }
 
         protected void btnLogout_Click(object sender, EventArgs e)
