@@ -50,6 +50,21 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             cursor: pointer;
             z-index: 2;
+            text-decoration: none;
+            font-size: 16px;
+            line-height: 1;
+            font-family: var(--font-body);
+            transition: background 0.2s, color 0.2s, transform 0.15s;
+        }
+
+        .btn-heart-wishlist:hover {
+            transform: scale(1.08);
+        }
+
+        /* Đã yêu thích: tô đầy để trạng thái đọc được bằng mắt, không chỉ bằng icon */
+        .btn-heart-wishlist.active {
+            background: var(--brand);
+            color: #fff;
         }
 
         .product-thumb {

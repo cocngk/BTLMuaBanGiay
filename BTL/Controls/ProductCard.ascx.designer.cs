@@ -24,6 +24,15 @@ namespace ShoeStore
         protected global::System.Web.UI.WebControls.Panel pnlHot;
 
         /// <summary>
+        /// btnHeart control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnHeart;
+
+        /// <summary>
         /// lnkImage control.
         /// </summary>
         /// <remarks>

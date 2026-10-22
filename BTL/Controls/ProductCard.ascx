@@ -5,7 +5,12 @@
         Nổi bật
     </asp:Panel>
 
-    <button type="button" class="btn-heart-wishlist"><i class="fa-solid fa-heart"></i></button>
+    <%-- Nút tim tự xử lý postback ngay trong control (không bubble Command về Repeater
+         cha) để chạy được ở mọi trang có ProductCard, kể cả khối "Sản phẩm liên quan"
+         không có handler ItemCommand. Dùng ký tự tim giống trang chi tiết sản phẩm. --%>
+    <asp:LinkButton ID="btnHeart" runat="server" CssClass="btn-heart-wishlist"
+        CausesValidation="false" OnClick="btnHeart_Click" ToolTip="Thêm vào yêu thích"
+        Text="&#9825;"></asp:LinkButton>
 
     <a id="lnkImage" runat="server" href="#">
         <asp:Image ID="imgThumb" runat="server" CssClass="product-thumb" />
