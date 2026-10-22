@@ -31,6 +31,16 @@ namespace ShoeStore.Data
             return All().Contains(productId);
         }
 
+        /// <summary>
+        /// Xoá sạch — gọi khi đăng xuất. Session gắn với trình duyệt chứ không gắn
+        /// với tài khoản, nên tim của người vừa thoát vẫn nằm đó cho người đăng
+        /// nhập sau trên cùng máy.
+        /// </summary>
+        public void Clear()
+        {
+            session.Remove(Key);
+        }
+
         /// <summary>Bật/tắt một mục. Trả về true nếu sau khi bật.</summary>
         public bool Toggle(int productId)
         {

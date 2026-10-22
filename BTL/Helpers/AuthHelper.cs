@@ -244,10 +244,19 @@ namespace ShoeStore.Helpers
             HttpContext.Current.Session["UserKey"] = account.Username;
         }
 
+        /// <summary>
+        /// Đăng xuất sạch: xoá danh tính và cả giỏ hàng / danh sách yêu thích trong
+        /// session. Session gắn với trình duyệt chứ không gắn với tài khoản; nếu giữ
+        /// lại, người đăng nhập sau trên cùng máy sẽ thấy hàng của người trước và có
+        /// thể đặt luôn đơn đó dưới tên mình.
+        /// </summary>
         public static void SignOut()
         {
             HttpContext.Current.Session["Username"] = null;
             HttpContext.Current.Session["UserKey"] = null;
+
+            new SessionCartStore(HttpContext.Current.Session).Clear();
+            new SessionWishlistStore(HttpContext.Current.Session).Clear();
         }
     }
 }
