@@ -83,32 +83,64 @@
             box-shadow: 0 3px 8px var(--brand-glow);
         }
 
-        .btn-apply-filter {
+        /* Hai nút của sidebar: cùng một hình học, khác nhau về vai.
+           Nút Xoá là thẻ <a> nên width:100% từng bị bỏ qua (inline không nhận
+           width), và padding dọc của nó không đẩy được dòng chữ — kết quả là
+           một link nhỏ lệch hẳn so với nút Áp dụng. */
+        .btn-apply-filter,
+        .btn-reset-filter {
+            display: block;
             width: 100%;
-            background: var(--brand);
-            color: white;
-            border: none;
-            padding: 11px;
+            min-height: 44px;
+            padding: 12px 14px;
             border-radius: 15px;
+            font-family: inherit;
+            font-size: 13.5px;
             font-weight: 700;
+            line-height: 1.2;
+            text-align: center;
             cursor: pointer;
-            margin-top: 10px;
-            transition: background 0.3s;
+            transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.1s;
         }
 
-        .btn-apply-filter:hover { background: var(--brand-hover); }
+        .btn-apply-filter {
+            background: var(--brand);
+            color: #fff;
+            /* Cùng 1px viền với nút Xoá để hai nút cao bằng nhau */
+            border: 1px solid var(--brand);
+            margin-top: 12px;
+            box-shadow: 0 4px 12px var(--brand-glow-soft);
+        }
+
+        .btn-apply-filter:hover {
+            background: var(--brand-hover);
+            border-color: var(--brand-hover);
+        }
 
         .btn-reset-filter {
-            width: 100%;
             background: var(--tint);
-            color: var(--brand);
+            color: var(--brand-text);
             border: 1px solid var(--border-strong);
-            padding: 8px;
-            border-radius: 15px;
-            font-weight: 700;
-            cursor: pointer;
             margin-top: 8px;
-            font-size: 12px;
+            text-decoration: none;
+        }
+
+        .btn-reset-filter:hover {
+            background: var(--brand-tint);
+            border-color: var(--brand-glow);
+            color: var(--brand-hover);
+        }
+
+        /* Bàn phím: viền focus nhìn thấy được, cùng kiểu ô nhập ở trang Đơn hàng */
+        .btn-apply-filter:focus-visible,
+        .btn-reset-filter:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 3px var(--brand-glow-soft);
+        }
+
+        .btn-apply-filter:active,
+        .btn-reset-filter:active {
+            transform: translateY(1px);
         }
 
         .shop-toolbar {

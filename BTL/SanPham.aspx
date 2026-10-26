@@ -41,7 +41,7 @@
                 </div>
             </div>
 
-            <asp:Button ID="btnApplyFilter" runat="server" Text="Áp Dụng Bộ Lọc" CssClass="btn-apply-filter" OnClick="btnFilter_Click" />
+            <asp:Button ID="btnApplyFilter" runat="server" Text="Áp dụng bộ lọc" CssClass="btn-apply-filter" OnClick="btnFilter_Click" />
             <a href="SanPham.aspx" class="btn-reset-filter">Xóa bộ lọc</a>
         </aside>
 
