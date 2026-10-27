@@ -1,4 +1,4 @@
-<%@ Page Title="Quản trị đơn hàng" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="QuanTriDonHang.aspx.cs" Inherits="ShoeStore.QuanTriDonHang" %>
+﻿<%@ Page Title="Quản trị đơn hàng" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="QuanTriDonHang.aspx.cs" Inherits="ShoeStore.QuanTriDonHang" %>
 <%@ Register Src="~/Controls/AdminTabs.ascx" TagPrefix="uc" TagName="AdminTabs" %>
 
 <asp:Content ID="HeadCss" ContentPlaceHolderID="HeadContent" runat="server">
