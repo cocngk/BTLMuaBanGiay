@@ -19,6 +19,14 @@ namespace ShoeStore.Helpers
         public string PasswordHash { get; set; }
         public string PasswordSalt { get; set; }
 
+        /// <summary>
+        /// Quyền quản trị. Trước đây tài khoản seed "admin" không khác gì tài khoản
+        /// thường: muốn biết ai được vào khu quản trị thì phải so tên đăng nhập với
+        /// một chuỗi viết cứng. Cờ nằm trên tài khoản để cấp/thu quyền được cho người
+        /// khác mà không sửa code.
+        /// </summary>
+        public bool IsAdmin { get; set; }
+
         /// <summary>Tên hiển thị duy nhất một chỗ (trước rải ở 2 trang).</summary>
         public string DisplayName
         {
@@ -34,6 +42,35 @@ namespace ShoeStore.Helpers
         EmailTaken
     }
 
+    /// <summary>Kết quả sửa hồ sơ — trang tự dịch sang câu tiếng Việt.</summary>
+    public enum ProfileUpdateOutcome
+    {
+        Updated,
+        EmailTaken,
+        NotFound
+    }
+
+    /// <summary>Kết quả đổi mật khẩu. Sai mật khẩu hiện tại là lý do riêng, không gộp vào "lỗi".</summary>
+    public enum PasswordChangeOutcome
+    {
+        Changed,
+        WrongPassword,
+        NotFound
+    }
+
+    /// <summary>
+    /// Kết quả đổi quyền quản trị. <see cref="LastAdmin"/> chặn trường hợp thu quyền
+    /// của quản trị viên cuối cùng — lúc đó không còn ai vào được khu quản trị nữa
+    /// và phải restart ứng dụng mới cứu được (kho chỉ nằm trong Application).
+    /// </summary>
+    public enum RoleChangeOutcome
+    {
+        Changed,
+        Unchanged,
+        LastAdmin,
+        NotFound
+    }
+
     /// <summary>
     /// Seam kho người dùng: test thay MemoryUserStore riêng, không đụng Application thật.
     /// </summary>
@@ -42,6 +79,9 @@ namespace ShoeStore.Helpers
         /// <summary>Bản sao tại thời điểm gọi — không phải list sống của kho.</summary>
         List<UserAccount> GetAll();
         UserAccount FindByUsernameOrEmail(string usernameOrEmail);
+
+        /// <summary>Tìm đúng theo tên đăng nhập, không khớp email — dùng cho phiên đang đăng nhập.</summary>
+        UserAccount FindByUsername(string username);
         bool UsernameExists(string username);
         bool EmailExists(string email);
 
@@ -51,6 +91,15 @@ namespace ShoeStore.Helpers
         /// nằm gọn bên trong kho.
         /// </summary>
         AddUserOutcome TryAdd(UserAccount account);
+
+        /// <summary>Sửa hồ sơ. Kiểm email trùng với người khác và ghi trong cùng một khóa.</summary>
+        ProfileUpdateOutcome TryUpdateProfile(string username, string fullName, string email, string phone);
+
+        /// <summary>Đổi mật khẩu: xác minh mật khẩu hiện tại rồi băm mật khẩu mới, cùng một khóa.</summary>
+        PasswordChangeOutcome TryChangePassword(string username, string currentPassword, string newPassword);
+
+        /// <summary>Cấp/thu quyền quản trị, có chặn thu quyền của admin cuối cùng.</summary>
+        RoleChangeOutcome TrySetAdmin(string username, bool isAdmin);
     }
 
     public sealed class MemoryUserStore : IUserStore
@@ -99,9 +148,12 @@ namespace ShoeStore.Helpers
         /// </summary>
         public static List<UserAccount> Seed()
         {
+            UserAccount admin = NewUser("Nguyễn Văn A", "admin", "admin@sneakerx.com", "0987654321", "123");
+            admin.IsAdmin = true;
+
             return new List<UserAccount>
             {
-                NewUser("Nguyễn Văn A", "admin", "admin@sneakerx.com", "0987654321", "123"),
+                admin,
                 NewUser("Khách Hàng Demo", "sneakerx", "demo@sneakerx.com", "0912345678", "123")
             };
         }
@@ -127,6 +179,26 @@ namespace ShoeStore.Helpers
                     string.Equals(u.Username, usernameOrEmail, StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(u.Email, usernameOrEmail, StringComparison.OrdinalIgnoreCase));
             }
+        }
+
+        public UserAccount FindByUsername(string username)
+        {
+            lock (gate)
+            {
+                return FindLocked(username);
+            }
+        }
+
+        /// <summary>Bản dùng bên trong khóa — chỉ gọi khi đã giữ <see cref="gate"/>.</summary>
+        private UserAccount FindLocked(string username)
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                return null;
+            }
+
+            return users.FirstOrDefault(u =>
+                string.Equals(u.Username, username, StringComparison.OrdinalIgnoreCase));
         }
 
         public bool UsernameExists(string username)
@@ -165,6 +237,93 @@ namespace ShoeStore.Helpers
 
                 users.Add(account);
                 return AddUserOutcome.Added;
+            }
+        }
+
+        /// <summary>
+        /// Sửa hồ sơ tại chỗ. Không nhận cả đối tượng UserAccount vì trang đang giữ
+        /// bản đọc từ kho: gán thẳng đối tượng đó là ghi mà không qua khóa, và có thể
+        /// ghi đè cả mật khẩu / quyền mà form không hề hiển thị.
+        /// </summary>
+        public ProfileUpdateOutcome TryUpdateProfile(string username, string fullName, string email, string phone)
+        {
+            lock (gate)
+            {
+                UserAccount account = FindLocked(username);
+                if (account == null)
+                {
+                    return ProfileUpdateOutcome.NotFound;
+                }
+
+                bool emailTaken = users.Any(u =>
+                    !ReferenceEquals(u, account) &&
+                    string.Equals(u.Email, email, StringComparison.OrdinalIgnoreCase));
+
+                if (emailTaken)
+                {
+                    return ProfileUpdateOutcome.EmailTaken;
+                }
+
+                account.FullName = fullName;
+                account.Email = email;
+                account.Phone = phone;
+                return ProfileUpdateOutcome.Updated;
+            }
+        }
+
+        /// <summary>
+        /// Đổi mật khẩu: xác minh mật khẩu cũ và ghi bản băm mới trong cùng một khóa,
+        /// nên không có khe giữa "kiểm tra đúng" và "đã đổi".
+        /// </summary>
+        public PasswordChangeOutcome TryChangePassword(string username, string currentPassword, string newPassword)
+        {
+            lock (gate)
+            {
+                UserAccount account = FindLocked(username);
+                if (account == null)
+                {
+                    return PasswordChangeOutcome.NotFound;
+                }
+
+                if (!PasswordHasher.Verify(currentPassword, account.PasswordSalt, account.PasswordHash))
+                {
+                    return PasswordChangeOutcome.WrongPassword;
+                }
+
+                string salt = PasswordHasher.NewSalt();
+                account.PasswordSalt = salt;
+                account.PasswordHash = PasswordHasher.Hash(newPassword, salt);
+                return PasswordChangeOutcome.Changed;
+            }
+        }
+
+        /// <summary>
+        /// Cấp/thu quyền quản trị. Đếm admin trong cùng khóa với lúc ghi: nếu đếm ở
+        /// ngoài thì hai request thu quyền cùng lúc đều thấy "còn 2 admin" và kết quả
+        /// là 0.
+        /// </summary>
+        public RoleChangeOutcome TrySetAdmin(string username, bool isAdmin)
+        {
+            lock (gate)
+            {
+                UserAccount account = FindLocked(username);
+                if (account == null)
+                {
+                    return RoleChangeOutcome.NotFound;
+                }
+
+                if (account.IsAdmin == isAdmin)
+                {
+                    return RoleChangeOutcome.Unchanged;
+                }
+
+                if (!isAdmin && users.Count(u => u.IsAdmin) <= 1)
+                {
+                    return RoleChangeOutcome.LastAdmin;
+                }
+
+                account.IsAdmin = isAdmin;
+                return RoleChangeOutcome.Changed;
             }
         }
     }
@@ -208,6 +367,32 @@ namespace ShoeStore.Helpers
             return Store.TryAdd(account);
         }
 
+        public static UserAccount FindByUsername(string username)
+        {
+            return Store.FindByUsername(username);
+        }
+
+        /// <summary>Toàn bộ tài khoản cho khu quản trị. Bản sao list, phần tử là tham chiếu đọc.</summary>
+        public static List<UserAccount> AllAccounts()
+        {
+            return Store.GetAll();
+        }
+
+        public static ProfileUpdateOutcome TryUpdateProfile(string username, string fullName, string email, string phone)
+        {
+            return Store.TryUpdateProfile(username, fullName, email, phone);
+        }
+
+        public static PasswordChangeOutcome TryChangePassword(string username, string currentPassword, string newPassword)
+        {
+            return Store.TryChangePassword(username, currentPassword, newPassword);
+        }
+
+        public static RoleChangeOutcome TrySetAdmin(string username, bool isAdmin)
+        {
+            return Store.TrySetAdmin(username, isAdmin);
+        }
+
         public static bool IsLoggedIn()
         {
             return HttpContext.Current.Session["Username"] != null;
@@ -227,6 +412,45 @@ namespace ShoeStore.Helpers
         public static string CurrentUserKey()
         {
             return UserKeyOf(HttpContext.Current.Session);
+        }
+
+        /// <summary>
+        /// Tài khoản của phiên đang đăng nhập, đọc tươi từ kho mỗi lần gọi — hồ sơ
+        /// vừa sửa hoặc quyền vừa đổi phải có hiệu lực ngay, không đợi đăng nhập lại.
+        /// Trả null khi chưa đăng nhập hoặc phiên còn giữ khóa cũ không còn trong kho.
+        /// </summary>
+        public static UserAccount CurrentAccount()
+        {
+            if (!IsLoggedIn())
+            {
+                return null;
+            }
+
+            return Store.FindByUsername(CurrentUserKey());
+        }
+
+        /// <summary>
+        /// Quyền quản trị của phiên hiện tại. Mọi trang quản trị phải hỏi câu này ở
+        /// server: ẩn link trên header chỉ là giao diện, gõ thẳng URL vẫn vào được.
+        /// </summary>
+        public static bool IsAdmin()
+        {
+            UserAccount account = CurrentAccount();
+            return account != null && account.IsAdmin;
+        }
+
+        /// <summary>
+        /// Cập nhật tên hiển thị trong session sau khi sửa họ tên. Session giữ bản
+        /// chụp lúc đăng nhập, nên không gọi chỗ này thì header vẫn hiện tên cũ tới
+        /// lần đăng nhập sau.
+        /// </summary>
+        public static void RefreshDisplayName()
+        {
+            UserAccount account = CurrentAccount();
+            if (account != null)
+            {
+                HttpContext.Current.Session["Username"] = account.DisplayName;
+            }
         }
 
         /// <summary>

@@ -73,7 +73,7 @@ namespace ShoeStore.Services
             if (!Catalog.TakeStock(wanted))
             {
                 return OrderResult.Invalid(
-                    "Một sản phẩm trong giỏ đã hết hàng hoặc không đủ số lượng. Vui lòng kiểm tra lại giỏ hàng!");
+                    "Một sản phẩm trong giỏ đã hết hàng hoặc không còn bán. Vui lòng kiểm tra lại giỏ hàng!");
             }
 
             Order order = new Order

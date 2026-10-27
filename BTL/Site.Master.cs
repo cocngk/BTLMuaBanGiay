@@ -38,6 +38,10 @@ namespace ShoeStore
                 if (pnlUser != null) pnlUser.Visible = false;
             }
 
+            // Quyền đọc tươi từ kho mỗi lần render: vừa được cấp quyền thì link hiện
+            // ra ngay, vừa bị thu thì biến mất — không phải đăng xuất rồi vào lại.
+            lnkAdmin.Visible = AuthHelper.IsAdmin();
+
             UpdateCartBadge();
         }
 

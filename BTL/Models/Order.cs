@@ -49,10 +49,33 @@ namespace ShoeStore.Models
         /// </summary>
         public string Username { get; set; }
 
-        /// <summary>Trạng thái đơn. Chưa có khu quản trị nên đơn mới luôn ở mức này.</summary>
+        /// <summary>Trạng thái đơn. Đơn mới luôn ở mức đầu; khu quản trị đổi các mức sau.</summary>
         public string Status { get; set; } = PendingStatus;
 
+        // Bốn mức trạng thái của một đơn. Gom ở đây để trang quản trị, trang khách
+        // và luật huỷ đơn cùng đọc một chỗ — trước đây chỉ có một chuỗi viết trong
+        // Order và một bản sao trong trang Đơn hàng.
         public const string PendingStatus = "Chờ xác nhận";
+        public const string ShippingStatus = "Đang giao";
+        public const string DeliveredStatus = "Đã giao";
+        public const string CancelledStatus = "Đã huỷ";
+
+        /// <summary>Thứ tự hiển thị trong dropdown, cũng là thứ tự một đơn đi qua.</summary>
+        public static List<string> AllStatuses()
+        {
+            return new List<string>
+            {
+                PendingStatus,
+                ShippingStatus,
+                DeliveredStatus,
+                CancelledStatus
+            };
+        }
+
+        public static bool IsKnownStatus(string status)
+        {
+            return AllStatuses().Contains(status);
+        }
 
         public string CustomerName { get; set; }
         public string Phone { get; set; }

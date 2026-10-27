@@ -77,10 +77,16 @@
     <Content Include="TinTuc.aspx" />
     <Content Include="ChinhSach.aspx" />
     <Content Include="DonHang.aspx" />
+    <Content Include="TaiKhoan.aspx" />
+    <Content Include="QuanTriSanPham.aspx" />
+    <Content Include="SuaSanPham.aspx" />
+    <Content Include="QuanTriNguoiDung.aspx" />
+    <Content Include="QuanTriDonHang.aspx" />
     <Content Include="Global.asax" />
     <Content Include="TrangChu.aspx" />
     <Content Include="TuVan.aspx" />
     <Content Include="Controls\SearchBox.ascx" />
+    <Content Include="Controls\AdminTabs.ascx" />
     <Content Include="Content\vendor\fontawesome\css\*.css" />
     <Content Include="Content\vendor\fontawesome\webfonts\*.woff2" />
     <Content Include="Content\fonts\fonts.css" />
@@ -103,6 +109,8 @@
     <Content Include="Content\tuvan.css" />
     <Content Include="Content\chinhsach.css" />
     <Content Include="Content\donhang.css" />
+    <Content Include="Content\taikhoan.css" />
+    <Content Include="Content\quantri.css" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -132,6 +140,7 @@
     <Compile Include="Pages\ShopPage.cs" />
     <Compile Include="Pages\CatalogFilterControls.cs" />
     <Compile Include="Services\OrderIntake.cs" />
+    <Compile Include="Services\OrderAdminService.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -233,6 +242,47 @@
     </Compile>
     <Compile Include="TuVan.aspx.designer.cs">
       <DependentUpon>TuVan.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="TaiKhoan.aspx.cs">
+      <DependentUpon>TaiKhoan.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="TaiKhoan.aspx.designer.cs">
+      <DependentUpon>TaiKhoan.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="QuanTriSanPham.aspx.cs">
+      <DependentUpon>QuanTriSanPham.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="QuanTriSanPham.aspx.designer.cs">
+      <DependentUpon>QuanTriSanPham.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="SuaSanPham.aspx.cs">
+      <DependentUpon>SuaSanPham.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SuaSanPham.aspx.designer.cs">
+      <DependentUpon>SuaSanPham.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="QuanTriNguoiDung.aspx.cs">
+      <DependentUpon>QuanTriNguoiDung.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="QuanTriNguoiDung.aspx.designer.cs">
+      <DependentUpon>QuanTriNguoiDung.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="QuanTriDonHang.aspx.cs">
+      <DependentUpon>QuanTriDonHang.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="QuanTriDonHang.aspx.designer.cs">
+      <DependentUpon>QuanTriDonHang.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AdminTabs.ascx.cs">
+      <DependentUpon>AdminTabs.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AdminTabs.ascx.designer.cs">
+      <DependentUpon>AdminTabs.ascx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

@@ -53,5 +53,32 @@ namespace ShoeStore
             Toast.RequireLogin(this, message);
             return false;
         }
+
+        /// <summary>
+        /// Chặn khu quản trị ở server. Ẩn link trên header chỉ là giao diện: gõ thẳng
+        /// URL vẫn vào được, nên mỗi trang quản trị phải hỏi lại câu này ở Page_Load
+        /// và ở mọi handler postback.
+        /// Trang gọi phải để phần nội dung trong một Panel Visible=false rồi bật lên
+        /// khi qua cửa — nếu chỉ return thì khung trang (tiêu đề, bảng rỗng) vẫn hiện.
+        /// </summary>
+        protected bool RequireAdmin()
+        {
+            if (AuthHelper.IsAdmin())
+            {
+                return true;
+            }
+
+            if (!AuthHelper.IsLoggedIn())
+            {
+                Toast.RequireLogin(this, "Vui lòng đăng nhập bằng tài khoản quản trị để vào khu này.");
+                return false;
+            }
+
+            Toast.ShowAndRedirect(this,
+                "Tài khoản của bạn không có quyền vào khu quản trị.",
+                "info",
+                "TrangChu.aspx");
+            return false;
+        }
     }
 }

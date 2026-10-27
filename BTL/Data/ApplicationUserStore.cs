@@ -31,6 +31,11 @@ namespace ShoeStore.Data
             return Inner.FindByUsernameOrEmail(usernameOrEmail);
         }
 
+        public UserAccount FindByUsername(string username)
+        {
+            return Inner.FindByUsername(username);
+        }
+
         public bool UsernameExists(string username)
         {
             return Inner.UsernameExists(username);
@@ -44,6 +49,21 @@ namespace ShoeStore.Data
         public AddUserOutcome TryAdd(UserAccount account)
         {
             return Inner.TryAdd(account);
+        }
+
+        public ProfileUpdateOutcome TryUpdateProfile(string username, string fullName, string email, string phone)
+        {
+            return Inner.TryUpdateProfile(username, fullName, email, phone);
+        }
+
+        public PasswordChangeOutcome TryChangePassword(string username, string currentPassword, string newPassword)
+        {
+            return Inner.TryChangePassword(username, currentPassword, newPassword);
+        }
+
+        public RoleChangeOutcome TrySetAdmin(string username, bool isAdmin)
+        {
+            return Inner.TrySetAdmin(username, isAdmin);
         }
     }
 }

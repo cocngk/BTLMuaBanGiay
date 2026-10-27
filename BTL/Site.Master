@@ -76,6 +76,17 @@
                         <i class="fa-solid fa-receipt"></i>
                     </a>
 
+                    <a href="TaiKhoan.aspx" class="btn-logout-icon" title="Tài khoản của tôi">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </a>
+
+                    <%-- Chỉ hiện với tài khoản quản trị. Ẩn ở đây chỉ là giao diện:
+                         mỗi trang quản trị vẫn tự kiểm tra quyền ở server. --%>
+                    <asp:HyperLink ID="lnkAdmin" runat="server" NavigateUrl="QuanTriSanPham.aspx"
+                        CssClass="btn-logout-icon" ToolTip="Khu quản trị" Visible="false">
+                        <i class="fa-solid fa-gauge-high"></i>
+                    </asp:HyperLink>
+
                     <asp:LinkButton
                         ID="btnLogout"
                         runat="server"
