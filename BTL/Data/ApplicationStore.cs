@@ -28,7 +28,7 @@ namespace ShoeStore.Data
         public static readonly object Gate = new object();
 
         /// <summary>
-        /// Kho tạm khi không có HttpContext (chạy ngoài IIS, unit test). Không phải
+        /// Kho tạm khi không có HttpContext (unit test, chạy ngoài request). Không phải
         /// nguồn dữ liệu thật — chỉ để code không ném NullReferenceException.
         /// </summary>
         private static readonly Dictionary<string, object> Fallback = new Dictionary<string, object>();
