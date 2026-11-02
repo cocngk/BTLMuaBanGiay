@@ -23,8 +23,9 @@ aider*/
 [Oo]ut/
 [Ll]og/
 
-# NuGet packages (restored via packages.config)
-packages/
+# NuGet: giu ca thu muc packages/ trong repo de may moi clone ve la build duoc
+# ngay, khong phai Restore NuGet Packages (thu muc nay chua Roslyn csc.exe ma
+# Web Forms can luc chay). Chi bo file .nupkg vi da giai nen san.
 *.nupkg
 *.snupkg
 project.lock.json
