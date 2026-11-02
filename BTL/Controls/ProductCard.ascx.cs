@@ -65,6 +65,14 @@ namespace ShoeStore
 
         protected void btnHeart_Click(object sender, EventArgs e)
         {
+            // Cùng luật với trang chi tiết: tim gắn với tài khoản, khách bấm thì mời
+            // đăng nhập chứ không ghi vào session.
+            if (!AuthHelper.IsLoggedIn())
+            {
+                Toast.RequireLogin(this, "Vui lòng đăng nhập để lưu sản phẩm vào danh sách yêu thích!");
+                return;
+            }
+
             int productId;
             if (!int.TryParse(btnHeart.CommandArgument, out productId) || productId <= 0)
             {
@@ -85,6 +93,11 @@ namespace ShoeStore
             btnHeart.Text = liked ? "\u2665" : "\u2661";
             btnHeart.CssClass = liked ? "btn-heart-wishlist active" : "btn-heart-wishlist";
             btnHeart.ToolTip = liked ? "Bỏ khỏi yêu thích" : "Thêm vào yêu thích";
+
+            if (!AuthHelper.IsLoggedIn())
+            {
+                btnHeart.ToolTip = "Đăng nhập để lưu vào yêu thích";
+            }
         }
     }
 }

@@ -155,10 +155,25 @@ namespace ShoeStore
             btnWishlist.Text = liked ? "\u2665" : "\u2661";
             btnWishlist.CssClass = liked ? "btn-wishlist-detail active" : "btn-wishlist-detail";
             btnWishlist.ToolTip = liked ? "Bỏ khỏi yêu thích" : "Thêm vào yêu thích";
+
+            // Khách chưa đăng nhập bấm tim sẽ được mời đăng nhập (xem btnWishlist_Click),
+            // nên nói trước bằng tooltip thay vì để bấm rồi mới biết.
+            if (!AuthHelper.IsLoggedIn())
+            {
+                btnWishlist.ToolTip = "Đăng nhập để lưu vào yêu thích";
+            }
         }
 
         protected void btnWishlist_Click(object sender, EventArgs e)
         {
+            // Yêu thích là dữ liệu của tài khoản (lưu theo UserKey, không theo phiên),
+            // nên khách vãng lai không có chỗ nào để xem lại. Hỏi đăng nhập ngay thay
+            // vì ghi tạm vào session rồi người dùng tưởng đã lưu.
+            if (!RequireLogin("Vui lòng đăng nhập để lưu sản phẩm vào danh sách yêu thích!"))
+            {
+                return;
+            }
+
             int id = Convert.ToInt32(Request.QueryString["id"]);
             Wishlist.Toggle(id);
             RenderWishlist(id);
