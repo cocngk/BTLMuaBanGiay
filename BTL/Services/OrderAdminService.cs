@@ -58,16 +58,21 @@ namespace ShoeStore.Services
             return store.All();
         }
 
-        /// <summary>Lọc theo trạng thái; chuỗi rỗng hoặc lạ nghĩa là "tất cả".</summary>
-        public List<Order> ByStatus(string status)
+        /// <summary>
+        /// Lọc theo trạng thái; chuỗi rỗng hoặc lạ nghĩa là "tất cả".
+        /// Nhận danh sách đã đọc sẵn vì trang quản trị cần cả bản đầy đủ (để đếm và
+        /// viết câu "chưa có đơn nào") lẫn bản đã lọc — đọc kho hai lần là hai bản
+        /// sao thừa cho mỗi lần render.
+        /// </summary>
+        public static List<Order> FilterByStatus(IEnumerable<Order> all, string status)
         {
-            List<Order> all = store.All();
+            List<Order> orders = all == null ? new List<Order>() : all.ToList();
             if (string.IsNullOrEmpty(status) || !Order.IsKnownStatus(status))
             {
-                return all;
+                return orders;
             }
 
-            return all.Where(o => string.Equals(o.Status, status, StringComparison.Ordinal)).ToList();
+            return orders.Where(o => string.Equals(o.Status, status, StringComparison.Ordinal)).ToList();
         }
 
         /// <summary>

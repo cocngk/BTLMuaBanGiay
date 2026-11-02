@@ -53,8 +53,10 @@
                                 <ItemTemplate>
                                     <tr>
                                         <td class="cell-img">
-                                            <img src='<%# ResolveUrl(Convert.ToString(Eval("ImageUrl"))) %>'
-                                                alt='<%# Eval("Name") %>' loading="lazy" />
+                                            <%-- <%#: %> encode cả dấu nháy: tên sản phẩm và đường dẫn ảnh
+                                                 do người dùng nhập, để nguyên văn trong attribute là vỡ thẻ. --%>
+                                            <img src='<%#: ResolveUrl(Convert.ToString(Eval("ImageUrl"))) %>'
+                                                alt='<%#: Eval("Name") %>' loading="lazy" />
                                         </td>
                                         <td>
                                             <a class="cell-name" href='<%# "SuaSanPham.aspx?id=" + Eval("Id") %>'><%#: Eval("Name") %></a>

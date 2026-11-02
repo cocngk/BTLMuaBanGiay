@@ -79,6 +79,17 @@
                 <i class="fa-solid fa-user"></i>
                 <asp:Literal ID="litEmpty" runat="server" Mode="Encode"></asp:Literal>
             </asp:Panel>
+
+            <asp:Panel ID="pnlPager" runat="server" CssClass="admin-pager" Visible="false">
+                <asp:LinkButton ID="btnPrev" runat="server" CssClass="btn-row" CausesValidation="false"
+                    OnClick="btnPrev_Click"><i class="fa-solid fa-chevron-left"></i> Trước</asp:LinkButton>
+                <span class="pager-info">
+                    Trang <asp:Literal ID="litPage" runat="server"></asp:Literal> /
+                    <asp:Literal ID="litTotalPages" runat="server"></asp:Literal>
+                </span>
+                <asp:LinkButton ID="btnNext" runat="server" CssClass="btn-row" CausesValidation="false"
+                    OnClick="btnNext_Click">Sau <i class="fa-solid fa-chevron-right"></i></asp:LinkButton>
+            </asp:Panel>
         </section>
 
     </asp:Panel>

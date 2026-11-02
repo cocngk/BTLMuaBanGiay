@@ -32,6 +32,18 @@ namespace ShoeStore
                 return;
             }
 
+            // Có ?id= mà không đọc được thành số thì đừng lặng lẽ chuyển sang form
+            // "thêm mới": người dùng bấm Lưu sẽ tạo thêm một sản phẩm trùng, còn
+            // tưởng là đang sửa. Link hỏng thì báo và đưa về danh sách.
+            string rawId = Request.QueryString["id"];
+            int parsedId;
+            if (!string.IsNullOrEmpty(rawId) && (!int.TryParse(rawId, out parsedId) || parsedId <= 0))
+            {
+                Toast.ShowAndRedirect(this, "Đường dẫn sửa sản phẩm không hợp lệ. Hãy chọn lại từ danh sách.",
+                    "info", "QuanTriSanPham.aspx");
+                return;
+            }
+
             pnlAdmin.Visible = true;
 
             // Gợi ý hãng phải có cả sau postback, nếu không danh sách gợi ý biến mất

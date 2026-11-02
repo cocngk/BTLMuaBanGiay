@@ -52,7 +52,9 @@
                             Placeholder="Nike, Adidas, ..."></asp:TextBox>
                         <datalist id="dlBrands">
                             <asp:Repeater ID="rptBrands" runat="server">
-                                <ItemTemplate><option value="<%# Container.DataItem %>"></option></ItemTemplate>
+                                <%-- <%#: %> vì tên hãng là chuỗi người dùng nhập; dấu nháy trong
+                                     value của <option> sẽ làm vỡ attribute. --%>
+                                <ItemTemplate><option value="<%#: Container.DataItem %>"></option></ItemTemplate>
                             </asp:Repeater>
                         </datalist>
                         <div class="hint">Gõ tự do, hoặc chọn một hãng đã có để bộ lọc không bị tách đôi.</div>

@@ -87,7 +87,7 @@ namespace ShoeStore
             string keyword = txtSearch.Text.Trim();
 
             List<Order> all = service.All();
-            List<Order> filtered = service.ByStatus(status);
+            List<Order> filtered = OrderAdminService.FilterByStatus(all, status);
 
             if (keyword.Length > 0)
             {

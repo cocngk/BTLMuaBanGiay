@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI.WebControls;
+using ShoeStore.Data;
 using ShoeStore.Helpers;
 
 namespace ShoeStore
@@ -31,6 +32,8 @@ namespace ShoeStore
     /// </summary>
     public partial class QuanTriNguoiDung : ShopPage
     {
+        private const int PageSize = 10;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!RequireAdmin())
@@ -42,7 +45,25 @@ namespace ShoeStore
 
             if (!IsPostBack)
             {
+                CurrentPage = 1;
                 BindList();
+            }
+        }
+
+        /// <summary>
+        /// Số trang giữ trong ViewState như hai trang quản trị còn lại: nút Trước/Sau là
+        /// postback, nên không cần dựng URL và cũng không mất trang khi đổi quyền một dòng.
+        /// </summary>
+        private int CurrentPage
+        {
+            get
+            {
+                object value = ViewState["Page"];
+                return value == null ? 1 : (int)value;
+            }
+            set
+            {
+                ViewState["Page"] = value;
             }
         }
 
@@ -92,12 +113,27 @@ namespace ShoeStore
                 .ThenBy(r => r.Username, StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
-            rptUsers.DataSource = rows;
+            // Cắt trang sau khi đã lọc và sắp: số trang tính trên đúng danh sách đang xem,
+            // không phải trên toàn bộ tài khoản.
+            PagedResult<AdminUserRow> page = Paging.Paginate(rows, CurrentPage, PageSize);
+            CurrentPage = page.Page;
+
+            rptUsers.DataSource = page.Items;
             rptUsers.DataBind();
 
-            bool empty = rows.Count == 0;
+            bool empty = page.Items.Count == 0;
             pnlTable.Visible = !empty;
             pnlEmpty.Visible = empty;
+            pnlPager.Visible = page.TotalPages > 1;
+
+            litPage.Text = page.Page.ToString();
+            litTotalPages.Text = page.TotalPages.ToString();
+
+            btnPrev.Enabled = page.Page > 1;
+            btnNext.Enabled = page.Page < page.TotalPages;
+            btnPrev.CssClass = page.Page > 1 ? "btn-row" : "btn-row is-disabled";
+            btnNext.CssClass = page.Page < page.TotalPages ? "btn-row" : "btn-row is-disabled";
+
             litEmpty.Text = keyword.Length == 0
                 ? "Chưa có tài khoản nào."
                 : "Không có tài khoản nào khớp với \"" + keyword + "\".";
@@ -128,6 +164,31 @@ namespace ShoeStore
                 return;
             }
 
+            // Tìm mới thì luôn về trang đầu: kết quả ít hơn có thể làm trang hiện tại
+            // vượt quá số trang, và người dùng đang tìm thứ khác.
+            CurrentPage = 1;
+            BindList();
+        }
+
+        protected void btnPrev_Click(object sender, EventArgs e)
+        {
+            if (!RequireAdmin())
+            {
+                return;
+            }
+
+            CurrentPage = Math.Max(1, CurrentPage - 1);
+            BindList();
+        }
+
+        protected void btnNext_Click(object sender, EventArgs e)
+        {
+            if (!RequireAdmin())
+            {
+                return;
+            }
+
+            CurrentPage = CurrentPage + 1;
             BindList();
         }
 
