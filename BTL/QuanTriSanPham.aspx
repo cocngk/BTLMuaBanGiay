@@ -14,8 +14,8 @@
             <div>
                 <h1 class="admin-title">Quản trị sản phẩm</h1>
                 <p class="admin-sub">
-                    Toàn bộ danh mục đang bán: thêm, sửa, xoá. Thay đổi chỉ nằm trong bộ nhớ
-                    của ứng dụng (bản demo), khởi động lại IIS là quay về dữ liệu mẫu.
+                    Toàn bộ danh mục đang bán: thêm, sửa, xoá. Thay đổi có hiệu lực ngay
+                    cho mọi khách truy cập.
                 </p>
             </div>
             <a href="SuaSanPham.aspx" class="btn-admin"><i class="fa-solid fa-plus"></i> Thêm sản phẩm</a>

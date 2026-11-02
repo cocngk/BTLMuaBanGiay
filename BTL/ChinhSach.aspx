@@ -27,7 +27,7 @@
             <a href="#dieu-khoan">Điều khoản sử dụng</a>
         </nav>
 
-        <!-- ================= ĐỔI TRẢ ================= -->
+        <!-- Đổi trả -->
         <section id="doi-tra" class="policy-card">
             <h2 class="policy-heading"><i class="fa-solid fa-rotate-left"></i> Chính sách đổi trả</h2>
             <ol class="policy-list">
@@ -43,7 +43,7 @@
             </p>
         </section>
 
-        <!-- ================= BẢO HÀNH ================= -->
+        <!-- Bảo hành -->
         <section id="bao-hanh" class="policy-card">
             <h2 class="policy-heading"><i class="fa-solid fa-screwdriver-wrench"></i> Bảo hành sản phẩm</h2>
             <ol class="policy-list">
@@ -59,7 +59,7 @@
             </p>
         </section>
 
-        <!-- ================= VẬN CHUYỂN ================= -->
+        <!-- Vận chuyển -->
         <section id="van-chuyen" class="policy-card">
             <h2 class="policy-heading"><i class="fa-solid fa-truck-fast"></i> Vận chuyển &amp; giao hàng</h2>
             <ol class="policy-list">
@@ -75,7 +75,7 @@
             </p>
         </section>
 
-        <!-- ================= THANH TOÁN ================= -->
+        <!-- Thanh toán -->
         <section id="thanh-toan" class="policy-card">
             <h2 class="policy-heading"><i class="fa-solid fa-shield-halved"></i> Thanh toán &amp; bảo mật</h2>
             <ol class="policy-list">
@@ -91,7 +91,7 @@
             </p>
         </section>
 
-        <!-- ================= ĐIỀU KHOẢN ================= -->
+        <!-- Điều khoản -->
         <section id="dieu-khoan" class="policy-card">
             <h2 class="policy-heading"><i class="fa-solid fa-file-contract"></i> Điều khoản sử dụng</h2>
             <ol class="policy-list">

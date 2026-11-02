@@ -79,7 +79,7 @@
                     </div>
                 </div>
 
-                <!-- HOTLINE HỖ TRỢ NHANH -->
+                <!-- Hotline hỗ trợ nhanh -->
                 <div class="quick-contact-box">
                     <div class="quick-contact-icon"><i class="fa-solid fa-phone"></i></div>
                     <div>

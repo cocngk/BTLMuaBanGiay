@@ -4,10 +4,7 @@ using System.Linq;
 
 namespace ShoeStore.Models
 {
-    /// <summary>
-    /// Single product model shared by all pages (was triplicated in
-    /// TrangChu / SanPham / ChiTietSanPham code-behinds).
-    /// </summary>
+    /// <summary>Model sản phẩm dùng chung cho mọi trang.</summary>
     public class ProductItem
     {
         public int Id { get; set; }
@@ -20,10 +17,8 @@ namespace ShoeStore.Models
         public string Sizes { get; set; }
         /// <summary>
         /// Đường dẫn bắt đầu bằng ~ để ResolveUrl() luôn ra gốc ứng dụng.
-        /// Không có ~ thì ResolveUrl bên trong UserControl sẽ ghép vào /Controls/ — 
-        /// đó chính là lý do ảnh trong card từng hỏng.
-        /// Trước đây đường dẫn là URL của Unsplash và trang chi tiết tự đổi kích
-        /// cỡ bằng Replace("w=400", "w=1200") — thứ chỉ chạy được với URL online.
+        /// Không có ~ thì ResolveUrl bên trong UserControl sẽ ghép vào /Controls/,
+        /// và ảnh trong thẻ sản phẩm sẽ hỏng.
         /// </summary>
         public string ImageUrl { get; set; }
 

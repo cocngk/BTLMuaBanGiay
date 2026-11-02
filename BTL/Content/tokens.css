@@ -1,0 +1,40 @@
+/* Bảng màu và token dùng chung cho toàn site SneakerX */
+/* Thứ tự nạp: tokens.css trước, rồi site.css và css của từng trang. */
+:root {
+    /* nền và bề mặt */
+    --section: #f7f7f5;         /* nền nội dung */
+    --panel: #fbfaf9;            /* thẻ và bề mặt nổi */
+    --tint: #efeeea;             /* nhóm pill, ô tìm kiếm, nền ô nhập */
+    --brand-tint: #fae9e7;       /* nhãn và nền màu thương hiệu nhạt */
+    --accent-band: #f1f2ea;      /* dải kem ở banner và footer */
+
+    /* thương hiệu */
+    --brand: #e4544b;            /* nút chính, điểm nhấn thương hiệu */
+    --brand-hover: #c9443a;      /* trạng thái hover, đậm hơn */
+    --brand-text: #c9443a;       /* link và chữ nhấn, đủ tương phản */
+    --brand-glow: rgba(228, 84, 75, 0.35);
+    --brand-glow-soft: rgba(228, 84, 75, 0.25);
+    --brand-glow-strong: rgba(228, 84, 75, 0.5);
+    --header-shadow: rgba(28, 25, 23, 0.08);
+    --card-shadow: rgba(28, 25, 23, 0.04);
+
+    /* chữ */
+    --heading: #1c1917;          /* tiêu đề, độ tương phản cao */
+    --body: #57534e;             /* chữ nội dung chính */
+    --muted: #79716b;            /* chú thích và thông tin phụ */
+
+    /* viền */
+    --border: #e7e6e5;           /* đường phân cách mảnh */
+    --border-strong: #d6d3d1;
+
+    /* kiểu chữ: Inter cho nội dung, font hiển thị đậm và sít cho tiêu đề, mono cho nhãn nhỏ */
+    --font-body: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --font-display: 'Circular', 'DM Sans', 'Inter', 'Segoe UI', sans-serif;
+    --font-mono: 'Fragment Mono', Consolas, monospace;
+
+    /* hình khối: control dạng pill, panel bo 24px, menu bo 12px, checkbox bo 4px */
+    --radius-pill: 30px;
+    --radius-panel: 24px;
+    --radius-menu: 12px;
+    --radius-circle: 50%;
+}

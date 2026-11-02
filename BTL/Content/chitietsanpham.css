@@ -77,7 +77,7 @@
             display: block;
         }
 
-        /* SIZE SELECTION STYLES */
+        /* Chọn size */
         .size-selector {
             display: flex;
             gap: 10px;
@@ -194,7 +194,7 @@
             line-height: 1.7;
         }
 
-        /* ===== PDP UPGRADE: gallery, rating, stock, qty, ship, reviews ===== */
+        /* ===== Trang chi tiết: thư viện ảnh, đánh giá, tồn kho, số lượng, vận chuyển ===== */
         .zoom-wrap {
             overflow: hidden;
             border-radius: 24px;

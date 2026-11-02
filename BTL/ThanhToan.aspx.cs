@@ -40,8 +40,8 @@ namespace ShoeStore
             pnlEmpty.Visible = false;
             pnlCheckout.Visible = true;
 
-            // Cart khong cai IEnumerable nen khong bind truc tiep, phai lay Lines
-            // giong trang GioHang, neu khong se nem ArgumentException.
+            // Cart không cài IEnumerable nên không bind trực tiếp, phải lấy Lines
+            // giống trang Giỏ hàng, nếu không sẽ ném ArgumentException.
             rptSummary.DataSource = cart.Lines.ToList();
             rptSummary.DataBind();
 

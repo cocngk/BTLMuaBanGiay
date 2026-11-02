@@ -1,5 +1,5 @@
-/* Đơn hàng của tôi — Charm: panel bo 24px, control pill, hairline border.
-   Coral chỉ dùng cho action / mã đơn / tổng tiền, không tô nền lớn. */
+/* Đơn hàng của tôi — panel bo góc lớn, control dạng pill, viền mảnh.
+   Màu nhấn chỉ dùng cho action / mã đơn / tổng tiền, không tô nền lớn. */
 
 .orders-shell {
     max-width: 960px;

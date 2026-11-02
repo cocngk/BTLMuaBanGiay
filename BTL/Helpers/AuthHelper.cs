@@ -143,7 +143,7 @@ namespace ShoeStore.Helpers
         }
 
         /// <summary>
-        /// Dữ liệu demo. Mật khẩu thô chỉ xuất hiện đúng ở chỗ này,
+        /// Tài khoản khởi tạo. Mật khẩu thô chỉ xuất hiện đúng ở chỗ này,
         /// vào là được băm ngay — không có UserAccount nào giữ bản thô.
         /// </summary>
         public static List<UserAccount> Seed()
@@ -154,7 +154,7 @@ namespace ShoeStore.Helpers
             return new List<UserAccount>
             {
                 admin,
-                NewUser("Khách Hàng Demo", "sneakerx", "demo@sneakerx.com", "0912345678", "123")
+                NewUser("Lê Thu Hà", "sneakerx", "thuha@sneakerx.com", "0912345678", "123")
             };
         }
 
@@ -329,7 +329,7 @@ namespace ShoeStore.Helpers
     }
 
     /// <summary>
-    /// Demo-only auth (was triplicated in SiteMaster / DangNhap / DangKy).
+    /// Xác thực dùng chung cho cả site: đăng nhập, đăng ký và header cùng đi qua đây.
     /// Kho là bộ nhớ thuần sau IUserStore; khi thêm database chỉ thay adapter.
     /// </summary>
     public static class AuthHelper

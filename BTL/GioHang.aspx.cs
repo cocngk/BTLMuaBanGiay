@@ -79,7 +79,7 @@ namespace ShoeStore
         {
             FlushPendingQuantities();
             LoadCartData();
-            // Tu dong luu: khong hien toast, so tien da cap nhat tu dong o client.
+            // Tự động lưu: không hiện toast, số tiền đã cập nhật tự động ở client.
         }
 
         /// <summary>

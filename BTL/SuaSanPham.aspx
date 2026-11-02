@@ -94,7 +94,7 @@
                     <asp:TextBox ID="txtImageUrl" runat="server" CssClass="admin-input" MaxLength="400"
                         Placeholder="~/Content/images/ten-anh.jpg"></asp:TextBox>
                     <div class="hint">
-                        Bắt đầu bằng <code>~/</code> để luôn trỏ đúng gốc ứng dụng, hoặc dùng URL http(s).
+                        Bắt đầu bằng <code>~/</code> để luôn trỏ đúng gốc website, hoặc dùng URL http(s).
                         Đây là đường dẫn chứ không phải tệp tải lên.
                     </div>
                 </div>
@@ -115,8 +115,7 @@
                 <div class="admin-note">
                     <i class="fa-solid fa-circle-info"></i>
                     <span>
-                        Bản demo lưu danh mục trong bộ nhớ ứng dụng. Thay đổi có hiệu lực ngay cho
-                        mọi phiên, nhưng mất khi IIS khởi động lại.
+                        Thay đổi được áp dụng ngay cho mọi phiên truy cập sau khi lưu.
                     </span>
                 </div>
 

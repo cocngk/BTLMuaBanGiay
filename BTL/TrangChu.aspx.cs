@@ -31,18 +31,18 @@ namespace ShoeStore
             Redirect("SanPham.aspx");
         }
 
-        // BẤM NÚT DẤU CỘNG Ở CÁC SẢN PHẨM TRANG CHỦ
+        // Nút dấu cộng ở thẻ sản phẩm trên trang chủ: thêm nhanh size đầu tiên.
         protected void rptProducts_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             if (e.CommandName == "QuickAdd")
             {
-                // 1. KIỂM TRA ĐĂNG NHẬP
+                // Chưa đăng nhập thì mời đăng nhập, không thêm gì vào giỏ.
                 if (!RequireLogin("Vui lòng đăng nhập hoặc đăng ký tài khoản để mua hàng!"))
                 {
                     return;
                 }
 
-                // 2. THÊM SẢN PHẨM VÀO GIỎ HÀNG (size đầu tiên có sẵn, key gồm Id + Size)
+                // Thêm size đầu tiên còn hàng; dòng giỏ được khóa theo Id + Size.
                 int productId = Convert.ToInt32(e.CommandArgument);
                 ProductItem selected = Catalog.Find(productId);
 

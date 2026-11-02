@@ -3,8 +3,8 @@ using System.Text.RegularExpressions;
 namespace ShoeStore.Models
 {
     /// <summary>
-    /// Payment vocabulary, shared by markup values and order intake.
-    /// Add a method here and both sides follow.
+    /// Từ vựng phương thức thanh toán, dùng chung cho markup và bước đặt hàng.
+    /// Thêm một phương thức ở đây thì cả hai phía cùng theo.
     /// </summary>
     public static class PaymentMethods
     {
@@ -24,7 +24,7 @@ namespace ShoeStore.Models
         public string PaymentMethod { get; set; }
     }
 
-    /// <summary>Single validation ruleset (was hand-rolled per page).</summary>
+    /// <summary>Bộ luật kiểm tra đơn hàng dùng chung cho mọi trang đặt hàng.</summary>
     public static class OrderValidator
     {
         private static readonly Regex PhoneRegex = new Regex(@"^[0-9]{9,11}$");
@@ -34,7 +34,7 @@ namespace ShoeStore.Models
             return !string.IsNullOrEmpty(phone) && PhoneRegex.IsMatch(phone);
         }
 
-        /// <summary>Returns null when valid, otherwise the error message.</summary>
+        /// <summary>Trả về null khi hợp lệ, ngược lại là câu báo lỗi.</summary>
         public static string Validate(OrderInput order)
         {
             if (order == null) return "Thiếu thông tin đơn hàng!";

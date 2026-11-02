@@ -2,10 +2,7 @@ using System;
 
 namespace ShoeStore.Models
 {
-    /// <summary>
-    /// One line in the shopping cart. Top-level (was nested in GioHang page,
-    /// forcing every consumer through the GioHang.CartItem seam).
-    /// </summary>
+    /// <summary>Một dòng trong giỏ hàng: sản phẩm, size và số lượng.</summary>
     [Serializable]
     public class CartItem
     {

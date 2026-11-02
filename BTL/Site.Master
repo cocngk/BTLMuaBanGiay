@@ -10,10 +10,10 @@
     <title>SneakerX - Giày Dép Chính Hãng</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Icon + font đều nằm trong project: không gọi ra ngoài, chạy được khi offline -->
+    <!-- Icon và font để trong site, không gọi ra ngoài, chạy được khi offline -->
     <link rel="stylesheet" href="Content/vendor/fontawesome/css/all.min.css" />
     <link rel="stylesheet" href="Content/fonts/fonts.css" />
-    <link rel="stylesheet" href="Content/charm-tokens.css" />
+    <link rel="stylesheet" href="Content/tokens.css" />
     <link rel="stylesheet" href="Content/site.css" />
 
     
@@ -177,10 +177,10 @@
             </div>
         </footer>
 
-        <!-- NOI HIEN THI THONG BAO -->
+        <!-- Nơi hiện thông báo -->
         <div id="toastContainer" class="toast-container"></div>
 
-        <!-- HAM TOAST DUNG CHUNG CHO CAC TRANG -->
+        <!-- Hàm toast dùng chung cho các trang -->
         <script type="text/javascript">
             function openLoginModal() {
                 window.location.href = 'DangNhap.aspx';
@@ -210,7 +210,7 @@
                 return true;
             }
 
-            // Sinh tu Helpers.Money nen client va server luon hien cung khu giá.
+            // Sinh từ Helpers.Money để client và server luôn hiện cùng một cách.
             <%= Money.JsFormatter %>
 
             function showToast(message, type) {

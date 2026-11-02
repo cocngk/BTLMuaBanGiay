@@ -15,7 +15,7 @@
             color: var(--body);
         }
 
-        /* ===== HEADER v2: one-row compact (Charm) ===== */
+        /* ===== HEADER: một hàng gọn ===== */
         .header-container {
             background: var(--panel);
             padding: 10px 24px;
@@ -489,7 +489,7 @@
             margin-top: 8px;
         }
 
-        /* THONG BAO TOAST */
+        /* Thông báo toast */
         .toast-container {
             position: fixed;
             top: 25px;

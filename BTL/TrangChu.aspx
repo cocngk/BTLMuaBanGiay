@@ -9,7 +9,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     
 
-    <!-- BANNER HERO -->
+    <!-- Banner đầu trang -->
     <div class="hero-section">
         <div class="hero-hint-text"><i class="fa-solid fa-hand-pointer"></i> Di chuột vào đây để khám phá</div>
 
@@ -25,7 +25,7 @@
         </div>
     </div>
 
-    <!-- SẢN PHẨM NỔI BẬT -->
+    <!-- Sản phẩm nổi bật -->
     <div class="section-container" id="san-pham">
         <div class="section-header-flex">
             <div>

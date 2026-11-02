@@ -174,7 +174,7 @@
 
         .btn-action-buy:hover { background: var(--brand-hover); }
 
-        /* ===== Section header pattern (home + related) ===== */
+        /* ===== Khối tiêu đề dùng chung (trang chủ và sản phẩm liên quan) ===== */
         .section-container {
             max-width: 1200px;
             margin: 40px auto;

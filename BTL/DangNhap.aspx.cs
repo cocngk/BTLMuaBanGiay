@@ -23,7 +23,7 @@ namespace ShoeStore
             string username = txtUsername.Text.Trim();
             string password = txtPassword.Text.Trim();
 
-            // 2. Tim tai khoan (dùng chung qua AuthHelper)
+            // Tìm tài khoản theo tên đăng nhập hoặc email.
             UserAccount account = AuthHelper.FindByUsernameOrEmail(username);
 
             if (account == null)
@@ -32,14 +32,14 @@ namespace ShoeStore
                 return;
             }
 
-            // 3. Kiem tra mat khau — so bang hash, khong so bang chuoi goc
+            // So mật khẩu bằng hash, không giữ và không so chuỗi gốc.
             if (!PasswordHasher.Verify(password, account.PasswordSalt, account.PasswordHash))
             {
                 ShowFormError("Sai mật khẩu! Vui lòng kiểm tra lại.");
                 return;
             }
 
-            // 4. Dang nhap thanh cong
+            // Hợp lệ: ghi phiên đăng nhập rồi về trang chủ.
             AuthHelper.SignIn(account);
 
             Toast.ShowAndRedirect(this,

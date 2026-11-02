@@ -8,7 +8,7 @@
     
 
     <div class="news-container">
-        <!-- BÀI VIẾT NỔI BẬT HERO -->
+        <!-- Bài viết nổi bật -->
         <div class="featured-news-hero">
             <asp:Image ID="imgHero" runat="server" CssClass="featured-news-img" />
             <div class="featured-news-content">
@@ -25,7 +25,7 @@
 
         <div class="news-layout">
             <div>
-                <!-- LƯỚI DANH SÁCH BÀI VIẾT -->
+                <!-- Lưới danh sách bài viết -->
                 <div class="blogs-grid">
                     <asp:Repeater ID="rptBlogs" runat="server">
                         <ItemTemplate>
@@ -44,7 +44,7 @@
                     </asp:Repeater>
                 </div>
 
-                <!-- THANH PHÂN TRANG TIN TỨC -->
+                <!-- Thanh phân trang -->
                 <div class="pagination-container" id="pnlNewsPagination" runat="server">
                     <asp:HyperLink ID="btnNewsPrev" runat="server" CssClass="page-link-custom">&laquo; Trước</asp:HyperLink>
                     <asp:Repeater ID="rptNewsPages" runat="server">
@@ -56,7 +56,7 @@
                 </div>
             </div>
 
-            <!-- SIDEBAR BÊN PHẢI -->
+            <!-- Cột bên phải -->
             <aside>
                 <div class="sidebar-widget">
                     <h3 class="widget-title">Chuyên mục tin tức</h3>

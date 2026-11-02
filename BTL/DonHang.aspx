@@ -19,7 +19,7 @@
             </p>
         </div>
 
-        <!-- ================= TRA CỨU THEO MÃ ĐƠN ================= -->
+        <!-- Tra cứu theo mã đơn -->
         <div class="orders-lookup">
             <label class="orders-lookup-label" for="<%= txtCode.ClientID %>">
                 <i class="fa-solid fa-magnifying-glass"></i> Tra cứu theo mã đơn
@@ -31,7 +31,7 @@
             </div>
         </div>
 
-        <!-- ================= KẾT QUẢ TRA CỨU ================= -->
+        <!-- Kết quả tra cứu -->
         <asp:Panel ID="pnlLookup" runat="server" Visible="false" CssClass="order-card order-card-lookup">
             <div class="order-card-head">
                 <div>
@@ -66,7 +66,7 @@
             </p>
         </asp:Panel>
 
-        <!-- ================= CHƯA ĐĂNG NHẬP ================= -->
+        <!-- Chưa đăng nhập -->
         <asp:Panel ID="pnlLoginHint" runat="server" Visible="false" CssClass="orders-empty">
             <i class="fa-solid fa-user-lock orders-empty-icon"></i>
             <p class="orders-empty-title">Bạn chưa đăng nhập</p>
@@ -76,7 +76,7 @@
             </p>
         </asp:Panel>
 
-        <!-- ================= CHƯA CÓ ĐƠN NÀO ================= -->
+        <!-- Chưa có đơn nào -->
         <asp:Panel ID="pnlNoOrders" runat="server" Visible="false" CssClass="orders-empty">
             <i class="fa-solid fa-box-open orders-empty-icon"></i>
             <p class="orders-empty-title">Chưa có đơn hàng nào</p>
@@ -85,7 +85,7 @@
             </p>
         </asp:Panel>
 
-        <!-- ================= DANH SÁCH ĐƠN CỦA TÔI ================= -->
+        <!-- Danh sách đơn của tôi -->
         <asp:Panel ID="pnlMyOrders" runat="server" Visible="false">
             <h2 class="orders-section-title">
                 Đơn đã đặt (<asp:Literal ID="litOrderCount" runat="server"></asp:Literal>)

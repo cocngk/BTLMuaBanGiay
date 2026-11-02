@@ -14,8 +14,8 @@ namespace ShoeStore
         }
 
         /// <summary>
-        /// Footer tro toi TuVan.aspx?topic=... nen chon san chu de de nguoi dung
-        /// khong phai tu dong lai.
+        /// Footer trỏ tới TuVan.aspx?topic=... nên chọn sẵn chủ đề để người dùng
+        /// không phải tự dòng lại.
         /// </summary>
         private void SelectTopicFromQuery()
         {

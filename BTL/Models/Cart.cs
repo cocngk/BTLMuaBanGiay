@@ -5,9 +5,9 @@ using System.Linq;
 namespace ShoeStore.Models
 {
     /// <summary>
-    /// Deep Cart domain module: owns lines (keyed by Id+Size), totals and
-    /// stock clamping. Pure logic — no HttpContext, no Session — so this is
-    /// the unit-test surface. Persistence lives behind Data.CartStore.
+    /// Miền nghiệp vụ của giỏ hàng: giữ các dòng (khóa theo Id + Size), tính tổng
+    /// và chặn theo tồn kho. Thuần logic — không HttpContext, không Session — nên
+    /// đây là chỗ test được. Việc lưu nằm sau Data.CartStore.
     /// </summary>
     public class Cart
     {

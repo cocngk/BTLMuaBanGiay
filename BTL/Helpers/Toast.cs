@@ -5,13 +5,13 @@ using System.Web.UI;
 namespace ShoeStore.Helpers
 {
     /// <summary>
-    /// Single toast adapter (was copy-pasted per page with two dialects).
-    /// Requires the Master ScriptManager; falls back safely when absent.
+    /// Cửa duy nhất để hiện toast. Cần ScriptManager của Master; thiếu thì tự lùi
+    /// về cách đăng ký script cổ điển để trang không vỡ.
     /// </summary>
     public static class Toast
     {
-        // Nhan Control chu khong Page: MasterPage khong phai Page, nhung ca hai deu
-        // dua qua ScriptManager cua Master nen can mot dau vao chung.
+        // Nhận Control chứ không phải Page: MasterPage không phải Page, nhưng cả hai
+        // đều đi qua ScriptManager của Master nên cần một đầu vào chung.
         private static void Register(Control control, string key, string script)
         {
             if (ResolveScriptManager(control) != null)
@@ -25,14 +25,14 @@ namespace ShoeStore.Helpers
         }
 
         /// <summary>
-        /// ScriptManager nam trong Site.Master chu khong nam tren tung trang.
-        /// ScriptManager.GetCurrent chi nhan Page, nen tu MasterPage phai xac dinh
-        /// trang con truoc; neu khong tim thay thi quet form tim ScriptManager.
+        /// ScriptManager nằm trong Site.Master chứ không nằm trên từng trang.
+        /// ScriptManager.GetCurrent chỉ nhận Page, nên từ MasterPage phải xác định
+        /// trang con trước; nếu không tìm thấy thì quét form tìm ScriptManager.
         /// </summary>
         private static System.Web.UI.ScriptManager ResolveScriptManager(Control control)
         {
-            // Control.Page leo len Control cha de tra ve trang chua no: goi tu
-            // MasterPage se ra dung trang con, goi tu Page thi ra chinh no.
+            // Control.Page leo lên Control cha để trả về trang chứa nó: gọi từ
+            // MasterPage sẽ ra đúng trang con, gọi từ Page thì ra chính nó.
             Page page = control as Page;
             if (page == null && control != null)
             {

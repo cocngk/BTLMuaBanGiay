@@ -10,7 +10,7 @@
     
 
     <div class="shop-page-layout">
-        <!-- SIDEBAR BỘ LỌC -->
+        <!-- Cột bộ lọc bên trái -->
         <aside class="filter-sidebar">
             <div class="filter-group">
                 <div class="filter-title"><i class="fa-solid fa-filter"></i> Thương hiệu</div>
@@ -27,7 +27,7 @@
                 </asp:RadioButtonList>
             </div>
 
-            <!-- CỤM CHỌN SIZE ĐÃ SỬA LỖI -->
+            <!-- Bộ chọn size -->
             <div class="filter-group">
                 <div class="filter-title"><i class="fa-solid fa-shoe-prints"></i> Kích cỡ (Size)</div>
                 <asp:HiddenField ID="hfSelectedSize" runat="server" Value="" />
@@ -45,7 +45,7 @@
             <a href="SanPham.aspx" class="btn-reset-filter">Xóa bộ lọc</a>
         </aside>
 
-        <!-- KHU VỰC HIỂN THỊ SẢN PHẨM -->
+        <!-- Danh sách sản phẩm -->
         <div>
             <div class="shop-toolbar">
                 <div class="search-inner">
@@ -87,7 +87,7 @@
                 </asp:Panel>
             </div>
 
-            <!-- THANH PHÂN TRANG -->
+            <!-- Thanh phân trang -->
             <div class="pagination-container" id="pnlPagination" runat="server">
                 <asp:HyperLink ID="lnkPrevPage" runat="server" CssClass="page-link-custom">&laquo; Trước</asp:HyperLink>
                 <asp:Repeater ID="rptPages" runat="server">
@@ -100,7 +100,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT FIX LỖI TỰ ĐỘNG LƯU TRẠNG THÁI SIZE SANG DỮ LIỆU C# -->
+    <!-- Đồng bộ size đang chọn giữa client và server -->
     <script>
         function clickSelectSize(element, sizeValue) {
             var hf = document.getElementById('<%= hfSelectedSize.ClientID %>');
@@ -116,7 +116,7 @@
             }
         }
 
-        // Giữ trạng thái hiển thị màu đỏ của ô Size sau khi Reload/PostBack trang
+        // Đánh dấu lại size đang chọn sau khi tải lại trang hoặc PostBack
         document.addEventListener("DOMContentLoaded", function () {
             var currentSize = document.getElementById('<%= hfSelectedSize.ClientID %>').value;
             if (currentSize) {

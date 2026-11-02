@@ -56,7 +56,7 @@
                     </div>
                     <div class="stock-row"><asp:Literal ID="litStock" runat="server"></asp:Literal></div>
 
-                    <!-- CHỌN SIZE THEO DATA THẬT CỦA SẢN PHẨM -->
+                    <!-- Chọn size -->
                     <div class="size-label-row">
                         <span class="section-label">Chọn Size giày:</span>
                         <a href="javascript:void(0)" class="size-guide-link" onclick="toggleSizeGuide()"><i class="fa-solid fa-ruler"></i> Bảng size</a>
@@ -84,7 +84,7 @@
                         </table>
                     </div>
 
-                    <!-- CHỌN SỐ LƯỢNG -->
+                    <!-- Chọn số lượng -->
                     <span class="section-label">Số lượng:</span>
                     <div class="qty-box-flex">
                         <button type="button" class="qty-step-btn" onclick="stepQty(-1)">−</button>

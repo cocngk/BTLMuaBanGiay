@@ -11,9 +11,9 @@ namespace ShoeStore
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Repeater khong giu item qua postback: bind o MOI lan render,
-            // neu chi bind lan !IsPostBack thi menu/footer bien mat sau
-            // khi bam nut (them gio, luu so luong, dang ky nhan tin...).
+            // Repeater không giữ item qua postback: bind ở MỌI lần render,
+            // nếu chỉ bind lần !IsPostBack thì menu/footer biến mất sau
+            // khi bấm nút (thêm giỏ, lưu số lượng, đăng ký nhận tin...).
             BindMenu();
             BindFooter();
 
@@ -62,9 +62,9 @@ namespace ShoeStore
             {
                 item.IsActive = string.Equals(item.Url, pageName, StringComparison.OrdinalIgnoreCase);
             }
-            // Khong ep muc nao active khi khong co muc nao khop: trang Thanh toan,
-            // Gio hang, Dang nhap... deu khong phai muc menu, to do Trang chu se
-            // to do sai.
+            // Không ép mục nào active khi không có mục nào khớp: trang Thanh toán,
+            // Giỏ hàng, Đăng nhập... đều không phải mục menu, tô đỏ Trang chủ sẽ
+            // tô đỏ sai.
             rptMenu.DataSource = items;
             rptMenu.DataBind();
 

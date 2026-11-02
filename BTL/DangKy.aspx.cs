@@ -31,7 +31,7 @@ namespace ShoeStore
             // khóa. CheckDuplicate bên dưới chỉ là gợi ý tức thời cho người dùng.
             if (!Page.IsValid) return;
 
-            // 8. Luu tai khoan moi — mat khau duoc bam ngay, khong luu ban tho
+            // Mật khẩu được băm ngay khi tạo tài khoản, không lưu bản thô.
             UserAccount account = MemoryUserStore.NewUser(fullName, username, email, phone, password);
 
             switch (AuthHelper.TryAdd(account))
@@ -44,7 +44,7 @@ namespace ShoeStore
                     return;
             }
 
-            // 9. Dang nhap ngay sau khi dang ky
+            // Đăng ký xong thì đăng nhập luôn, khỏi bắt gõ lại.
             AuthHelper.SignIn(account);
 
             Toast.ShowAndRedirect(this,

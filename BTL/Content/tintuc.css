@@ -173,7 +173,7 @@
             line-height: 1.3;
         }
 
-        /* --- STYLES PHÂN TRANG TIN TỨC --- */
+        /* Thanh phân trang tin tức */
         .pagination-container {
             display: flex;
             justify-content: center;

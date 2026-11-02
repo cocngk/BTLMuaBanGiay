@@ -96,7 +96,7 @@
     <Content Include="Content\images\hero\*.jpg" />
     <Content Include="Content\images\blogs\*.jpg" />
     <Content Include="Content\product-card.css" />
-    <Content Include="Content\charm-tokens.css" />
+    <Content Include="Content\tokens.css" />
     <Content Include="Content\site.css" />
     <Content Include="Content\trangchu.css" />
     <Content Include="Content\sanpham.css" />

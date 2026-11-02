@@ -8,8 +8,8 @@ using ShoeStore.Models;
 namespace ShoeStore.Data
 {
     /// <summary>
-    /// Price bucket vocabulary, shared by markup (radio values) and filtering.
-    /// Add a bucket here and both sides follow.
+    /// Từ vựng khoảng giá, dùng chung cho markup (value của radio) và bộ lọc.
+    /// Thêm một khoảng ở đây thì cả hai phía cùng theo.
     /// </summary>
     public static class PriceBuckets
     {
@@ -31,7 +31,7 @@ namespace ShoeStore.Data
     }
 
     /// <summary>
-    /// Single filter interface: parse (query) -> apply (list) -> build URL.
+    /// Một cửa cho bộ lọc: đọc query -> áp lên danh sách -> dựng URL.
     /// Không biết control nào của trang: adapter ở Pages/CatalogFilterControls
     /// mới là nơi duy nhất chạm TextBox/CheckBoxList.
     /// </summary>

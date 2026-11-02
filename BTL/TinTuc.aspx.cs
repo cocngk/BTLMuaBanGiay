@@ -7,7 +7,7 @@ namespace ShoeStore
 {
     public partial class TinTuc : ShopPage
     {
-        // 3 BÀI VIẾT / TRANG
+        // Số bài viết mỗi trang.
         private const int PageSize = 3;
 
         public int CurrentNewsPage { get; private set; }
