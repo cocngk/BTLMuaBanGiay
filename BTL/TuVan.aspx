@@ -14,7 +14,7 @@
         </div>
 
         <div class="consult-layout">
-            <!-- BÊN TRÁI: FORM GỬI CÂU HỎI TƯ VẤN -->
+            <!-- Bên trái: form gửi câu hỏi tư vấn -->
             <div class="card-box">
                 <h3 class="card-title"><i class="fa-solid fa-paper-plane"></i> Gửi Yêu Cầu Tư Vấn</h3>
 
@@ -58,7 +58,7 @@
                 <asp:Button ID="btnSubmitConsult" runat="server" Text="GỬI CÂU HỎI TƯ VẤN" CssClass="btn-pink-submit" OnClick="btnSubmitConsult_Click" />
             </div>
 
-            <!-- BÊN PHẢI: CÂU HỎI THƯỜNG GẶP (FAQ) & LIÊN HỆ TRỰC TIẾP -->
+            <!-- Bên phải: câu hỏi thường gặp và liên hệ trực tiếp -->
             <div>
                 <div class="card-box">
                     <h3 class="card-title"><i class="fa-solid fa-circle-question"></i> Câu Hỏi Thường GẶP</h3>

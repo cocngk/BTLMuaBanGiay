@@ -11,8 +11,8 @@
     <div class="cart-page-shell">
     <h1 class="cart-page-title">Giỏ hàng của bạn</h1>
 
-    <!-- Hai Panel rỗng/có hàng nằm TRONG UpdatePanel: đổi Visible khi async
-         postback mới được đẩy về client, nếu ngoài thì xoá dòng cuối cứ để lại bảng rỗng. -->
+    <!-- Hai Panel rỗng/có hàng nằm trong UpdatePanel: đổi Visible khi async
+         postback mới được đẩy về client, nếu để ngoài thì xoá dòng cuối vẫn còn bảng rỗng. -->
     <asp:UpdatePanel ID="updCart" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
 
@@ -90,7 +90,7 @@
                     <span id="totalValue"><asp:Literal ID="litTotal" runat="server">0đ</asp:Literal></span>
                 </div>
 
-                <!-- CHUYỂN THÀNH OnClick Server-Side ĐỂ KIỂM TRA ĐĂNG NHẬP -->
+                <!-- Nút thanh toán là postback server để kiểm tra đăng nhập -->
                 <asp:Button ID="btnGoToCheckout" runat="server" Text="TIẾN HÀNH THANH TOÁN &rarr;" OnClick="btnGoToCheckout_Click" CssClass="btn-checkout" />
             </div>
         </div>
