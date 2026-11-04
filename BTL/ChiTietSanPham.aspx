@@ -1,5 +1,5 @@
 ﻿<%@ Register Src="~/Controls/TheSanPham.ascx" TagPrefix="uc" TagName="TheSanPham" %>
-<%@ Page Title="Chi Tiết Sản Phẩm" Language="C#" MasterPageFile="~/KhungTrang.Master" AutoEventWireup="true" CodeBehind="ChiTietSanPham.aspx.cs" Inherits="ShoeStore.ChiTietSanPham" %>
+<%@ Page Title="Chi Tiết Sản Phẩm" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="ChiTietSanPham.aspx.cs" Inherits="ShoeStore.ChiTietSanPham" %>
 
 <asp:Content ID="HeadCss" ContentPlaceHolderID="HeadContent" runat="server">
     <link rel="stylesheet" href="Content/the-san-pham.css" />

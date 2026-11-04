@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Tin Tức" Language="C#" MasterPageFile="~/KhungTrang.Master" AutoEventWireup="true" CodeBehind="TinTuc.aspx.cs" Inherits="ShoeStore.TinTuc" %>
+﻿<%@ Page Title="Tin Tức" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="TinTuc.aspx.cs" Inherits="ShoeStore.TinTuc" %>
 
 <asp:Content ID="HeadCss" ContentPlaceHolderID="HeadContent" runat="server">
     <link rel="stylesheet" href="Content/tintuc.css" />

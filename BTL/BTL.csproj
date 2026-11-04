@@ -192,12 +192,12 @@
     <Compile Include="SanPham.aspx.designer.cs">
       <DependentUpon>SanPham.aspx</DependentUpon>
     </Compile>
-    <Compile Include="KhungTrang.Master.cs">
-      <DependentUpon>KhungTrang.Master</DependentUpon>
+    <Compile Include="Site.Master.cs">
+      <DependentUpon>Site.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="KhungTrang.Master.designer.cs">
-      <DependentUpon>KhungTrang.Master</DependentUpon>
+    <Compile Include="Site.Master.designer.cs">
+      <DependentUpon>Site.Master</DependentUpon>
     </Compile>
     <Compile Include="ThanhToan.aspx.cs">
       <DependentUpon>ThanhToan.aspx</DependentUpon>
@@ -272,7 +272,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <Content Include="KhungTrang.Master" />
+    <Content Include="Site.Master" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

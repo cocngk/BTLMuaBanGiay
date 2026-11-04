@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Đơn hàng của tôi" Language="C#" MasterPageFile="~/KhungTrang.Master" AutoEventWireup="true" CodeBehind="DonHang.aspx.cs" Inherits="ShoeStore.DonHang" %>
+﻿<%@ Page Title="Đơn hàng của tôi" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="DonHang.aspx.cs" Inherits="ShoeStore.DonHang" %>
 <%@ Import Namespace="ShoeStore.Helpers" %>
 <%@ Import Namespace="ShoeStore.Models" %>
 

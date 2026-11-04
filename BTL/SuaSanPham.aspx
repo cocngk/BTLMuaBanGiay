@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Sửa sản phẩm" Language="C#" MasterPageFile="~/KhungTrang.Master" AutoEventWireup="true" CodeBehind="SuaSanPham.aspx.cs" Inherits="ShoeStore.SuaSanPham" %>
+﻿<%@ Page Title="Sửa sản phẩm" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="SuaSanPham.aspx.cs" Inherits="ShoeStore.SuaSanPham" %>
 <%@ Register Src="~/Controls/TabQuanTri.ascx" TagPrefix="uc" TagName="TabQuanTri" %>
 
 <asp:Content ID="HeadCss" ContentPlaceHolderID="HeadContent" runat="server">

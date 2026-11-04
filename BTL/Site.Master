@@ -1,5 +1,5 @@
 
-<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="KhungTrang.Master.cs" Inherits="ShoeStore.SiteMaster" %>
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Master.cs" Inherits="ShoeStore.SiteMaster" %>
 <%@ Register Src="~/Controls/HopTimKiem.ascx" TagPrefix="uc" TagName="HopTimKiem" %>
 <%@ Import Namespace="ShoeStore.Models" %>
 <%@ Import Namespace="ShoeStore.Helpers" %>

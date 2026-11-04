@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Thanh Toán" Language="C#" MasterPageFile="~/KhungTrang.Master" AutoEventWireup="true" CodeBehind="ThanhToan.aspx.cs" Inherits="ShoeStore.ThanhToan" %>
+﻿<%@ Page Title="Thanh Toán" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="ThanhToan.aspx.cs" Inherits="ShoeStore.ThanhToan" %>
 <%@ Import Namespace="ShoeStore.Helpers" %>
 
 <asp:Content ID="HeadCss" ContentPlaceHolderID="HeadContent" runat="server">

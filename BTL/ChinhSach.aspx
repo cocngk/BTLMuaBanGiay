@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Chính sách &amp; Điều khoản" Language="C#" MasterPageFile="~/KhungTrang.Master" AutoEventWireup="true" CodeBehind="ChinhSach.aspx.cs" Inherits="ShoeStore.ChinhSach" %>
+﻿<%@ Page Title="Chính sách &amp; Điều khoản" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="ChinhSach.aspx.cs" Inherits="ShoeStore.ChinhSach" %>
 <%@ Import Namespace="ShoeStore.Models" %>
 
 <asp:Content ID="HeadCss" ContentPlaceHolderID="HeadContent" runat="server">
