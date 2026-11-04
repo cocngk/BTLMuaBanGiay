@@ -32,11 +32,11 @@ CREATE TABLE Products
 
 CREATE TABLE ProductColourways
 (
+    Id INT IDENTITY PRIMARY KEY,
     ProductId INT NOT NULL,
     Name NVARCHAR(80) NOT NULL,
     Small NVARCHAR(400) NOT NULL,
     Large NVARCHAR(400) NOT NULL,
-    CONSTRAINT PK_ProductColourways PRIMARY KEY (ProductId, Name),
     CONSTRAINT FK_ProductColourways_Product FOREIGN KEY (ProductId) REFERENCES Products(Id) ON DELETE CASCADE
 );
 
