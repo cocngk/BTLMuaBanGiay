@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using ShoeStore.Data;
 using ShoeStore.Helpers;
@@ -13,406 +12,159 @@ namespace ShoeStore
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
-            {
-                LoadProductDetails();
-            }
+            if (!IsPostBack) LoadProduct();
         }
 
-        private void LoadProductDetails()
+        private void LoadProduct()
         {
             int id;
-
-            if (Request.QueryString["id"] != null &&
-                int.TryParse(Request.QueryString["id"], out id))
+            ProductItem product = int.TryParse(Request.QueryString["id"], out id) ? Catalog.Find(id) : null;
+            if (product == null) { pnlProductDetail.Visible = false; pnlNotFound.Visible = true; return; }
+            pnlProductDetail.Visible = true;
+            pnlNotFound.Visible = false;
+            imgProduct.ImageUrl = ResolveUrl(product.LargeImageUrl());
+            imgProduct.AlternateText = product.Name;
+            BindColourways(product);
+            litBrand.Text = product.Brand;
+            lnkViewAllRelated.NavigateUrl = "SanPham.aspx?brand=" + Server.UrlEncode(product.Brand);
+            lnkViewAllRelated.Text = "Xem thêm " + product.Brand + " &rarr;";
+            litName.Text = litBreadcrumb.Text = product.Name;
+            litSku.Text = "SNK-" + product.Id.ToString("D4");
+            litPrice.Text = Money.Format(product.Price);
+            litDescription.Text = product.Description + " Được làm từ chất liệu cao cấp, độ bền hoàn hảo và thiết kế tối ưu nâng tầm phong cách thời trang năng động cho bạn.";
+            ApplySeo(product);
+            if (product.OldPrice.HasValue && product.OldPrice.Value > product.Price)
             {
-                ProductItem product = Catalog.Find(id);
-
-                if (product != null)
-                {
-                    pnlProductDetail.Visible = true;
-                    pnlNotFound.Visible = false;
-
-                    imgProduct.ImageUrl = ResolveUrl(product.LargeImageUrl());
-                    BindColourways(product);
-                    imgProduct.AlternateText = product.Name;
-
-                    litBrand.Text = product.Brand;
-                    lnkViewAllRelated.NavigateUrl =
-                        "SanPham.aspx?brand=" + Server.UrlEncode(product.Brand);
-                    lnkViewAllRelated.Text =
-                        "Xem thêm " + product.Brand + " &rarr;";
-
-                    litName.Text = product.Name;
-                    litBreadcrumb.Text = product.Name;
-                    litSku.Text = "SNK-" + product.Id.ToString("D4");
-                    litPrice.Text = Money.Format(product.Price);
-
-                    litDescription.Text = product.Description +
-                        " Được làm từ chất liệu cao cấp, độ bền hoàn hảo và thiết kế tối ưu nâng tầm phong cách thời trang năng động cho bạn.";
-
-                    ApplySeo(product);
-
-                    if (product.OldPrice.HasValue &&
-                        product.OldPrice.Value > product.Price)
-                    {
-                        pnlDiscount.Visible = true;
-                        litOldPrice.Text = Money.Format(product.OldPrice.Value);
-
-                        int pct = (int)Math.Round(
-                            (1 - product.Price / product.OldPrice.Value) * 100);
-
-                        litDiscountPct.Text = "-" + pct + "%";
-                    }
-
-                    int canBuy = MaxBuyable(product);
-                    hfMaxQty.Value = canBuy.ToString();
-
-                    if (product.Stock <= 0)
-                    {
-                        litStock.Text =
-                            "<span class=\"stock-pill out\">Hết hàng</span>";
-
-                        btnAddToCart.Enabled = false;
-                        btnBuyNow.Enabled = false;
-                        txtQuantity.Enabled = false;
-                    }
-                    else if (product.Stock <= 5)
-                    {
-                        litStock.Text =
-                            "<span class=\"stock-pill low\">Sắp hết hàng — chỉ còn " +
-                            canBuy + " đôi</span>";
-                    }
-                    else
-                    {
-                        litStock.Text =
-                            "<span class=\"stock-pill in\">Còn hàng • sẵn sàng giao ngay</span>";
-                    }
-
-                    List<string> sizes = product.SizeList();
-
-                    if (sizes.Count == 0)
-                        sizes.Add(product.FirstSize());
-
-                    hfSelectedSize.Value = sizes[0];
-
-                    rptSizes.DataSource =
-                        sizes.Select(s => new { Size = s }).ToList();
-
-                    rptSizes.DataBind();
-
-                    rptRelated.DataSource = Catalog.RelatedTo(product.Id, 4);
-                    rptRelated.DataBind();
-
-                    RenderWishlist(product.Id);
-
-                    // Tải đánh giá của sản phẩm
-                    LoadReviews(product.Id);
-                }
-                else
-                {
-                    pnlProductDetail.Visible = false;
-                    pnlNotFound.Visible = true;
-                }
+                pnlDiscount.Visible = true;
+                litOldPrice.Text = Money.Format(product.OldPrice.Value);
+                litDiscountPct.Text = "-" + (int)Math.Round((1 - product.Price / product.OldPrice.Value) * 100) + "%";
             }
-            else
+            int max = MaxBuyable(product);
+            hfMaxQty.Value = max.ToString();
+            if (product.Stock <= 0)
             {
-                pnlProductDetail.Visible = false;
-                pnlNotFound.Visible = true;
+                litStock.Text = "<span class=\"stock-pill out\">Hết hàng</span>";
+                btnAddToCart.Enabled = btnBuyNow.Enabled = txtQuantity.Enabled = false;
             }
-        }
-
-        private string ResolveSize(ProductItem product)
-        {
+            else if (product.Stock <= 5) litStock.Text = "<span class=\"stock-pill low\">Sắp hết hàng — chỉ còn " + max + " đôi</span>";
+            else litStock.Text = "<span class=\"stock-pill in\">Còn hàng • sẵn sàng giao ngay</span>";
             List<string> sizes = product.SizeList();
-
-            return !string.IsNullOrEmpty(hfSelectedSize.Value) &&
-                   sizes.Contains(hfSelectedSize.Value)
-                ? hfSelectedSize.Value
-                : product.FirstSize();
+            if (sizes.Count == 0) sizes.Add(product.FirstSize());
+            hfSelectedSize.Value = sizes[0];
+            rptSizes.DataSource = sizes.Select(x => new { Size = x }).ToList();
+            rptSizes.DataBind();
+            rptRelated.DataSource = Catalog.RelatedTo(product.Id, 4);
+            rptRelated.DataBind();
+            RenderWishlist(product.Id);
+            LoadReviews(product.Id);
         }
 
         private void BindColourways(ProductItem product)
         {
-            if (product.Colourways == null ||
-                product.Colourways.Count < 2)
-            {
-                pnlColourways.Visible = false;
-                return;
-            }
-
+            if (product.Colourways == null || product.Colourways.Count < 2) { pnlColourways.Visible = false; return; }
             pnlColourways.Visible = true;
-
-            rptColourways.DataSource = product.Colourways
-                .Select((c, i) => new
-                {
-                    Name = c.Name,
-                    Small = c.Small,
-                    Large = c.Large,
-                    Active = i == 0
-                        ? " colourway-chip active"
-                        : " colourway-chip",
-                    Alt = product.Name + " — màu " + c.Name
-                })
-                .ToList();
-
+            rptColourways.DataSource = product.Colourways.Select((x, i) => new { Name = x.Name, Small = x.Small, Large = x.Large, Active = i == 0 ? " colourway-chip active" : " colourway-chip", Alt = product.Name + " — màu " + x.Name }).ToList();
             rptColourways.DataBind();
         }
 
         private void ApplySeo(ProductItem product)
         {
-            this.Title = product.Name + " - " +
-                product.Brand + " | " + ShopInfo.BrandName;
-
-            HtmlMeta meta = new HtmlMeta();
-            meta.Name = "description";
-            meta.Content = product.Name + " chính hãng " +
-                product.Brand + " - " + product.Description;
-
-            this.Header.Controls.Add(meta);
+            Title = product.Name + " - " + product.Brand + " | " + ShopInfo.BrandName;
+            HtmlMeta meta = new HtmlMeta { Name = "description", Content = product.Name + " chính hãng " + product.Brand + " - " + product.Description };
+            Header.Controls.Add(meta);
         }
 
-        private void RenderWishlist(int productId)
+        private void RenderWishlist(int id)
         {
-            bool liked = Wishlist.Contains(productId);
-
-            btnWishlist.Text = liked ? "\u2665" : "\u2661";
-
-            btnWishlist.CssClass = liked
-                ? "btn-wishlist-detail active"
-                : "btn-wishlist-detail";
-
-            btnWishlist.ToolTip = liked
-                ? "Bỏ khỏi yêu thích"
-                : "Thêm vào yêu thích";
-
-            if (!AuthHelper.IsLoggedIn())
-            {
-                btnWishlist.ToolTip =
-                    "Đăng nhập để lưu vào yêu thích";
-            }
+            bool liked = Wishlist.Contains(id);
+            btnWishlist.Text = liked ? "♥" : "♡";
+            btnWishlist.CssClass = liked ? "btn-wishlist-detail active" : "btn-wishlist-detail";
+            btnWishlist.ToolTip = !AuthHelper.IsLoggedIn() ? "Đăng nhập để lưu vào yêu thích" : (liked ? "Bỏ khỏi yêu thích" : "Thêm vào yêu thích");
         }
 
         protected void btnWishlist_Click(object sender, EventArgs e)
         {
-            if (!RequireLogin(
-                "Vui lòng đăng nhập để lưu sản phẩm vào danh sách yêu thích!"))
-            {
-                return;
-            }
-
-            int id = Convert.ToInt32(Request.QueryString["id"]);
-
-            Wishlist.Toggle(id);
-            RenderWishlist(id);
+            if (!RequireLogin("Vui lòng đăng nhập để lưu sản phẩm vào danh sách yêu thích!")) return;
+            int id;
+            if (int.TryParse(Request.QueryString["id"], out id)) { Wishlist.Toggle(id); RenderWishlist(id); }
         }
 
-        private int MaxBuyable(ProductItem product)
+        private int MaxBuyable(ProductItem product) { return CartService.MaxBuyable(CartStore.Load(), product.Id); }
+
+        private string SelectedSize(ProductItem product)
         {
-            return CartService.MaxBuyable(
-                CartStore.Load(),
-                product.Id);
+            return product.SizeList().Contains(hfSelectedSize.Value) ? hfSelectedSize.Value : product.FirstSize();
         }
 
-        private int ResolveQty(ProductItem product)
+        private int Quantity(ProductItem product)
         {
-            int qty = int.TryParse(txtQuantity.Text, out int q)
-                ? (q > 0 ? q : 1)
-                : 1;
-
-            return Cart.ClampQty(qty, MaxBuyable(product));
+            int value;
+            return Cart.ClampQty(int.TryParse(txtQuantity.Text, out value) ? value : 1, MaxBuyable(product));
         }
 
         protected void btnAddToCart_Click(object sender, EventArgs e)
         {
-            if (!RequireLogin(
-                "Vui lòng đăng nhập hoặc đăng ký tài khoản để mua hàng!"))
-            {
-                return;
-            }
-
-            int id = Convert.ToInt32(Request.QueryString["id"]);
-            ProductItem product = Catalog.Find(id);
-
-            if (product != null)
-            {
-                string size = ResolveSize(product);
-
-                CartStore.AddProduct(
-                    product,
-                    size,
-                    ResolveQty(product));
-
-                Toast.Success(this,
-                    "Đã thêm " + product.Name +
-                    " (Size " + size + ") vào giỏ hàng!");
-            }
+            if (!RequireLogin("Vui lòng đăng nhập hoặc đăng ký tài khoản để mua hàng!")) return;
+            ProductItem product = ProductFromQuery();
+            if (product == null) return;
+            string size = SelectedSize(product);
+            CartStore.AddProduct(product, size, Quantity(product));
+            Toast.Success(this, "Đã thêm " + product.Name + " (Size " + size + ") vào giỏ hàng!");
         }
 
         protected void btnBuyNow_Click(object sender, EventArgs e)
         {
-            if (!RequireLogin(
-                "Vui lòng đăng nhập để tiến hành thanh toán!"))
-            {
-                return;
-            }
-
-            int id = Convert.ToInt32(Request.QueryString["id"]);
-            ProductItem product = Catalog.Find(id);
-
-            if (product != null)
-            {
-                string size = ResolveSize(product);
-
-                CartStore.AddProduct(
-                    product,
-                    size,
-                    ResolveQty(product));
-
-                Redirect("ThanhToan.aspx");
-            }
+            if (!RequireLogin("Vui lòng đăng nhập để tiến hành thanh toán!")) return;
+            ProductItem product = ProductFromQuery();
+            if (product == null) return;
+            CartStore.AddProduct(product, SelectedSize(product), Quantity(product));
+            Redirect("ThanhToan.aspx");
         }
 
-        // Kiểm tra khách hàng đã mua và nhận sản phẩm hay chưa
-        private bool HasPurchasedProduct(int productId)
+        private ProductItem ProductFromQuery()
         {
-            if (!AuthHelper.IsLoggedIn())
-                return false;
-
-            string userKey = AuthHelper.CurrentUserKey();
-
-            List<Order> orders =
-                new ApplicationOrderStore().ByUser(userKey);
-
-            return orders.Any(order =>
-                order.Status == Order.DeliveredStatus &&
-                order.Lines != null &&
-                order.Lines.Any(line =>
-                    line.ProductId == productId));
+            int id;
+            return int.TryParse(Request.QueryString["id"], out id) ? Catalog.Find(id) : null;
         }
 
-        // Hiển thị đánh giá của sản phẩm
-        private void LoadReviews(int productId)
+        private bool HasPurchased(int id)
         {
-            List<ProductReview> reviews =
-                ProductReviewStore.GetByProduct(productId);
+            if (!AuthHelper.IsLoggedIn()) return false;
+            return new ApplicationOrderStore().ByUser(AuthHelper.CurrentUserKey()).Any(o => o.Status == Order.DeliveredStatus && (o.Lines ?? new List<OrderLine>()).Any(x => x.ProductId == id));
+        }
 
-            litAverageRating.Text =
-                ProductReviewStore.GetAverage(productId).ToString("0.0");
-
+        private void LoadReviews(int id)
+        {
+            List<ProductReview> reviews = ProductReviewStore.GetByProduct(id);
+            litAverageRating.Text = ProductReviewStore.GetAverage(id).ToString("0.0");
             litReviewCount.Text = reviews.Count + " đánh giá";
-
             rptReviews.DataSource = reviews;
             rptReviews.DataBind();
-
             pnlNoReviews.Visible = reviews.Count == 0;
-
-            bool canReview = HasPurchasedProduct(productId);
-
+            bool canReview = HasPurchased(id);
             pnlReviewForm.Visible = canReview;
             pnlReviewLogin.Visible = !canReview;
-
             if (canReview)
             {
-                ProductReview oldReview = ProductReviewStore.Find(
-                    productId,
-                    AuthHelper.CurrentUserKey());
-
-                if (oldReview != null)
-                {
-                    ddlRating.SelectedValue =
-                        oldReview.Rating.ToString();
-
-                    txtReview.Text = oldReview.Comment;
-                }
+                ProductReview review = ProductReviewStore.Find(id, AuthHelper.CurrentUserKey());
+                if (review != null) { ddlRating.SelectedValue = review.Rating.ToString(); txtReview.Text = review.Comment; }
             }
         }
 
-        // Gửi đánh giá
         protected void btnSubmitReview_Click(object sender, EventArgs e)
         {
-            if (!AuthHelper.IsLoggedIn())
-            {
-                litReviewMessage.Text =
-                    "Bạn cần đăng nhập trước khi đánh giá.";
-
-                return;
-            }
-
-            int productId;
-
-            if (!int.TryParse(
-                Request.QueryString["id"],
-                out productId))
-            {
-                return;
-            }
-
-            // Kiểm tra lại đơn hàng ở phía máy chủ
-            if (!HasPurchasedProduct(productId))
-            {
-                litReviewMessage.Text =
-                    "Bạn cần mua và nhận sản phẩm trước khi đánh giá.";
-
-                return;
-            }
-
-            int rating;
-
-            if (!int.TryParse(ddlRating.SelectedValue, out rating) ||
-                rating < 1 || rating > 5)
-            {
-                litReviewMessage.Text =
-                    "Vui lòng chọn số sao từ 1 đến 5.";
-
-                return;
-            }
-
+            int id, rating;
+            if (!AuthHelper.IsLoggedIn()) { litReviewMessage.Text = "Bạn cần đăng nhập trước khi đánh giá."; return; }
+            if (!int.TryParse(Request.QueryString["id"], out id) || !HasPurchased(id)) { litReviewMessage.Text = "Bạn cần mua và nhận sản phẩm trước khi đánh giá."; return; }
+            if (!int.TryParse(ddlRating.SelectedValue, out rating) || rating < 1 || rating > 5) { litReviewMessage.Text = "Vui lòng chọn số sao từ 1 đến 5."; return; }
             string comment = txtReview.Text.Trim();
-
-            if (comment.Length < 5)
-            {
-                litReviewMessage.Text =
-                    "Nhận xét cần có ít nhất 5 ký tự.";
-
-                return;
-            }
-
-            if (comment.Length > 1000)
-            {
-                litReviewMessage.Text =
-                    "Nhận xét không được vượt quá 1000 ký tự.";
-
-                return;
-            }
-
+            if (comment.Length < 5) { litReviewMessage.Text = "Nhận xét cần có ít nhất 5 ký tự."; return; }
+            if (comment.Length > 1000) { litReviewMessage.Text = "Nhận xét không được vượt quá 1000 ký tự."; return; }
             UserAccount account = AuthHelper.CurrentAccount();
-
-            if (account == null)
-            {
-                litReviewMessage.Text =
-                    "Không tìm thấy thông tin tài khoản.";
-
-                return;
-            }
-
-            ProductReview review = new ProductReview
-            {
-                ProductId = productId,
-                UserKey = AuthHelper.CurrentUserKey(),
-                CustomerName = account.DisplayName,
-                Rating = rating,
-                Comment = comment,
-                CreatedAt = DateTime.Now
-            };
-
-            ProductReviewStore.Save(review);
-
-            // Tải lại danh sách rồi mới hiện thông báo thành công
-            LoadReviews(productId);
-
-            litReviewMessage.Text =
-                "Cảm ơn bạn! Đánh giá đã được gửi thành công.";
+            if (account == null) { litReviewMessage.Text = "Không tìm thấy thông tin tài khoản."; return; }
+            ProductReviewStore.Save(new ProductReview { ProductId = id, UserKey = AuthHelper.CurrentUserKey(), CustomerName = account.DisplayName, Rating = rating, Comment = comment, CreatedAt = DateTime.Now });
+            LoadReviews(id);
+            litReviewMessage.Text = "Cảm ơn bạn! Đánh giá đã được gửi thành công.";
         }
     }
 }

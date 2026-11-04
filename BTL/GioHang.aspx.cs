@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Linq;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 using ShoeStore.Data;
 using ShoeStore.Helpers;
@@ -12,131 +11,71 @@ namespace ShoeStore
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
-            {
-                LoadCartData();
-            }
+            if (!IsPostBack) BindCart();
         }
 
-        private void LoadCartData()
+        private void BindCart()
         {
             Cart cart = CartStore.Load();
-
-            if (cart.IsEmpty)
-            {
-                pnlEmptyCart.Visible = true;
-                pnlCartHasItems.Visible = false;
-            }
-            else
-            {
-                pnlEmptyCart.Visible = false;
-                pnlCartHasItems.Visible = true;
-
-                rptCart.DataSource = CartService.Lines(cart);
-                rptCart.DataBind();
-
-                litSubTotal.Text = Money.Format(cart.SubTotal());
-                litTotal.Text = Money.Format(cart.SubTotal());
-            }
+            bool empty = cart.IsEmpty;
+            pnlEmptyCart.Visible = empty;
+            pnlCartHasItems.Visible = !empty;
+            if (empty) return;
+            rptCart.DataSource = CartService.Lines(cart);
+            rptCart.DataBind();
+            litSubTotal.Text = Money.Format(cart.SubTotal());
+            litTotal.Text = Money.Format(cart.SubTotal());
         }
 
-        private bool TryParseKey(string key, out int id, out string size)
+        private bool TryKey(string key, out int id, out string size)
         {
-            id = 0;
-            size = "";
-            if (string.IsNullOrEmpty(key)) return false;
-            string[] parts = key.Split('|');
-            if (parts.Length != 2) return false;
-            if (!int.TryParse(parts[0], out id)) return false;
-            size = parts[1];
-            return true;
+            id = 0; size = "";
+            string[] parts = (key ?? "").Split('|');
+            return parts.Length == 2 && int.TryParse(parts[0], out id) && (size = parts[1]) != null;
         }
 
         protected void rptCart_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            if (e.CommandName == "Remove")
+            if (e.CommandName != "Remove") return;
+            int id; string size;
+            if (!TryKey(Convert.ToString(e.CommandArgument), out id, out size)) return;
+            FlushQuantities();
+            Cart cart = CartStore.Load();
+            if (cart.Remove(id, size))
             {
-                int id;
-                string size;
-                if (TryParseKey(Convert.ToString(e.CommandArgument), out id, out size))
-                {
-                    // Ô số lượng đang debounce 800ms; bấm xoá trong lúc đó sẽ nuốt
-                    // thao tác lưu. Đọc luôn giá trị đang được gõ trong form rồi mới xoá.
-                    FlushPendingQuantities();
-
-                    Cart cart = CartStore.Load();
-                    if (cart.Remove(id, size))
-                    {
-                        CartStore.Save(cart);
-                        LoadCartData();
-                        Toast.Info(this, "Đã xóa sản phẩm khỏi giỏ hàng!");
-                    }
-                }
+                CartStore.Save(cart);
+                BindCart();
+                Toast.Info(this, "Đã xóa sản phẩm khỏi giỏ hàng!");
             }
         }
 
-        protected void btnUpdateCart_Click(object sender, EventArgs e)
-        {
-            FlushPendingQuantities();
-            LoadCartData();
-            // Tự động lưu: không hiện toast, số tiền đã cập nhật tự động ở client.
-        }
+        protected void btnUpdateCart_Click(object sender, EventArgs e) { FlushQuantities(); BindCart(); }
 
-        /// <summary>
-        /// Ghi lại số lượng của mọi dòng đang hiện trong form.
-        /// Mọi postback của trang đều mang theo giá trị các ô TextBox, nên gọi hàm này
-        /// ở đầu mỗi handler là cách duy nhất để không mất thay đổi khi người dùng
-        /// bấm nút khác trước khi debounce kịp chạy.
-        /// </summary>
-        private void FlushPendingQuantities()
+        private void FlushQuantities()
         {
             Cart cart = CartStore.Load();
             if (cart.IsEmpty) return;
-
-            if (rptCart.Items.Count == 0)
-            {
-                rptCart.DataSource = cart.Lines.ToList();
-                rptCart.DataBind();
-            }
-
+            if (rptCart.Items.Count == 0) { rptCart.DataSource = cart.Lines.ToList(); rptCart.DataBind(); }
             bool changed = false;
             foreach (RepeaterItem item in rptCart.Items)
             {
-                HiddenField hfKey = item.FindControl("hfKey") as HiddenField;
-                TextBox txtQty = item.FindControl("txtQuantity") as TextBox;
-                if (hfKey == null || txtQty == null) continue;
-
-                int id;
-                string size;
-                if (!TryParseKey(hfKey.Value, out id, out size)) continue;
-
-                // Ô trong Repeater không được Web Forms nạp postback data (item sinh sau
-                // ProcessPostData) nên phải đọc thẳng Request.Form theo UniqueID.
-                string posted = Request.Form[txtQty.UniqueID];
-                if (posted == null) continue;
-
+                HiddenField key = item.FindControl("hfKey") as HiddenField;
+                TextBox text = item.FindControl("txtQuantity") as TextBox;
+                if (key == null || text == null) continue;
+                int id; string size;
+                if (!TryKey(key.Value, out id, out size)) continue;
+                string posted = Request.Form[text.UniqueID];
                 int qty;
-                if (!int.TryParse(posted, out qty)) qty = 1;
-
-                CartItem line = cart.Lines.FirstOrDefault(c => c.Id == id && c.Size == size);
-                if (line == null) continue;
-
+                if (posted == null || !int.TryParse(posted, out qty)) continue;
                 if (CartService.SetQuantity(cart, id, size, qty)) changed = true;
             }
-
             if (changed) CartStore.Save(cart);
         }
 
         protected void btnGoToCheckout_Click(object sender, EventArgs e)
         {
-            if (!RequireLogin("Vui lòng đăng nhập để tiến hành thanh toán!"))
-            {
-                return;
-            }
-
-            // Nút nằm trong UpdatePanel nên postback là async: Response.Redirect bị
-            // XHR đi theo và trình duyệt không đổi trang. Phải chuyển bằng script.
-            FlushPendingQuantities();
+            if (!RequireLogin("Vui lòng đăng nhập để tiến hành thanh toán!")) return;
+            FlushQuantities();
             Toast.Navigate(this, "ThanhToan.aspx");
         }
     }

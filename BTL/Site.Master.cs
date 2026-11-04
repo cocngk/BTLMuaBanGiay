@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Web.UI;
+using System.IO;
 using System.Web.UI.WebControls;
 using ShoeStore.Data;
 using ShoeStore.Helpers;
+using ShoeStore.Models;
 
 namespace ShoeStore
 {
@@ -11,83 +12,49 @@ namespace ShoeStore
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Repeater không giữ item qua postback: bind ở MỌI lần render,
-            // nếu chỉ bind lần !IsPostBack thì menu/footer biến mất sau
-            // khi bấm nút (thêm giỏ, lưu số lượng, đăng ký nhận tin...).
             BindMenu();
             BindFooter();
-
-            CheckLoginState();
-        }
-
-        private void CheckLoginState()
-        {
-            Panel pnlGuest = FindControl("pnlGuest") as Panel;
-            Panel pnlUser = FindControl("pnlUser") as Panel;
-            Literal litUsername = FindControl("litUsername") as Literal;
-
-            if (AuthHelper.IsLoggedIn())
-            {
-                if (pnlGuest != null) pnlGuest.Visible = false;
-                if (pnlUser != null) pnlUser.Visible = true;
-                if (litUsername != null) litUsername.Text = AuthHelper.CurrentUserName();
-            }
-            else
-            {
-                if (pnlGuest != null) pnlGuest.Visible = true;
-                if (pnlUser != null) pnlUser.Visible = false;
-            }
-
-            // Quyền đọc tươi từ kho mỗi lần render: vừa được cấp quyền thì link hiện
-            // ra ngay, vừa bị thu thì biến mất — không phải đăng xuất rồi vào lại.
-            lnkAdmin.Visible = AuthHelper.IsAdmin();
-
-            UpdateCartBadge();
-        }
-
-        private void UpdateCartBadge()
-        {
-            if (cartCount == null) return;
-            int total = new CartStore(Session).Load().TotalQuantity();
-            cartCount.Visible = total > 0;
-            cartCount.InnerText = total > 99 ? "99+" : total.ToString();
+            UpdateUserState();
         }
 
         private void BindMenu()
         {
-            string pageName = System.IO.Path.GetFileName(Request.Url.AbsolutePath).ToLower();
-
-            List<Models.MenuItem> items = Models.MenuItem.MainMenu();
-            foreach (Models.MenuItem item in items)
-            {
-                item.IsActive = string.Equals(item.Url, pageName, StringComparison.OrdinalIgnoreCase);
-            }
-            // Không ép mục nào active khi không có mục nào khớp: trang Thanh toán,
-            // Giỏ hàng, Đăng nhập... đều không phải mục menu, tô đỏ Trang chủ sẽ
-            // tô đỏ sai.
+            string page = Path.GetFileName(Request.Url.AbsolutePath).ToLowerInvariant();
+            List<ShoeStore.Models.MenuItem> items = ShoeStore.Models.MenuItem.MainMenu();
+            foreach (ShoeStore.Models.MenuItem item in items) item.IsActive = item.Url.Equals(page, StringComparison.OrdinalIgnoreCase);
             rptMenu.DataSource = items;
             rptMenu.DataBind();
-
-            if (cartIcon != null) cartIcon.Attributes["class"] = "cart-icon-btn";
-            if (pageName.Contains("giohang") && cartIcon != null) cartIcon.Attributes["class"] = "cart-icon-btn active";
+            cartIcon.Attributes["class"] = page.Contains("giohang") ? "cart-icon-btn active" : "cart-icon-btn";
         }
 
         private void BindFooter()
         {
-            rptSocial.DataSource = Models.ShopInfo.SocialLinks();
+            rptSocial.DataSource = ShopInfo.SocialLinks();
             rptSocial.DataBind();
-
-            rptFooterPages.DataSource = Models.ShopInfo.PageLinks();
+            rptFooterPages.DataSource = ShopInfo.PageLinks();
             rptFooterPages.DataBind();
-
-            rptFooterPolicies.DataSource = Models.ShopInfo.PolicyLinks();
+            rptFooterPolicies.DataSource = ShopInfo.PolicyLinks();
             rptFooterPolicies.DataBind();
+        }
+
+        private void UpdateUserState()
+        {
+            Panel guest = FindControl("pnlGuest") as Panel;
+            Panel user = FindControl("pnlUser") as Panel;
+            Literal name = FindControl("litUsername") as Literal;
+            bool logged = AuthHelper.IsLoggedIn();
+            if (guest != null) guest.Visible = !logged;
+            if (user != null) user.Visible = logged;
+            if (name != null && logged) name.Text = AuthHelper.CurrentUserName();
+            lnkAdmin.Visible = AuthHelper.IsAdmin();
+            int count = new CartStore(Session).Load().TotalQuantity();
+            cartCount.Visible = count > 0;
+            cartCount.InnerText = count > 99 ? "99+" : count.ToString();
         }
 
         protected void btnLogout_Click(object sender, EventArgs e)
         {
             AuthHelper.SignOut();
-            CheckLoginState();
             Response.Redirect("TrangChu.aspx");
         }
     }

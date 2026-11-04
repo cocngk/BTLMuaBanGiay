@@ -1,5 +1,4 @@
-﻿using System;
-using System.Web.UI;
+using System;
 using System.Web.UI.WebControls;
 using ShoeStore.Helpers;
 using ShoeStore.Models;
@@ -10,47 +9,26 @@ namespace ShoeStore
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack) SelectTopicFromQuery();
-        }
-
-        /// <summary>
-        /// Footer trỏ tới TuVan.aspx?topic=... nên chọn sẵn chủ đề để người dùng
-        /// không phải tự dòng lại.
-        /// </summary>
-        private void SelectTopicFromQuery()
-        {
-            string topic = Request.QueryString["topic"];
-            if (string.IsNullOrEmpty(topic)) return;
-
-            ListItem match = ddlTopic.Items.FindByValue(topic);
-            if (match != null) ddlTopic.SelectedValue = match.Value;
+            if (!IsPostBack)
+            {
+                ListItem item = ddlTopic.Items.FindByValue(Request.QueryString["topic"]);
+                if (item != null) ddlTopic.SelectedValue = item.Value;
+            }
         }
 
         protected void btnSubmitConsult_Click(object sender, EventArgs e)
         {
             if (!Page.IsValid) return;
-
-            string name = txtName.Text.Trim();
             string phone = txtPhone.Text.Trim();
-            string topic = ddlTopic.SelectedItem != null ? ddlTopic.SelectedItem.Text : "";
-            string content = txtContent.Text.Trim();
-
             if (!OrderValidator.IsValidPhone(phone))
             {
-                // Phòng client bị bypass: báo lại bằng toast rồi dừng
-                Toast.Info(this,
-                    "Số điện thoại phải có từ 9 đến 11 chữ số!");
+                Toast.Info(this, "Số điện thoại phải có từ 9 đến 11 chữ số!");
                 return;
             }
-
-            // Xóa trắng form sau khi gửi
-            txtName.Text = "";
-            txtPhone.Text = "";
-            txtContent.Text = "";
-
-            // Thông báo thành công, nêu rõ chủ đề đã chọn
-            Toast.Success(this,
-                "Cảm ơn " + name + "! Yêu cầu '" + topic + "' đã được gửi đi. Đội ngũ SneakerX sẽ liên hệ lại trong thời gian sớm nhất.");
+            string topic = ddlTopic.SelectedItem == null ? "" : ddlTopic.SelectedItem.Text;
+            string name = txtName.Text.Trim();
+            txtName.Text = txtPhone.Text = txtContent.Text = "";
+            Toast.Success(this, "Cảm ơn " + name + "! Yêu cầu '" + topic + "' đã được gửi đi. Đội ngũ SneakerX sẽ liên hệ lại trong thời gian sớm nhất.");
         }
     }
 }

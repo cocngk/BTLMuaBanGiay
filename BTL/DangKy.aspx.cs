@@ -1,60 +1,23 @@
-﻿
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using ShoeStore.Helpers;
-using ShoeStore.Models;
 
 namespace ShoeStore
 {
     public partial class DangKy : ShopPage
     {
-        protected void Page_Load(object sender, EventArgs e)
-        {
-        }
-
         protected void btnRegister_Click(object sender, EventArgs e)
         {
-            string fullName = txtFullName.Text.Trim();
-            string username = txtUsername.Text.Trim();
-            string email = txtEmail.Text.Trim();
-            string phone = txtPhone.Text.Trim();
-            string password = txtPassword.Text;
-            string confirm = txtConfirm.Text;
-
-            // Validators (required/regex/compare) đã chạy ở client + server.
-            // Trùng tài khoản thì để kho chặn: nó kiểm tra và thêm trong cùng một
-            // khóa. CheckDuplicate bên dưới chỉ là gợi ý tức thời cho người dùng.
             if (!Page.IsValid) return;
-
-            // Mật khẩu được băm ngay khi tạo tài khoản, không lưu bản thô.
-            UserAccount account = MemoryUserStore.NewUser(fullName, username, email, phone, password);
-
-            switch (AuthHelper.TryAdd(account))
-            {
-                case AddUserOutcome.UsernameTaken:
-                    ShowFormError("Tên đăng nhập đã tồn tại! Vui lòng chọn tên khác.");
-                    return;
-                case AddUserOutcome.EmailTaken:
-                    ShowFormError("Email này đã được đăng ký!");
-                    return;
-            }
-
-            // Đăng ký xong thì đăng nhập luôn, khỏi bắt gõ lại.
+            UserAccount account = MemoryUserStore.NewUser(txtFullName.Text.Trim(), txtUsername.Text.Trim(), txtEmail.Text.Trim(), txtPhone.Text.Trim(), txtPassword.Text);
+            AddUserOutcome result = AuthHelper.TryAdd(account);
+            if (result == AddUserOutcome.UsernameTaken) { ShowError("Tên đăng nhập đã tồn tại! Vui lòng chọn tên khác."); return; }
+            if (result == AddUserOutcome.EmailTaken) { ShowError("Email này đã được đăng ký!"); return; }
             AuthHelper.SignIn(account);
-
-            Toast.ShowAndRedirect(this,
-                "Đăng ký thành công! Bạn đã đăng nhập.",
-                "success",
-                "TrangChu.aspx");
+            Toast.ShowAndRedirect(this, "Đăng ký thành công! Bạn đã đăng nhập.", "success", "TrangChu.aspx");
         }
 
-        /// <summary>Băng lỗi chung của form — thay cho việc mượn CustomValidator làm băng.</summary>
-        private void ShowFormError(string message)
+        private void ShowError(string message)
         {
             litFormError.Text = HttpUtility.HtmlEncode(message);
             pnlFormError.Visible = true;
@@ -63,12 +26,7 @@ namespace ShoeStore
         [System.Web.Services.WebMethod]
         public static object CheckDuplicate(string username, string email)
         {
-            return new
-            {
-                userTaken = !string.IsNullOrEmpty(username) && AuthHelper.UsernameExists(username),
-                emailTaken = !string.IsNullOrEmpty(email) && AuthHelper.EmailExists(email)
-            };
+            return new { userTaken = !string.IsNullOrEmpty(username) && AuthHelper.UsernameExists(username), emailTaken = !string.IsNullOrEmpty(email) && AuthHelper.EmailExists(email) };
         }
-
     }
 }

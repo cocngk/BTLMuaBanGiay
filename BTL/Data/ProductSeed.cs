@@ -3,10 +3,6 @@ using ShoeStore.Models;
 
 namespace ShoeStore.Data
 {
-    /// <summary>
-    /// Dữ liệu seed của Catalog — implementation detail, không phải interface.
-    /// Chỉ Catalog đọc lớp này; khi có DB thì thay Catalog, seed biến mất.
-    /// </summary>
     internal static class ProductSeed
     {
         public static List<ProductItem> Items()
