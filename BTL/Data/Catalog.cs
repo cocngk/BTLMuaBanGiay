@@ -13,55 +13,24 @@ namespace ShoeStore.Data
 
     public static class Catalog
     {
-        private static List<ProductItem> Items
-        {
-            get { return ApplicationStore.GetOrCreate(ApplicationStore.ProductsKey, ProductSeed.Items); }
-        }
-
-        public static ProductItem Find(int id) { return Items.FirstOrDefault(p => p.Id == id); }
-
-        public static List<ProductItem> All()
-        {
-            lock (ApplicationStore.Gate) return new List<ProductItem>(Items);
-        }
-
-        public static List<ProductItem> Featured(int count)
-        {
-            return count <= 0 ? new List<ProductItem>() : Items.Take(count).ToList();
-        }
+        private static readonly SqlCatalogStore store = new SqlCatalogStore();
+        public static ProductItem Find(int id) { return store.Find(id); }
+        public static List<ProductItem> All() { return store.All(); }
+        public static List<ProductItem> Featured(int count) { return count <= 0 ? new List<ProductItem>() : All().Take(count).ToList(); }
 
         public static List<ProductItem> RelatedTo(int id, int count)
         {
             ProductItem current = Find(id);
             if (current == null || count <= 0) return new List<ProductItem>();
-            List<ProductItem> other = Items.Where(p => p.Id != id).ToList();
-            return other.Where(p => p.Brand == current.Brand).Concat(other.Where(p => p.Brand != current.Brand)).OrderBy(p => p.Id).Take(count).ToList();
+            List<ProductItem> other = All().Where(x => x.Id != id).ToList();
+            return other.Where(x => x.Brand == current.Brand).Concat(other.Where(x => x.Brand != current.Brand)).OrderBy(x => x.Id).Take(count).ToList();
         }
 
-        public static List<string> Brands()
-        {
-            return Items.Select(p => p.Brand).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(x => x).ToList();
-        }
-
-        public static PagedResult<ProductItem> Search(CatalogQuery query, int pageSize)
-        {
-            return Paging.Paginate((query ?? new CatalogQuery()).Apply(Items), query == null ? 1 : query.Page, pageSize);
-        }
-
-        public static bool TakeStock(IEnumerable<KeyValuePair<int, int>> input)
-        {
-            Dictionary<int, int> wanted = Totals(input);
-            lock (ApplicationStore.Gate)
-            {
-                foreach (KeyValuePair<int, int> item in wanted)
-                {
-                    ProductItem product = Find(item.Key);
-                    if (product == null || product.Stock < item.Value) return false;
-                }
-                foreach (KeyValuePair<int, int> item in wanted) Find(item.Key).Stock -= item.Value;
-                return true;
-            }
-        }
+        public static List<string> Brands() { return All().Select(x => x.Brand).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(x => x).ToList(); }
+        public static PagedResult<ProductItem> Search(CatalogQuery query, int pageSize) { CatalogQuery value = query ?? new CatalogQuery(); return Paging.Paginate(value.Apply(All()), value.Page, pageSize); }
+        public static bool TakeStock(IEnumerable<KeyValuePair<int, int>> items) { return store.TakeStock(items); }
+        public static void RestoreStock(IEnumerable<KeyValuePair<int, int>> items) { store.RestoreStock(items); }
+        public static bool Delete(int id) { return store.Delete(id); }
 
         public static SaveProductOutcome Save(ProductItem input)
         {
@@ -79,8 +48,7 @@ namespace ShoeStore.Data
             string sizes;
             if (!NormalizeSizes(input.Sizes, out sizes)) return SaveProductOutcome.InvalidSizes;
             if (image.Length == 0 || image.Length > 400) return SaveProductOutcome.InvalidImage;
-
-            ProductItem clean = new ProductItem
+            return store.Save(new ProductItem
             {
                 Id = input.Id,
                 Name = name,
@@ -91,72 +59,10 @@ namespace ShoeStore.Data
                 Stock = input.Stock,
                 Sizes = sizes,
                 ImageUrl = image,
-                ImageUrlLarge = large.Length == 0 ? image : large
-            };
-
-            lock (ApplicationStore.Gate)
-            {
-                if (input.Id <= 0)
-                {
-                    clean.Id = NextId();
-                    Items.Add(clean);
-                    return SaveProductOutcome.Created;
-                }
-
-                ProductItem target = Find(input.Id);
-                if (target == null) return SaveProductOutcome.NotFound;
-                bool changed = target.ImageUrl != clean.ImageUrl || target.ImageUrlLarge != clean.ImageUrlLarge;
-                target.Name = clean.Name;
-                target.Brand = clean.Brand;
-                target.Description = clean.Description;
-                target.Price = clean.Price;
-                target.OldPrice = clean.OldPrice;
-                target.Stock = clean.Stock;
-                target.Sizes = clean.Sizes;
-                target.ImageUrl = clean.ImageUrl;
-                target.ImageUrlLarge = clean.ImageUrlLarge;
-                if (changed) target.Colourways = null;
-                return SaveProductOutcome.Updated;
-            }
-        }
-
-        public static bool Delete(int id)
-        {
-            lock (ApplicationStore.Gate)
-            {
-                ProductItem item = Find(id);
-                return item != null && Items.Remove(item);
-            }
-        }
-
-        public static void RestoreStock(IEnumerable<KeyValuePair<int, int>> input)
-        {
-            Dictionary<int, int> wanted = Totals(input);
-            lock (ApplicationStore.Gate)
-            {
-                foreach (KeyValuePair<int, int> item in wanted)
-                {
-                    ProductItem product = Find(item.Key);
-                    if (product != null) product.Stock += item.Value;
-                }
-            }
-        }
-
-        private static Dictionary<int, int> Totals(IEnumerable<KeyValuePair<int, int>> input)
-        {
-            Dictionary<int, int> result = new Dictionary<int, int>();
-            if (input == null) return result;
-            foreach (KeyValuePair<int, int> item in input)
-            {
-                if (item.Value <= 0) continue;
-                result[item.Key] = result.ContainsKey(item.Key) ? result[item.Key] + item.Value : item.Value;
-            }
-            return result;
-        }
-
-        private static int NextId()
-        {
-            return Items.Count == 0 ? 1 : Items.Max(p => p.Id) + 1;
+                ImageUrlLarge = large.Length == 0 ? image : large,
+                IsHot = input.IsHot,
+                Colourways = input.Colourways
+            });
         }
 
         private static bool NormalizeSizes(string raw, out string value)

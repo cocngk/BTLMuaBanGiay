@@ -115,11 +115,7 @@ namespace ShoeStore.Data
                 return guest == null ? null : new List<CartItem>(guest);
             }
 
-            lock (ApplicationStore.Gate)
-            {
-                List<CartItem> saved;
-                return Carts().TryGetValue(Owner, out saved) && saved != null ? new List<CartItem>(saved) : null;
-            }
+            return new SqlCartStore().Load(Owner);
         }
 
         private void SaveLines(List<CartItem> lines)
@@ -131,16 +127,7 @@ namespace ShoeStore.Data
                 return;
             }
 
-            lock (ApplicationStore.Gate)
-            {
-                if (empty) Carts().Remove(Owner);
-                else Carts()[Owner] = new List<CartItem>(lines);
-            }
-        }
-
-        private static Dictionary<string, List<CartItem>> Carts()
-        {
-            return ApplicationStore.GetOrCreate(ApplicationStore.CartsKey, () => new Dictionary<string, List<CartItem>>(System.StringComparer.OrdinalIgnoreCase));
+            new SqlCartStore().Save(Owner, lines);
         }
     }
 }
@@ -198,11 +185,7 @@ namespace ShoeStore.Data
                 return guest == null ? new HashSet<int>() : new HashSet<int>(guest);
             }
 
-            lock (ApplicationStore.Gate)
-            {
-                HashSet<int> saved;
-                return Lists().TryGetValue(Owner, out saved) && saved != null ? new HashSet<int>(saved) : new HashSet<int>();
-            }
+            return new SqlWishlistStore().Load(Owner);
         }
 
         private void Save(HashSet<int> items)
@@ -214,17 +197,7 @@ namespace ShoeStore.Data
                 return;
             }
 
-            lock (ApplicationStore.Gate)
-            {
-                if (empty) Lists().Remove(Owner);
-                else Lists()[Owner] = new HashSet<int>(items);
-            }
-        }
-
-        private static Dictionary<string, HashSet<int>> Lists()
-        {
-            return ApplicationStore.GetOrCreate(ApplicationStore.WishlistsKey, () => new Dictionary<string, HashSet<int>>(System.StringComparer.OrdinalIgnoreCase));
+            new SqlWishlistStore().Save(Owner, items);
         }
     }
 }
-

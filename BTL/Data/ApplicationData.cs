@@ -1,82 +1,26 @@
 using System;
 using System.Collections.Generic;
-using System.Web;
 using ShoeStore.Helpers;
 using ShoeStore.Models;
 using System.Linq;
 using System.Collections.Specialized;
-
-
-namespace ShoeStore.Data
-{
-    internal static class ApplicationStore
-    {
-        public const string ProductsKey = "Products";
-        public const string UsersKey = "UserList";
-        public const string OrdersKey = "Orders";
-        public const string CartsKey = "Carts";
-        public const string WishlistsKey = "Wishlists";
-        public static readonly object Gate = new object();
-        private static readonly Dictionary<string, object> Fallback = new Dictionary<string, object>();
-
-        public static T GetOrCreate<T>(string key, Func<T> factory) where T : class
-        {
-            lock (Gate)
-            {
-                HttpApplicationState state = Current;
-                if (state == null)
-                {
-                    object value;
-                    if (!Fallback.TryGetValue(key, out value)) Fallback[key] = value = factory();
-                    return (T)value;
-                }
-
-                T result = state[key] as T;
-                if (result == null) state[key] = result = factory();
-                return result;
-            }
-        }
-
-        public static void Initialize(HttpApplicationState state)
-        {
-            if (state == null) return;
-            lock (Gate)
-            {
-                if (!(state[ProductsKey] is List<ProductItem>)) state[ProductsKey] = ProductSeed.Items();
-                if (!(state[UsersKey] is MemoryUserStore)) state[UsersKey] = new MemoryUserStore();
-                if (!(state[OrdersKey] is List<Order>)) state[OrdersKey] = new List<Order>();
-                if (!(state[CartsKey] is Dictionary<string, List<CartItem>>)) state[CartsKey] = new Dictionary<string, List<CartItem>>(StringComparer.OrdinalIgnoreCase);
-                if (!(state[WishlistsKey] is Dictionary<string, HashSet<int>>)) state[WishlistsKey] = new Dictionary<string, HashSet<int>>(StringComparer.OrdinalIgnoreCase);
-            }
-        }
-
-        private static HttpApplicationState Current
-        {
-            get { return HttpContext.Current == null ? null : HttpContext.Current.Application; }
-        }
-    }
-}
-
+using System.Web;
 
 
 namespace ShoeStore.Data
 {
     public sealed class ApplicationUserStore : IUserStore
     {
-        private static MemoryUserStore Inner
-        {
-            get { return ApplicationStore.GetOrCreate(ApplicationStore.UsersKey, () => new MemoryUserStore()); }
-        }
-
-        public List<UserAccount> GetAll() { return Inner.GetAll(); }
-        public UserAccount FindByUsernameOrEmail(string value) { return Inner.FindByUsernameOrEmail(value); }
-        public UserAccount FindByUsername(string value) { return Inner.FindByUsername(value); }
-        public bool UsernameExists(string value) { return Inner.UsernameExists(value); }
-        public bool EmailExists(string value) { return Inner.EmailExists(value); }
-        public AddUserOutcome TryAdd(UserAccount value) { return Inner.TryAdd(value); }
-        public ProfileUpdateOutcome TryUpdateProfile(string user, string name, string email, string phone) { return Inner.TryUpdateProfile(user, name, email, phone); }
-        public PasswordChangeOutcome TryChangePassword(string user, string current, string updated) { return Inner.TryChangePassword(user, current, updated); }
-        public RoleChangeOutcome TrySetAdmin(string user, bool admin) { return Inner.TrySetAdmin(user, admin); }
+        private readonly SqlUserStore inner = new SqlUserStore();
+        public List<UserAccount> GetAll() { return inner.GetAll(); }
+        public UserAccount FindByUsernameOrEmail(string value) { return inner.FindByUsernameOrEmail(value); }
+        public UserAccount FindByUsername(string value) { return inner.FindByUsername(value); }
+        public bool UsernameExists(string value) { return inner.UsernameExists(value); }
+        public bool EmailExists(string value) { return inner.EmailExists(value); }
+        public AddUserOutcome TryAdd(UserAccount value) { return inner.TryAdd(value); }
+        public ProfileUpdateOutcome TryUpdateProfile(string user, string name, string email, string phone) { return inner.TryUpdateProfile(user, name, email, phone); }
+        public PasswordChangeOutcome TryChangePassword(string user, string current, string updated) { return inner.TryChangePassword(user, current, updated); }
+        public RoleChangeOutcome TrySetAdmin(string user, bool admin) { return inner.TrySetAdmin(user, admin); }
     }
 }
 
@@ -94,35 +38,12 @@ namespace ShoeStore.Data
 
     public sealed class ApplicationOrderStore : IOrderStore
     {
-        private static List<Order> Inner
-        {
-            get { return ApplicationStore.GetOrCreate(ApplicationStore.OrdersKey, () => new List<Order>()); }
-        }
-
-        public void Save(Order order)
-        {
-            if (order == null) return;
-            lock (ApplicationStore.Gate) Inner.Insert(0, order);
-        }
-
-        public List<Order> All()
-        {
-            lock (ApplicationStore.Gate) return new List<Order>(Inner);
-        }
-
-        public List<Order> ByUser(string username)
-        {
-            return string.IsNullOrEmpty(username)
-                ? new List<Order>()
-                : All().Where(o => string.Equals(o.Username, username, StringComparison.OrdinalIgnoreCase)).ToList();
-        }
-
-        public Order FindByCode(string code)
-        {
-            if (string.IsNullOrWhiteSpace(code)) return null;
-            string value = code.Trim();
-            lock (ApplicationStore.Gate) return Inner.FirstOrDefault(o => string.Equals(o.Code, value, StringComparison.OrdinalIgnoreCase));
-        }
+        private readonly SqlOrderStore inner = new SqlOrderStore();
+        public void Save(Order order) { inner.Save(order); }
+        public List<Order> All() { return inner.All(); }
+        public List<Order> ByUser(string username) { return inner.ByUser(username); }
+        public Order FindByCode(string code) { return inner.FindByCode(code); }
+        public void Update(Order order) { inner.UpdateStatus(order); }
     }
 }
 
@@ -154,83 +75,12 @@ namespace ShoeStore.Data
 {
     public static class ProductReviewStore
     {
-        private const string ReviewsKey = "ProductReviews";
-
-        private static List<ProductReview> Reviews
-        {
-            get
-            {
-                return ApplicationStore.GetOrCreate(
-                    ReviewsKey,
-                    () => new List<ProductReview>());
-            }
-        }
-
-        public static List<ProductReview> GetByProduct(int productId)
-        {
-            lock (ApplicationStore.Gate)
-            {
-                return Reviews
-                    .Where(r => r.ProductId == productId)
-                    .OrderByDescending(r => r.CreatedAt)
-                    .ToList();
-            }
-        }
-
-        public static ProductReview Find(int productId, string userKey)
-        {
-            lock (ApplicationStore.Gate)
-            {
-                return Reviews.FirstOrDefault(r =>
-                    r.ProductId == productId &&
-                    string.Equals(r.UserKey, userKey,
-                        StringComparison.OrdinalIgnoreCase));
-            }
-        }
-
-        public static void Save(ProductReview review)
-        {
-            lock (ApplicationStore.Gate)
-            {
-                ProductReview old = Find(
-                    review.ProductId, review.UserKey);
-
-                if (old == null)
-                {
-                    review.CreatedAt = DateTime.Now;
-                    Reviews.Add(review);
-                }
-                else
-                {
-                    old.Rating = review.Rating;
-                    old.Comment = review.Comment;
-                    old.CreatedAt = DateTime.Now;
-                    old.CustomerName = review.CustomerName;
-                }
-            }
-        }
-
-        public static double GetAverage(int productId)
-        {
-            lock (ApplicationStore.Gate)
-            {
-                var list = Reviews
-                    .Where(r => r.ProductId == productId)
-                    .ToList();
-
-                return list.Count == 0
-                    ? 0
-                    : list.Average(r => r.Rating);
-            }
-        }
-
-        public static int Count(int productId)
-        {
-            lock (ApplicationStore.Gate)
-            {
-                return Reviews.Count(r => r.ProductId == productId);
-            }
-        }
+        private static readonly SqlReviewStore Inner = new SqlReviewStore();
+        public static List<ProductReview> GetByProduct(int productId) { return Inner.GetByProduct(productId); }
+        public static ProductReview Find(int productId, string userKey) { return Inner.Find(productId, userKey); }
+        public static void Save(ProductReview review) { Inner.Save(review); }
+        public static double GetAverage(int productId) { return Inner.Average(productId); }
+        public static int Count(int productId) { return Inner.GetByProduct(productId).Count; }
     }
 }
 
@@ -339,4 +189,3 @@ namespace ShoeStore.Data
         }
     }
 }
-

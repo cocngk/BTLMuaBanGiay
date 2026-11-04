@@ -67,6 +67,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Database\ShoeStore.sql" />
     <Content Include="ChiTietSanPham.aspx" />
     <Content Include="Controls\ProductCard.ascx" />
     <Content Include="DangKy.aspx" />
@@ -118,6 +119,7 @@
     <Compile Include="Data\ProductSeed.cs" />
     <Compile Include="Data\ApplicationData.cs" />
     <Compile Include="Data\CartData.cs" />
+    <Compile Include="Data\SqlData.cs" />
     <Compile Include="Helpers\AppHelpers.cs" />
     <Compile Include="Models\ShopModels.cs" />
     <Compile Include="Pages\PageSupport.cs">

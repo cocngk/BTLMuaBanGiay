@@ -46,7 +46,6 @@ namespace ShoeStore.Services
         {
             if (string.IsNullOrWhiteSpace(code)) return Result(StatusChangeOutcome.NotFound, "Thiếu mã đơn hàng.");
             if (!Order.IsKnownStatus(status)) return Result(StatusChangeOutcome.InvalidStatus, "Trạng thái không hợp lệ.");
-            lock (ApplicationStore.Gate)
             {
                 Order order = store.FindByCode(code);
                 if (order == null) return Result(StatusChangeOutcome.NotFound, "Không tìm thấy đơn hàng có mã " + code.Trim() + ".");
@@ -60,7 +59,9 @@ namespace ShoeStore.Services
                     if (!Catalog.TakeStock(Quantities(order))) return Result(StatusChangeOutcome.OutOfStock, "Không mở lại được đơn: tồn kho vừa thay đổi, vui lòng thử lại.");
                     note = " Đã lấy lại " + order.TotalQuantity() + " đôi từ kho.";
                 }
-                order.Status = status; return Result(StatusChangeOutcome.Updated, "Đơn " + order.Code + " → " + status + "." + note);
+                order.Status = status;
+                store.Update(order);
+                return Result(StatusChangeOutcome.Updated, "Đơn " + order.Code + " → " + status + "." + note);
             }
         }
         private static StatusChangeResult Result(StatusChangeOutcome outcome, string message) { return new StatusChangeResult { Outcome = outcome, Message = message }; }

@@ -8,7 +8,7 @@ namespace ShoeStore
     {
         protected void Application_Start(object sender, EventArgs e)
         {
-            ApplicationStore.Initialize(Application);
+            SqlDatabase.SeedIfEmpty();
         }
     }
 }
