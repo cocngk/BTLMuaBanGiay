@@ -9,62 +9,67 @@ namespace ShoeStore
 {
     public partial class SanPham : ShopPage
     {
-        private const int PageSize = 6;
-        public int CurrentPage { get { return ViewState["CurrentPage"] == null ? 1 : (int)ViewState["CurrentPage"]; } set { ViewState["CurrentPage"] = value; } }
-        private CatalogFilterControls Filters { get { return new CatalogFilterControls(txtStoreSearch, cblBrands, rblPriceRange, hfSelectedSize, ddlSort); } }
+        private const int KichThuocTrang = 6;
+        public int TrangHienTai { get { return ViewState["CurrentPage"] == null ? 1 : (int)ViewState["CurrentPage"]; } set { ViewState["CurrentPage"] = value; } }
+        private CatalogFilterControls BoLoc { get { return new CatalogFilterControls(txtStoreSearch, cblBrands, rblPriceRange, hfSelectedSize, ddlSort); } }
 
+        // Xử lý sự kiện vòng đời của điều khiển.
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
             cblBrands.Items.Clear();
-            foreach (string brand in Catalog.Brands()) cblBrands.Items.Add(new ListItem(brand, brand));
+            foreach (string thuongHieu in Catalog.Brands()) cblBrands.Items.Add(new ListItem(thuongHieu, thuongHieu));
         }
 
-        protected void Page_Load(object sender, EventArgs e)
+        // Xử lý khi trang được tải.
+        protected void Page_Load(object nguonSuKien, EventArgs e)
         {
             if (!IsPostBack)
             {
-                CatalogQuery query = CatalogQuery.FromQuery(Request.QueryString);
-                Filters.Write(query);
-                CurrentPage = query.Page;
+                CatalogQuery truyVan = CatalogQuery.FromQuery(Request.QueryString);
+                BoLoc.Write(truyVan);
+                TrangHienTai = truyVan.Page;
             }
             BindProducts();
         }
 
-        protected void btnFilter_Click(object sender, EventArgs e) { Redirect(Filters.Read(1).ToUrl()); }
+        // Xử lý khi người dùng bấm nút.
+        protected void btnFilter_Click(object nguonSuKien, EventArgs e) { Redirect(BoLoc.Read(1).ToUrl()); }
 
+        // Thực hiện việc nạp sản phẩm.
         private void BindProducts()
         {
-            CatalogQuery query = IsPostBack ? Filters.Read(CurrentPage) : CatalogQuery.FromQuery(Request.QueryString);
-            PagedResult<ProductItem> page = Catalog.Search(query, PageSize);
-            CurrentPage = page.Page;
-            bool empty = page.Items.Count == 0;
-            rptAllProducts.Visible = !empty;
-            pnlNoResults.Visible = empty;
-            pnlPagination.Visible = !empty && page.TotalPages > 1;
-            if (empty) return;
-            rptAllProducts.DataSource = page.Items;
+            CatalogQuery truyVan = IsPostBack ? BoLoc.Read(TrangHienTai) : CatalogQuery.FromQuery(Request.QueryString);
+            PagedResult<ProductItem> trang = Catalog.Search(truyVan, KichThuocTrang);
+            TrangHienTai = trang.Page;
+            bool rong = trang.Items.Count == 0;
+            rptAllProducts.Visible = !rong;
+            pnlNoResults.Visible = rong;
+            pnlPagination.Visible = !rong && trang.TotalPages > 1;
+            if (rong) return;
+            rptAllProducts.DataSource = trang.Items;
             rptAllProducts.DataBind();
-            rptPages.DataSource = Enumerable.Range(1, page.TotalPages).Select(n => new { Number = n, Url = query.ToUrl("SanPham.aspx", n), Css = n == CurrentPage ? "page-link-custom active" : "page-link-custom" }).ToList();
+            rptPages.DataSource = Enumerable.Range(1, trang.TotalPages).Select(n => new { Number = n, Url = truyVan.ToUrl("SanPham.aspx", n), Css = n == TrangHienTai ? "page-link-custom active" : "page-link-custom" }).ToList();
             rptPages.DataBind();
-            bool previous = CurrentPage > 1;
-            lnkPrevPage.NavigateUrl = query.ToUrl("SanPham.aspx", previous ? CurrentPage - 1 : CurrentPage);
+            bool previous = TrangHienTai > 1;
+            lnkPrevPage.NavigateUrl = truyVan.ToUrl("SanPham.aspx", previous ? TrangHienTai - 1 : TrangHienTai);
             lnkPrevPage.CssClass = previous ? "page-link-custom" : "page-link-custom disabled";
             lnkPrevPage.Attributes["onclick"] = previous ? "" : "return false;";
-            bool next = CurrentPage < page.TotalPages;
-            lnkNextPage.NavigateUrl = query.ToUrl("SanPham.aspx", next ? CurrentPage + 1 : CurrentPage);
+            bool next = TrangHienTai < trang.TotalPages;
+            lnkNextPage.NavigateUrl = truyVan.ToUrl("SanPham.aspx", next ? TrangHienTai + 1 : TrangHienTai);
             lnkNextPage.CssClass = next ? "page-link-custom" : "page-link-custom disabled";
             lnkNextPage.Attributes["onclick"] = next ? "" : "return false;";
         }
 
-        protected void rptAllProducts_ItemCommand(object source, RepeaterCommandEventArgs e)
+        // Xử lý lệnh trên một dòng dữ liệu.
+        protected void rptAllProducts_ItemCommand(object nguon, RepeaterCommandEventArgs e)
         {
             if (!RequireLogin("Vui lòng đăng nhập hoặc đăng ký tài khoản để mua hàng!")) return;
-            ProductItem product = Catalog.Find(Convert.ToInt32(e.CommandArgument));
-            if (product == null) return;
-            string size = string.IsNullOrEmpty(hfSelectedSize.Value) ? product.FirstSize() : hfSelectedSize.Value;
-            CartStore.AddProduct(product, size, 1);
-            if (e.CommandName == "AddToCart") Toast.Success(this, "Đã thêm " + product.Name + " vào giỏ hàng!");
+            ProductItem sanPham = Catalog.Find(Convert.ToInt32(e.CommandArgument));
+            if (sanPham == null) return;
+            string kichThuoc = string.IsNullOrEmpty(hfSelectedSize.Value) ? sanPham.FirstSize() : hfSelectedSize.Value;
+            CartStore.AddProduct(sanPham, kichThuoc, 1);
+            if (e.CommandName == "AddToCart") Toast.Success(this, "Đã thêm " + sanPham.Name + " vào giỏ hàng!");
             else if (e.CommandName == "BuyNow") Redirect("ThanhToan.aspx");
         }
     }

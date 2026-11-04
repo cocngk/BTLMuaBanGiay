@@ -11,7 +11,7 @@ namespace ShoeStore
 {
 
 
-    public partial class SearchBox
+    public partial class HopTimKiem
     {
 
         /// <summary>

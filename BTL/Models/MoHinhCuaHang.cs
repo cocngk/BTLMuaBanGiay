@@ -10,38 +10,51 @@ namespace ShoeStore.Models
 
     public class Cart
     {
-        private readonly List<CartItem> lines;
+        private readonly List<CartItem> cacDong;
+        // Thực hiện việc giỏ hàng.
         public Cart() : this(null) { }
-        public Cart(IEnumerable<CartItem> existing) { lines = existing == null ? new List<CartItem>() : new List<CartItem>(existing); }
-        public IReadOnlyList<CartItem> Lines { get { return lines; } }
-        public bool IsEmpty { get { return lines.Count == 0; } }
-        public static int ClampQty(int qty, int max) { max = max > 0 ? max : 1; return Math.Max(1, Math.Min(qty, max)); }
-        public int ProductQuantity(int id) { return lines.Where(x => x.Id == id).Sum(x => x.Quantity); }
-        public int RemainingToBuy(int id, int stock, string excludeSize) { int count = ProductQuantity(id); if (excludeSize != null) count -= lines.Where(x => x.Id == id && x.Size == excludeSize).Sum(x => x.Quantity); return stock - count; }
-        public void AddOrMerge(int id, string name, decimal price, string size, int qty, string image, int stock)
+        // Thực hiện việc giỏ hàng.
+        public Cart(IEnumerable<CartItem> existing) { cacDong = existing == null ? new List<CartItem>() : new List<CartItem>(existing); }
+        public IReadOnlyList<CartItem> Lines { get { return cacDong; } }
+        public bool IsEmpty { get { return cacDong.Count == 0; } }
+        // Thực hiện việc clamp qty.
+        public static int ClampQty(int soLuong, int max) { max = max > 0 ? max : 1; return Math.Max(1, Math.Min(soLuong, max)); }
+        // Thực hiện việc sản phẩm số lượng.
+        public int ProductQuantity(int ma) { return cacDong.Where(x => x.Id == ma).Sum(x => x.Quantity); }
+        // Thực hiện việc remaining chuyển đổi sang buy.
+        public int RemainingToBuy(int ma, int stock, string excludeSize) { int soLuong = ProductQuantity(ma); if (excludeSize != null) soLuong -= cacDong.Where(x => x.Id == ma && x.Size == excludeSize).Sum(x => x.Quantity); return stock - soLuong; }
+        // Thực hiện việc thêm or gộp.
+        public void AddOrMerge(int ma, string ten, decimal gia, string kichThuoc, int soLuong, string anh, int stock)
         {
-            CartItem item = lines.FirstOrDefault(x => x.Id == id && x.Size == size);
-            if (item != null) item.Quantity = ClampQty(item.Quantity + qty, RemainingToBuy(id, stock, size));
-            else lines.Add(new CartItem { Id = id, Name = name, Price = price, Quantity = ClampQty(qty, RemainingToBuy(id, stock, null)), Size = size, ImageUrl = image });
+            CartItem phanTu = cacDong.FirstOrDefault(x => x.Id == ma && x.Size == kichThuoc);
+            if (phanTu != null) phanTu.Quantity = ClampQty(phanTu.Quantity + soLuong, RemainingToBuy(ma, stock, kichThuoc));
+            else cacDong.Add(new CartItem { Id = ma, Name = ten, Price = gia, Quantity = ClampQty(soLuong, RemainingToBuy(ma, stock, null)), Size = kichThuoc, ImageUrl = anh });
         }
-        public bool Remove(int id, string size) { return lines.RemoveAll(x => x.Id == id && x.Size == size) > 0; }
-        public void SetQuantity(int id, string size, int qty, int stock) { CartItem item = lines.FirstOrDefault(x => x.Id == id && x.Size == size); if (item != null) item.Quantity = ClampQty(qty, RemainingToBuy(id, stock, size)); }
-        public decimal SubTotal() { return lines.Sum(x => x.Price * x.Quantity); }
-        public int TotalQuantity() { return lines.Sum(x => x.Quantity); }
-        public void Clear() { lines.Clear(); }
+        // Thực hiện việc xóa.
+        public bool Remove(int ma, string kichThuoc) { return cacDong.RemoveAll(x => x.Id == ma && x.Size == kichThuoc) > 0; }
+        // Thực hiện việc đặt số lượng.
+        public void SetQuantity(int ma, string kichThuoc, int soLuong, int stock) { CartItem phanTu = cacDong.FirstOrDefault(x => x.Id == ma && x.Size == kichThuoc); if (phanTu != null) phanTu.Quantity = ClampQty(soLuong, RemainingToBuy(ma, stock, kichThuoc)); }
+        // Thực hiện việc sub total.
+        public decimal SubTotal() { return cacDong.Sum(x => x.Price * x.Quantity); }
+        // Thực hiện việc total số lượng.
+        public int TotalQuantity() { return cacDong.Sum(x => x.Quantity); }
+        // Thực hiện việc xóa.
+        public void Clear() { cacDong.Clear(); }
     }
 
     public static class PaymentMethods { public const string Cod = "COD"; public const string Qr = "QR"; }
     public class OrderInput { public string Username { get; set; } public string CustomerName { get; set; } public string Phone { get; set; } public string Address { get; set; } public string PaymentMethod { get; set; } }
     public static class OrderValidator
     {
-        private static readonly Regex PhoneRegex = new Regex(@"^[0-9]{9,11}$");
-        public static bool IsValidPhone(string phone) { return !string.IsNullOrEmpty(phone) && PhoneRegex.IsMatch(phone); }
-        public static string Validate(OrderInput order)
+        private static readonly Regex BieuThucSoDienThoai = new Regex(@"^[0-9]{9,11}$");
+        // Thực hiện việc is valid phone.
+        public static bool IsValidPhone(string soDienThoai) { return !string.IsNullOrEmpty(soDienThoai) && BieuThucSoDienThoai.IsMatch(soDienThoai); }
+        // Thực hiện việc kiểm tra.
+        public static string Validate(OrderInput donHang)
         {
-            if (order == null) return "Thiếu thông tin đơn hàng!";
-            if (string.IsNullOrEmpty(order.CustomerName) || string.IsNullOrEmpty(order.Phone) || string.IsNullOrEmpty(order.Address)) return "Bạn chưa nhập đủ thông tin nhận hàng!";
-            return IsValidPhone(order.Phone) ? null : "Số điện thoại chưa hợp lệ. Vui lòng kiểm tra lại!";
+            if (donHang == null) return "Thiếu thông tin đơn hàng!";
+            if (string.IsNullOrEmpty(donHang.CustomerName) || string.IsNullOrEmpty(donHang.Phone) || string.IsNullOrEmpty(donHang.Address)) return "Bạn chưa nhập đủ thông tin nhận hàng!";
+            return IsValidPhone(donHang.Phone) ? null : "Số điện thoại chưa hợp lệ. Vui lòng kiểm tra lại!";
         }
     }
 
@@ -52,35 +65,46 @@ namespace ShoeStore.Models
     public class MenuItem
     {
         public string Title { get; set; } public string Url { get; set; } public string IconClass { get; set; } public bool IsActive { get; set; }
+        // Thực hiện việc chính menu.
         public static List<MenuItem> MainMenu() { return new List<MenuItem> { new MenuItem { Title = "Trang chủ", Url = "TrangChu.aspx", IconClass = "fa-solid fa-house" }, new MenuItem { Title = "Sản phẩm", Url = "SanPham.aspx", IconClass = "fa-solid fa-shoe-prints" }, new MenuItem { Title = "Tin tức", Url = "TinTuc.aspx", IconClass = "fa-solid fa-newspaper" }, new MenuItem { Title = "Tư vấn", Url = "TuVan.aspx", IconClass = "fa-solid fa-headset" } }; }
     }
 
     public class OrderLine
     {
         public int ProductId { get; set; } public string Name { get; set; } public string Size { get; set; } public decimal Price { get; set; } public int Quantity { get; set; }
+        // Thực hiện việc dòng total.
         public decimal LineTotal() { return Price * Quantity; }
-        public static List<OrderLine> FromCart(IEnumerable<CartItem> lines) { return lines.Select(x => new OrderLine { ProductId = x.Id, Name = x.Name, Size = x.Size, Price = x.Price, Quantity = x.Quantity }).ToList(); }
+        // Thực hiện việc chuyển đổi từ giỏ hàng.
+        public static List<OrderLine> FromCart(IEnumerable<CartItem> cacDong) { return cacDong.Select(x => new OrderLine { ProductId = x.Id, Name = x.Name, Size = x.Size, Price = x.Price, Quantity = x.Quantity }).ToList(); }
     }
 
     public class Order
     {
         public string Code { get; set; } public DateTime CreatedAt { get; set; } public string Username { get; set; } public string Status { get; set; } = PendingStatus;
         public const string PendingStatus = "Chờ xác nhận"; public const string ShippingStatus = "Đang giao"; public const string DeliveredStatus = "Đã giao"; public const string CancelledStatus = "Đã huỷ";
+        // Thực hiện việc toàn bộ statuses.
         public static List<string> AllStatuses() { return new List<string> { PendingStatus, ShippingStatus, DeliveredStatus, CancelledStatus }; }
-        public static bool IsKnownStatus(string status) { return AllStatuses().Contains(status); }
+        // Thực hiện việc is known trạng thái.
+        public static bool IsKnownStatus(string trangThai) { return AllStatuses().Contains(trangThai); }
         public string CustomerName { get; set; } public string Phone { get; set; } public string Address { get; set; } public string PaymentMethod { get; set; } public List<OrderLine> Lines { get; set; }
+        // Thực hiện việc total.
         public decimal Total() { return Lines.Sum(x => x.LineTotal()); }
+        // Thực hiện việc total số lượng.
         public int TotalQuantity() { return Lines.Sum(x => x.Quantity); }
-        public static string NewCode() { lock (CodeRandom) return "SX-" + DateTime.Now.ToString("yyMMdd") + "-" + CodeRandom.Next(1000, 10000); }
-        private static readonly Random CodeRandom = new Random();
+        // Thực hiện việc tạo mới mã.
+        public static string NewCode() { lock (BoSinhMa) return "SX-" + DateTime.Now.ToString("yyMMdd") + "-" + BoSinhMa.Next(1000, 10000); }
+        private static readonly Random BoSinhMa = new Random();
     }
 
     public class ProductItem
     {
         public int Id { get; set; } public string Name { get; set; } public string Brand { get; set; } public string Description { get; set; } public decimal Price { get; set; } public decimal? OldPrice { get; set; } public int Stock { get; set; } = 10; public string Sizes { get; set; } public string ImageUrl { get; set; } public string ImageUrlLarge { get; set; } public List<ProductColourway> Colourways { get; set; } public bool IsHot { get; set; }
+        // Thực hiện việc large image đường dẫn.
         public string LargeImageUrl() { return string.IsNullOrEmpty(ImageUrlLarge) ? ImageUrl : ImageUrlLarge; }
+        // Tạo danh sách kích thước.
         public List<string> SizeList() { return (Sizes ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToList(); }
-        public string FirstSize() { List<string> sizes = SizeList(); return sizes.Count == 0 ? "40" : sizes[0]; }
+        // Lấy kích thước đầu tiên.
+        public string FirstSize() { List<string> kichThuoc = SizeList(); return kichThuoc.Count == 0 ? "40" : kichThuoc[0]; }
     }
 
     public class ProductReview
@@ -92,8 +116,11 @@ namespace ShoeStore.Models
     public static class ShopInfo
     {
         public static string BrandName { get { return "SneakerX"; } } public static string Tagline { get { return "Giày thể thao chính hãng, đổi trả 30 ngày, giao hàng toàn quốc."; } } public static string Hotline { get { return "1900 6789"; } } public static string Mobile { get { return "0988 123 456"; } } public static string Email { get { return "hotro@sneakerx.com"; } } public static string Address { get { return "128 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh"; } } public static string OpeningHours { get { return "8:00 – 21:00, cả 7 ngày trong tuần"; } } public static string CurrentYear { get { return DateTime.Now.Year.ToString(); } }
+        // Thực hiện việc mạng xã hội liên kết.
         public static List<SocialLink> SocialLinks() { return new List<SocialLink> { new SocialLink { Label = "Facebook", IconClass = "fa-brands fa-facebook-f", Url = "#" }, new SocialLink { Label = "TikTok", IconClass = "fa-brands fa-tiktok", Url = "#" }, new SocialLink { Label = "Instagram", IconClass = "fa-brands fa-instagram", Url = "#" }, new SocialLink { Label = "YouTube", IconClass = "fa-brands fa-youtube", Url = "#" }, new SocialLink { Label = "Zalo", IconClass = "fa-solid fa-comments", Url = "#" } }; }
+        // Thực hiện việc trang liên kết.
         public static List<FooterLink> PageLinks() { return new List<FooterLink> { new FooterLink { Title = "Sản phẩm", Url = "SanPham.aspx" }, new FooterLink { Title = "Tin tức", Url = "TinTuc.aspx" }, new FooterLink { Title = "Tư vấn", Url = "TuVan.aspx" }, new FooterLink { Title = "Giỏ hàng", Url = "GioHang.aspx" } }; }
+        // Thực hiện việc chính sách liên kết.
         public static List<FooterLink> PolicyLinks() { return new List<FooterLink> { new FooterLink { Title = "Chính sách đổi trả", Url = "ChinhSach.aspx#doi-tra" }, new FooterLink { Title = "Bảo hành sản phẩm", Url = "ChinhSach.aspx#bao-hanh" }, new FooterLink { Title = "Vận chuyển & giao hàng", Url = "ChinhSach.aspx#van-chuyen" }, new FooterLink { Title = "Thanh toán & bảo mật", Url = "ChinhSach.aspx#thanh-toan" }, new FooterLink { Title = "Điều khoản sử dụng", Url = "ChinhSach.aspx#dieu-khoan" } }; }
     }
 }

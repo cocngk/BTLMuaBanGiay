@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Tư Vấn" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="TuVan.aspx.cs" Inherits="ShoeStore.TuVan" %>
+﻿<%@ Page Title="Tư Vấn" Language="C#" MasterPageFile="~/KhungTrang.Master" AutoEventWireup="true" CodeBehind="TuVan.aspx.cs" Inherits="ShoeStore.TuVan" %>
 
 <asp:Content ID="HeadCss" ContentPlaceHolderID="HeadContent" runat="server">
     <link rel="stylesheet" href="Content/tuvan.css" />

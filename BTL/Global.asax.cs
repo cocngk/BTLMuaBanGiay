@@ -6,7 +6,8 @@ namespace ShoeStore
 {
     public class Global : HttpApplication
     {
-        protected void Application_Start(object sender, EventArgs e)
+        // Thực hiện việc ứng dụng khởi động.
+        protected void Application_Start(object nguonSuKien, EventArgs e)
         {
             SqlDatabase.SeedIfEmpty();
         }

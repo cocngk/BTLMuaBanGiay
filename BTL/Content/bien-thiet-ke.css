@@ -1,5 +1,5 @@
 /* Bảng màu và token dùng chung cho toàn site SneakerX */
-/* Thứ tự nạp: tokens.css trước, rồi site.css và css của từng trang. */
+/* Thứ tự nạp: bien-thiet-ke.css trước, rồi trang-web.css và css của từng trang. */
 :root {
     /* nền và bề mặt */
     --section: #f7f7f5;         /* nền nội dung */

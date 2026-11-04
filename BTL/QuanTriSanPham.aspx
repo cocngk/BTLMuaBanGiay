@@ -1,6 +1,6 @@
-﻿<%@ Page Title="Quản trị sản phẩm" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="QuanTriSanPham.aspx.cs" Inherits="ShoeStore.QuanTriSanPham" %>
+﻿<%@ Page Title="Quản trị sản phẩm" Language="C#" MasterPageFile="~/KhungTrang.Master" AutoEventWireup="true" CodeBehind="QuanTriSanPham.aspx.cs" Inherits="ShoeStore.QuanTriSanPham" %>
 <%@ Import Namespace="ShoeStore.Helpers" %>
-<%@ Register Src="~/Controls/AdminTabs.ascx" TagPrefix="uc" TagName="AdminTabs" %>
+<%@ Register Src="~/Controls/TabQuanTri.ascx" TagPrefix="uc" TagName="TabQuanTri" %>
 
 <asp:Content ID="HeadCss" ContentPlaceHolderID="HeadContent" runat="server">
     <link rel="stylesheet" href="Content/quantri.css" />
@@ -21,7 +21,7 @@
             <a href="SuaSanPham.aspx" class="btn-admin"><i class="fa-solid fa-plus"></i> Thêm sản phẩm</a>
         </div>
 
-        <uc:AdminTabs ID="ucTabs" runat="server" />
+        <uc:TabQuanTri ID="ucTabs" runat="server" />
 
         <section class="admin-card">
             <div class="admin-toolbar">

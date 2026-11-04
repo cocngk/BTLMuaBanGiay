@@ -10,7 +10,7 @@
 namespace ShoeStore
 {
 
-    public partial class AdminTabs
+    public partial class TabQuanTri
     {
 
         /// <summary>

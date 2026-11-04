@@ -1,6 +1,6 @@
-﻿
-<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="ShoeStore.SiteMaster" %>
-<%@ Register Src="~/Controls/SearchBox.ascx" TagPrefix="uc" TagName="SearchBox" %>
+
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="KhungTrang.Master.cs" Inherits="ShoeStore.SiteMaster" %>
+<%@ Register Src="~/Controls/HopTimKiem.ascx" TagPrefix="uc" TagName="HopTimKiem" %>
 <%@ Import Namespace="ShoeStore.Models" %>
 <%@ Import Namespace="ShoeStore.Helpers" %>
 
@@ -12,9 +12,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Icon và font để trong site, không gọi ra ngoài, chạy được khi offline -->
     <link rel="stylesheet" href="Content/vendor/fontawesome/css/all.min.css" />
-    <link rel="stylesheet" href="Content/fonts/fonts.css" />
-    <link rel="stylesheet" href="Content/tokens.css" />
-    <link rel="stylesheet" href="Content/site.css" />
+    <link rel="stylesheet" href="Content/fonts/phong-chu.css" />
+    <link rel="stylesheet" href="Content/bien-thiet-ke.css" />
+    <link rel="stylesheet" href="Content/trang-web.css" />
 
     
 
@@ -46,7 +46,7 @@
             </ul>
 
             <div class="header-right">
-                <uc:SearchBox ID="ucHeaderSearch" runat="server" />
+                <uc:HopTimKiem ID="ucHeaderSearch" runat="server" />
 
                 <a href="GioHang.aspx" id="cartIcon" runat="server" class="cart-icon-btn" title="Giỏ hàng">
                     <i class="fa-solid fa-bag-shopping"></i>

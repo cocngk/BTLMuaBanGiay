@@ -1,8 +1,8 @@
-﻿<%@ Register Src="~/Controls/ProductCard.ascx" TagPrefix="uc" TagName="ProductCard" %>
-<%@ Page Title="Trang Chủ" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="TrangChu.aspx.cs" Inherits="ShoeStore.TrangChu" %>
+﻿<%@ Register Src="~/Controls/TheSanPham.ascx" TagPrefix="uc" TagName="TheSanPham" %>
+<%@ Page Title="Trang Chủ" Language="C#" MasterPageFile="~/KhungTrang.Master" AutoEventWireup="true" CodeBehind="TrangChu.aspx.cs" Inherits="ShoeStore.TrangChu" %>
 
 <asp:Content ID="HeadCss" ContentPlaceHolderID="HeadContent" runat="server">
-    <link rel="stylesheet" href="Content/product-card.css" />
+    <link rel="stylesheet" href="Content/the-san-pham.css" />
     <link rel="stylesheet" href="Content/trangchu.css" />
 </asp:Content>
 
@@ -38,7 +38,7 @@
         <div class="products-grid">
             <asp:Repeater ID="rptProducts" runat="server" OnItemCommand="rptProducts_ItemCommand">
                 <ItemTemplate>
-                    <uc:ProductCard runat="server" ActionMode="QuickAdd"
+                    <uc:TheSanPham runat="server" ActionMode="QuickAdd"
                         ProductId='<%# Eval("Id") %>'
                         ProductName='<%# Eval("Name") %>'
                         Description='<%# Eval("Description") %>'

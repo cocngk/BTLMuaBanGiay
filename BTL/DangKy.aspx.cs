@@ -6,27 +6,30 @@ namespace ShoeStore
 {
     public partial class DangKy : ShopPage
     {
-        protected void btnRegister_Click(object sender, EventArgs e)
+        // Xử lý khi người dùng bấm nút.
+        protected void btnRegister_Click(object nguonSuKien, EventArgs e)
         {
             if (!Page.IsValid) return;
-            UserAccount account = MemoryUserStore.NewUser(txtFullName.Text.Trim(), txtUsername.Text.Trim(), txtEmail.Text.Trim(), txtPhone.Text.Trim(), txtPassword.Text);
-            AddUserOutcome result = AuthHelper.TryAdd(account);
-            if (result == AddUserOutcome.UsernameTaken) { ShowError("Tên đăng nhập đã tồn tại! Vui lòng chọn tên khác."); return; }
-            if (result == AddUserOutcome.EmailTaken) { ShowError("Email này đã được đăng ký!"); return; }
-            AuthHelper.SignIn(account);
+            UserAccount taiKhoan = MemoryUserStore.NewUser(txtFullName.Text.Trim(), txtUsername.Text.Trim(), txtEmail.Text.Trim(), txtPhone.Text.Trim(), txtPassword.Text);
+            AddUserOutcome ketQua = AuthHelper.TryAdd(taiKhoan);
+            if (ketQua == AddUserOutcome.UsernameTaken) { ShowError("Tên đăng nhập đã tồn tại! Vui lòng chọn tên khác."); return; }
+            if (ketQua == AddUserOutcome.EmailTaken) { ShowError("Email này đã được đăng ký!"); return; }
+            AuthHelper.SignIn(taiKhoan);
             Toast.ShowAndRedirect(this, "Đăng ký thành công! Bạn đã đăng nhập.", "success", "TrangChu.aspx");
         }
 
-        private void ShowError(string message)
+        // Thực hiện việc hiển thị error.
+        private void ShowError(string thongBao)
         {
-            litFormError.Text = HttpUtility.HtmlEncode(message);
+            litFormError.Text = HttpUtility.HtmlEncode(thongBao);
             pnlFormError.Visible = true;
         }
 
         [System.Web.Services.WebMethod]
-        public static object CheckDuplicate(string username, string email)
+        // Thực hiện việc kiểm tra duplicate.
+        public static object CheckDuplicate(string tenDangNhap, string email)
         {
-            return new { userTaken = !string.IsNullOrEmpty(username) && AuthHelper.UsernameExists(username), emailTaken = !string.IsNullOrEmpty(email) && AuthHelper.EmailExists(email) };
+            return new { userTaken = !string.IsNullOrEmpty(tenDangNhap) && AuthHelper.UsernameExists(tenDangNhap), emailTaken = !string.IsNullOrEmpty(email) && AuthHelper.EmailExists(email) };
         }
     }
 }

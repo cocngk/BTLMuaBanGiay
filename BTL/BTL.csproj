@@ -1,4 +1,4 @@
-﻿<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -69,7 +69,7 @@
   <ItemGroup>
     <Content Include="Database\ShoeStore.sql" />
     <Content Include="ChiTietSanPham.aspx" />
-    <Content Include="Controls\ProductCard.ascx" />
+    <Content Include="Controls\TheSanPham.ascx" />
     <Content Include="DangKy.aspx" />
     <Content Include="DangNhap.aspx" />
     <Content Include="GioHang.aspx" />
@@ -86,19 +86,19 @@
     <Content Include="Global.asax" />
     <Content Include="TrangChu.aspx" />
     <Content Include="TuVan.aspx" />
-    <Content Include="Controls\SearchBox.ascx" />
-    <Content Include="Controls\AdminTabs.ascx" />
+    <Content Include="Controls\HopTimKiem.ascx" />
+    <Content Include="Controls\TabQuanTri.ascx" />
     <Content Include="Content\vendor\fontawesome\css\*.css" />
     <Content Include="Content\vendor\fontawesome\webfonts\*.woff2" />
-    <Content Include="Content\fonts\fonts.css" />
+    <Content Include="Content\fonts\phong-chu.css" />
     <Content Include="Content\fonts\*.woff2" />
     <Content Include="Content\images\products\*.jpg" />
     <Content Include="Content\images\gallery\*.jpg" />
     <Content Include="Content\images\hero\*.jpg" />
     <Content Include="Content\images\blogs\*.jpg" />
-    <Content Include="Content\product-card.css" />
-    <Content Include="Content\tokens.css" />
-    <Content Include="Content\site.css" />
+    <Content Include="Content\the-san-pham.css" />
+    <Content Include="Content\bien-thiet-ke.css" />
+    <Content Include="Content\trang-web.css" />
     <Content Include="Content\trangchu.css" />
     <Content Include="Content\sanpham.css" />
     <Content Include="Content\chitietsanpham.css" />
@@ -115,17 +115,17 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\Catalog.cs" />
-    <Compile Include="Data\ProductSeed.cs" />
-    <Compile Include="Data\ApplicationData.cs" />
-    <Compile Include="Data\CartData.cs" />
-    <Compile Include="Data\SqlData.cs" />
-    <Compile Include="Helpers\AppHelpers.cs" />
-    <Compile Include="Models\ShopModels.cs" />
-    <Compile Include="Pages\PageSupport.cs">
+    <Compile Include="Data\DanhMuc.cs" />
+    <Compile Include="Data\DuLieuMauSanPham.cs" />
+    <Compile Include="Data\DuLieuUngDung.cs" />
+    <Compile Include="Data\DuLieuGioHang.cs" />
+    <Compile Include="Data\DuLieuSql.cs" />
+    <Compile Include="Helpers\TienIchUngDung.cs" />
+    <Compile Include="Models\MoHinhCuaHang.cs" />
+    <Compile Include="Pages\HoTroTrang.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Services\OrderServices.cs" />
+    <Compile Include="Services\DichVuDonHang.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -147,19 +147,19 @@
       <DependentUpon>ChiTietSanPham.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Controls\SearchBox.ascx.cs">
-      <DependentUpon>SearchBox.ascx</DependentUpon>
+    <Compile Include="Controls\HopTimKiem.ascx.cs">
+      <DependentUpon>HopTimKiem.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Controls\SearchBox.ascx.designer.cs">
-      <DependentUpon>SearchBox.ascx</DependentUpon>
+    <Compile Include="Controls\HopTimKiem.ascx.designer.cs">
+      <DependentUpon>HopTimKiem.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ProductCard.ascx.cs">
-      <DependentUpon>ProductCard.ascx</DependentUpon>
+    <Compile Include="Controls\TheSanPham.ascx.cs">
+      <DependentUpon>TheSanPham.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Controls\ProductCard.ascx.designer.cs">
-      <DependentUpon>ProductCard.ascx</DependentUpon>
+    <Compile Include="Controls\TheSanPham.ascx.designer.cs">
+      <DependentUpon>TheSanPham.ascx</DependentUpon>
     </Compile>
     <Compile Include="ChiTietSanPham.aspx.designer.cs">
       <DependentUpon>ChiTietSanPham.aspx</DependentUpon>
@@ -193,12 +193,12 @@
     <Compile Include="SanPham.aspx.designer.cs">
       <DependentUpon>SanPham.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Site.Master.cs">
-      <DependentUpon>Site.Master</DependentUpon>
+    <Compile Include="KhungTrang.Master.cs">
+      <DependentUpon>KhungTrang.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Site.Master.designer.cs">
-      <DependentUpon>Site.Master</DependentUpon>
+    <Compile Include="KhungTrang.Master.designer.cs">
+      <DependentUpon>KhungTrang.Master</DependentUpon>
     </Compile>
     <Compile Include="ThanhToan.aspx.cs">
       <DependentUpon>ThanhToan.aspx</DependentUpon>
@@ -263,17 +263,17 @@
     <Compile Include="QuanTriDonHang.aspx.designer.cs">
       <DependentUpon>QuanTriDonHang.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Controls\AdminTabs.ascx.cs">
-      <DependentUpon>AdminTabs.ascx</DependentUpon>
+    <Compile Include="Controls\TabQuanTri.ascx.cs">
+      <DependentUpon>TabQuanTri.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Controls\AdminTabs.ascx.designer.cs">
-      <DependentUpon>AdminTabs.ascx</DependentUpon>
+    <Compile Include="Controls\TabQuanTri.ascx.designer.cs">
+      <DependentUpon>TabQuanTri.ascx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <Content Include="Site.Master" />
+    <Content Include="KhungTrang.Master" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

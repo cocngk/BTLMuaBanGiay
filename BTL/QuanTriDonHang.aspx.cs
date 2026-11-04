@@ -26,91 +26,102 @@ namespace ShoeStore
 
     public partial class QuanTriDonHang : ShopPage
     {
-        private const int PageSize = 10;
-        private readonly OrderAdminService service = new OrderAdminService();
-        private int CurrentPage { get { return ViewState["Page"] == null ? 1 : (int)ViewState["Page"]; } set { ViewState["Page"] = value; } }
+        private const int KichThuocTrang = 10;
+        private readonly OrderAdminService dichVu = new OrderAdminService();
+        private int TrangHienTai { get { return ViewState["Page"] == null ? 1 : (int)ViewState["Page"]; } set { ViewState["Page"] = value; } }
 
-        protected void Page_Load(object sender, EventArgs e)
+        // Xử lý khi trang được tải.
+        protected void Page_Load(object nguonSuKien, EventArgs e)
         {
             if (!RequireAdmin()) return;
             pnlAdmin.Visible = true;
-            if (!IsPostBack) { BindStatus(); CurrentPage = 1; BindList(); }
+            if (!IsPostBack) { BindStatus(); TrangHienTai = 1; BindList(); }
         }
 
+        // Thực hiện việc nạp trạng thái.
         private void BindStatus()
         {
             ddlStatus.Items.Clear();
             ddlStatus.Items.Add(new ListItem("Tất cả trạng thái", ""));
-            foreach (string status in Order.AllStatuses()) ddlStatus.Items.Add(new ListItem(status, status));
+            foreach (string trangThai in Order.AllStatuses()) ddlStatus.Items.Add(new ListItem(trangThai, trangThai));
         }
 
+        // Thực hiện việc nạp danh sách.
         private void BindList()
         {
-            List<Order> all = service.All();
+            List<Order> all = dichVu.All();
             List<Order> filtered = OrderAdminService.FilterByStatus(all, ddlStatus.SelectedValue);
-            string keyword = txtSearch.Text.Trim();
-            if (keyword.Length > 0) filtered = filtered.Where(x => Contains(x.Code, keyword) || Contains(x.CustomerName, keyword) || Contains(x.Phone, keyword)).ToList();
-            PagedResult<Order> page = Paging.Paginate(filtered, CurrentPage, PageSize);
-            CurrentPage = page.Page;
-            rptOrders.DataSource = page.Items.Select(ToRow).ToList();
+            string tuKhoa = txtSearch.Text.Trim();
+            if (tuKhoa.Length > 0) filtered = filtered.Where(x => Contains(x.Code, tuKhoa) || Contains(x.CustomerName, tuKhoa) || Contains(x.Phone, tuKhoa)).ToList();
+            PagedResult<Order> trang = Paging.Paginate(filtered, TrangHienTai, KichThuocTrang);
+            TrangHienTai = trang.Page;
+            rptOrders.DataSource = trang.Items.Select(ToRow).ToList();
             rptOrders.DataBind();
-            bool empty = page.Items.Count == 0;
-            pnlTable.Visible = !empty;
-            pnlEmpty.Visible = empty;
-            pnlPager.Visible = page.TotalPages > 1;
+            bool rong = trang.Items.Count == 0;
+            pnlTable.Visible = !rong;
+            pnlEmpty.Visible = rong;
+            pnlPager.Visible = trang.TotalPages > 1;
             litEmpty.Text = all.Count == 0 ? "Chưa có đơn hàng nào. Đơn sẽ xuất hiện ở đây ngay sau khi khách đặt." : "Không có đơn nào khớp bộ lọc hiện tại.";
             litCount.Text = filtered.Count == all.Count ? all.Count + " đơn" : filtered.Count + " / " + all.Count + " đơn";
-            litPage.Text = page.Page.ToString();
-            litTotalPages.Text = page.TotalPages.ToString();
-            btnPrev.Enabled = page.Page > 1;
-            btnNext.Enabled = page.Page < page.TotalPages;
-            btnPrev.CssClass = page.Page > 1 ? "btn-row" : "btn-row is-disabled";
-            btnNext.CssClass = page.Page < page.TotalPages ? "btn-row" : "btn-row is-disabled";
+            litPage.Text = trang.Page.ToString();
+            litTotalPages.Text = trang.TotalPages.ToString();
+            btnPrev.Enabled = trang.Page > 1;
+            btnNext.Enabled = trang.Page < trang.TotalPages;
+            btnPrev.CssClass = trang.Page > 1 ? "btn-row" : "btn-row is-disabled";
+            btnNext.CssClass = trang.Page < trang.TotalPages ? "btn-row" : "btn-row is-disabled";
         }
 
-        private static AdminOrderRow ToRow(Order order)
+        // Thực hiện việc chuyển đổi sang row.
+        private static AdminOrderRow ToRow(Order donHang)
         {
-            List<OrderLine> lines = order.Lines ?? new List<OrderLine>();
-            return new AdminOrderRow { Code = order.Code, CreatedAtText = order.CreatedAt.ToString("dd/MM/yyyy HH:mm"), CustomerName = order.CustomerName, Phone = order.Phone, Address = order.Address, Quantity = order.TotalQuantity(), TotalText = Money.Format(order.Total()), Status = order.Status, StatusClass = StatusClass(order.Status), ItemSummary = lines.Count + " món · xem chi tiết", Lines = lines };
+            List<OrderLine> cacDong = donHang.Lines ?? new List<OrderLine>();
+            return new AdminOrderRow { Code = donHang.Code, CreatedAtText = donHang.CreatedAt.ToString("dd/MM/yyyy HH:mm"), CustomerName = donHang.CustomerName, Phone = donHang.Phone, Address = donHang.Address, Quantity = donHang.TotalQuantity(), TotalText = Money.Format(donHang.Total()), Status = donHang.Status, StatusClass = StatusClass(donHang.Status), ItemSummary = cacDong.Count + " món · xem chi tiết", Lines = cacDong };
         }
 
-        private static string StatusClass(string status)
+        // Thực hiện việc trạng thái lớp.
+        private static string StatusClass(string trangThai)
         {
-            if (status == Order.DeliveredStatus) return "status-pill is-delivered";
-            if (status == Order.CancelledStatus) return "status-pill is-cancelled";
-            if (status == Order.ShippingStatus) return "status-pill is-shipping";
+            if (trangThai == Order.DeliveredStatus) return "status-pill is-delivered";
+            if (trangThai == Order.CancelledStatus) return "status-pill is-cancelled";
+            if (trangThai == Order.ShippingStatus) return "status-pill is-shipping";
             return "status-pill is-pending";
         }
 
-        private static bool Contains(string value, string keyword) { return !string.IsNullOrEmpty(value) && value.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0; }
-        protected void btnFilter_Click(object sender, EventArgs e) { if (RequireAdmin()) { CurrentPage = 1; BindList(); } }
-        protected void btnPrev_Click(object sender, EventArgs e) { if (RequireAdmin()) { CurrentPage = Math.Max(1, CurrentPage - 1); BindList(); } }
-        protected void btnNext_Click(object sender, EventArgs e) { if (RequireAdmin()) { CurrentPage++; BindList(); } }
+        // Thực hiện việc kiểm tra chứa.
+        private static bool Contains(string giaTri, string tuKhoa) { return !string.IsNullOrEmpty(giaTri) && giaTri.IndexOf(tuKhoa, StringComparison.OrdinalIgnoreCase) >= 0; }
+        // Xử lý khi người dùng bấm nút.
+        protected void btnFilter_Click(object nguonSuKien, EventArgs e) { if (RequireAdmin()) { TrangHienTai = 1; BindList(); } }
+        // Xử lý khi người dùng bấm nút.
+        protected void btnPrev_Click(object nguonSuKien, EventArgs e) { if (RequireAdmin()) { TrangHienTai = Math.Max(1, TrangHienTai - 1); BindList(); } }
+        // Xử lý khi người dùng bấm nút.
+        protected void btnNext_Click(object nguonSuKien, EventArgs e) { if (RequireAdmin()) { TrangHienTai++; BindList(); } }
 
-        protected void rptOrders_ItemDataBound(object sender, RepeaterItemEventArgs e)
+        // Xử lý khi một dòng dữ liệu được liên kết.
+        protected void rptOrders_ItemDataBound(object nguonSuKien, RepeaterItemEventArgs e)
         {
             if (e.Item.ItemType != ListItemType.Item && e.Item.ItemType != ListItemType.AlternatingItem) return;
             AdminOrderRow row = e.Item.DataItem as AdminOrderRow;
-            DropDownList status = e.Item.FindControl("ddlRowStatus") as DropDownList;
-            Repeater lines = e.Item.FindControl("rptLines") as Repeater;
+            DropDownList trangThai = e.Item.FindControl("ddlRowStatus") as DropDownList;
+            Repeater cacDong = e.Item.FindControl("rptLines") as Repeater;
             if (row == null) return;
-            if (lines != null) { lines.DataSource = row.Lines; lines.DataBind(); }
-            if (status != null)
+            if (cacDong != null) { cacDong.DataSource = row.Lines; cacDong.DataBind(); }
+            if (trangThai != null)
             {
-                status.DataSource = Order.AllStatuses();
-                status.DataBind();
-                if (status.Items.FindByValue(row.Status) != null) status.SelectedValue = row.Status;
+                trangThai.DataSource = Order.AllStatuses();
+                trangThai.DataBind();
+                if (trangThai.Items.FindByValue(row.Status) != null) trangThai.SelectedValue = row.Status;
             }
         }
 
-        protected void rptOrders_ItemCommand(object source, RepeaterCommandEventArgs e)
+        // Xử lý lệnh trên một dòng dữ liệu.
+        protected void rptOrders_ItemCommand(object nguon, RepeaterCommandEventArgs e)
         {
             if (!RequireAdmin() || e.CommandName != "ChangeStatus") return;
-            DropDownList status = e.Item.FindControl("ddlRowStatus") as DropDownList;
-            if (status == null) return;
-            StatusChangeResult result = service.ChangeStatus(Convert.ToString(e.CommandArgument), status.SelectedValue);
-            if (result.Ok && result.Outcome == StatusChangeOutcome.Updated) Toast.Success(this, result.Message);
-            else Toast.Info(this, result.Message);
+            DropDownList trangThai = e.Item.FindControl("ddlRowStatus") as DropDownList;
+            if (trangThai == null) return;
+            StatusChangeResult ketQua = dichVu.ChangeStatus(Convert.ToString(e.CommandArgument), trangThai.SelectedValue);
+            if (ketQua.Ok && ketQua.Outcome == StatusChangeOutcome.Updated) Toast.Success(this, ketQua.Message);
+            else Toast.Info(this, ketQua.Message);
             BindList();
         }
     }

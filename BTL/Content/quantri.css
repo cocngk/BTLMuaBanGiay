@@ -1,6 +1,6 @@
 /* ==========================================================================
    Khu quản trị — khung trang, tab, bảng, form.
-   Màu lấy từ tokens.css; chỉ ba sắc thái trạng thái (chờ / đang giao /
+   Màu lấy từ bien-thiet-ke.css; chỉ ba sắc thái trạng thái (chờ / đang giao /
    đã giao / đã huỷ) cần thêm biến cục bộ, khai báo ngay trên .admin-page để
    không rò rỉ sang phần còn lại của site.
    ========================================================================== */

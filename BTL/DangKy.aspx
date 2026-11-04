@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Đăng Ký Tài Khoản" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="DangKy.aspx.cs" Inherits="ShoeStore.DangKy" %>
+﻿<%@ Page Title="Đăng Ký Tài Khoản" Language="C#" MasterPageFile="~/KhungTrang.Master" AutoEventWireup="true" CodeBehind="DangKy.aspx.cs" Inherits="ShoeStore.DangKy" %>
 
 <asp:Content ID="HeadCss" ContentPlaceHolderID="HeadContent" runat="server">
     <link rel="stylesheet" href="Content/dangky.css" />

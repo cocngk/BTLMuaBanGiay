@@ -7,28 +7,30 @@ namespace ShoeStore
 {
     public partial class TuVan : ShopPage
     {
-        protected void Page_Load(object sender, EventArgs e)
+        // Xử lý khi trang được tải.
+        protected void Page_Load(object nguonSuKien, EventArgs e)
         {
             if (!IsPostBack)
             {
-                ListItem item = ddlTopic.Items.FindByValue(Request.QueryString["topic"]);
-                if (item != null) ddlTopic.SelectedValue = item.Value;
+                ListItem phanTu = ddlTopic.Items.FindByValue(Request.QueryString["topic"]);
+                if (phanTu != null) ddlTopic.SelectedValue = phanTu.Value;
             }
         }
 
-        protected void btnSubmitConsult_Click(object sender, EventArgs e)
+        // Xử lý khi người dùng bấm nút.
+        protected void btnSubmitConsult_Click(object nguonSuKien, EventArgs e)
         {
             if (!Page.IsValid) return;
-            string phone = txtPhone.Text.Trim();
-            if (!OrderValidator.IsValidPhone(phone))
+            string soDienThoai = txtPhone.Text.Trim();
+            if (!OrderValidator.IsValidPhone(soDienThoai))
             {
                 Toast.Info(this, "Số điện thoại phải có từ 9 đến 11 chữ số!");
                 return;
             }
             string topic = ddlTopic.SelectedItem == null ? "" : ddlTopic.SelectedItem.Text;
-            string name = txtName.Text.Trim();
+            string ten = txtName.Text.Trim();
             txtName.Text = txtPhone.Text = txtContent.Text = "";
-            Toast.Success(this, "Cảm ơn " + name + "! Yêu cầu '" + topic + "' đã được gửi đi. Đội ngũ SneakerX sẽ liên hệ lại trong thời gian sớm nhất.");
+            Toast.Success(this, "Cảm ơn " + ten + "! Yêu cầu '" + topic + "' đã được gửi đi. Đội ngũ SneakerX sẽ liên hệ lại trong thời gian sớm nhất.");
         }
     }
 }

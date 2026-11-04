@@ -8,43 +8,47 @@ namespace ShoeStore
 {
     public partial class DonHang : ShopPage
     {
-        private readonly ApplicationOrderStore orders = new ApplicationOrderStore();
+        private readonly ApplicationOrderStore danhSachDonHang = new ApplicationOrderStore();
 
-        protected void Page_Load(object sender, EventArgs e)
+        // Xử lý khi trang được tải.
+        protected void Page_Load(object nguonSuKien, EventArgs e)
         {
             if (IsPostBack) return;
             if (!string.IsNullOrEmpty(Request.QueryString["code"])) ShowOrder(Request.QueryString["code"]);
             LoadMyOrders();
         }
 
-        protected void btnLookup_Click(object sender, EventArgs e) { ShowOrder(txtCode.Text); }
+        // Xử lý khi người dùng bấm nút.
+        protected void btnLookup_Click(object nguonSuKien, EventArgs e) { ShowOrder(txtCode.Text); }
 
-        private void ShowOrder(string code)
+        // Thực hiện việc hiển thị đơn hàng.
+        private void ShowOrder(string ma)
         {
-            if (string.IsNullOrWhiteSpace(code)) { Toast.Info(this, "Vui lòng nhập mã đơn cần tra cứu."); return; }
-            Order order = orders.FindByCode(code);
-            if (order == null)
+            if (string.IsNullOrWhiteSpace(ma)) { Toast.Info(this, "Vui lòng nhập mã đơn cần tra cứu."); return; }
+            Order donHang = danhSachDonHang.FindByCode(ma);
+            if (donHang == null)
             {
                 pnlLookup.Visible = false;
-                Toast.Info(this, "Không tìm thấy đơn hàng có mã " + code.Trim() + ". Vui lòng kiểm tra lại.");
+                Toast.Info(this, "Không tìm thấy đơn hàng có mã " + ma.Trim() + ". Vui lòng kiểm tra lại.");
                 return;
             }
-            litLookupCode.Text = order.Code;
-            litLookupStatus.Text = order.Status;
-            litLookupDate.Text = order.CreatedAt.ToString("dd/MM/yyyy HH:mm");
-            litLookupTotal.Text = Money.Format(order.Total());
-            rptLookupLines.DataSource = order.Lines;
+            litLookupCode.Text = donHang.Code;
+            litLookupStatus.Text = donHang.Status;
+            litLookupDate.Text = donHang.CreatedAt.ToString("dd/MM/yyyy HH:mm");
+            litLookupTotal.Text = Money.Format(donHang.Total());
+            rptLookupLines.DataSource = donHang.Lines;
             rptLookupLines.DataBind();
             pnlLookup.Visible = true;
         }
 
+        // Thực hiện việc tải my đơn hàng.
         private void LoadMyOrders()
         {
             if (!AuthHelper.IsLoggedIn()) { pnlLoginHint.Visible = true; return; }
-            List<Order> list = orders.ByUser(AuthHelper.CurrentUserKey());
-            if (list.Count == 0) { pnlNoOrders.Visible = true; return; }
-            litOrderCount.Text = list.Count.ToString();
-            rptOrders.DataSource = list;
+            List<Order> danhSach = danhSachDonHang.ByUser(AuthHelper.CurrentUserKey());
+            if (danhSach.Count == 0) { pnlNoOrders.Visible = true; return; }
+            litOrderCount.Text = danhSach.Count.ToString();
+            rptOrders.DataSource = danhSach;
             rptOrders.DataBind();
             pnlMyOrders.Visible = true;
         }

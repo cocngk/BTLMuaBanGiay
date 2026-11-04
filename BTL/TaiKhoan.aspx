@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Tài khoản của tôi" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="TaiKhoan.aspx.cs" Inherits="ShoeStore.TaiKhoan" %>
+﻿<%@ Page Title="Tài khoản của tôi" Language="C#" MasterPageFile="~/KhungTrang.Master" AutoEventWireup="true" CodeBehind="TaiKhoan.aspx.cs" Inherits="ShoeStore.TaiKhoan" %>
 
 <asp:Content ID="HeadCss" ContentPlaceHolderID="HeadContent" runat="server">
     <meta name="description" content="Xem và cập nhật hồ sơ, đổi mật khẩu đăng nhập tại SneakerX." />

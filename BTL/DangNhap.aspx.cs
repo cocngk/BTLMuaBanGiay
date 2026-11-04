@@ -8,26 +8,29 @@ namespace ShoeStore
 {
     public partial class DangNhap : ShopPage
     {
-        protected void btnLogin_Click(object sender, EventArgs e)
+        // Xử lý khi người dùng bấm nút.
+        protected void btnLogin_Click(object nguonSuKien, EventArgs e)
         {
             if (!Page.IsValid) return;
-            UserAccount account = AuthHelper.FindByUsernameOrEmail(txtUsername.Text.Trim());
-            if (account == null) { ShowError("Tài khoản chưa được đăng ký! Vui lòng đăng ký tài khoản mới."); return; }
-            if (!PasswordHasher.Verify(txtPassword.Text.Trim(), account.PasswordSalt, account.PasswordHash)) { ShowError("Sai mật khẩu! Vui lòng kiểm tra lại."); return; }
-            AuthHelper.SignIn(account);
+            UserAccount taiKhoan = AuthHelper.FindByUsernameOrEmail(txtUsername.Text.Trim());
+            if (taiKhoan == null) { ShowError("Tài khoản chưa được đăng ký! Vui lòng đăng ký tài khoản mới."); return; }
+            if (!PasswordHasher.Verify(txtPassword.Text.Trim(), taiKhoan.PasswordSalt, taiKhoan.PasswordHash)) { ShowError("Sai mật khẩu! Vui lòng kiểm tra lại."); return; }
+            AuthHelper.SignIn(taiKhoan);
             Toast.ShowAndRedirect(this, "Đăng nhập thành công! Đang chuyển đến trang chủ...", "success", "TrangChu.aspx");
         }
 
-        protected void cvUsername_ServerValidate(object source, ServerValidateEventArgs args)
+        // Kiểm tra dữ liệu ở phía máy chủ.
+        protected void cvUsername_ServerValidate(object nguon, ServerValidateEventArgs thamSoSuKien)
         {
-            string value = (txtUsername.Text ?? "").Trim();
-            args.IsValid = value.Contains("@") ? Regex.IsMatch(value, @"^[^@\s]+@[^@\s]+\.[^@\s]+$") : value.Length >= 3;
-            if (!args.IsValid) cvUsername.ErrorMessage = value.Contains("@") ? "Địa chỉ email không hợp lệ." : "Tên đăng nhập phải có ít nhất 3 ký tự.";
+            string giaTri = (txtUsername.Text ?? "").Trim();
+            thamSoSuKien.IsValid = giaTri.Contains("@") ? Regex.IsMatch(giaTri, @"^[^@\s]+@[^@\s]+\.[^@\s]+$") : giaTri.Length >= 3;
+            if (!thamSoSuKien.IsValid) cvUsername.ErrorMessage = giaTri.Contains("@") ? "Địa chỉ email không hợp lệ." : "Tên đăng nhập phải có ít nhất 3 ký tự.";
         }
 
-        private void ShowError(string message)
+        // Thực hiện việc hiển thị error.
+        private void ShowError(string thongBao)
         {
-            litFormError.Text = HttpUtility.HtmlEncode(message);
+            litFormError.Text = HttpUtility.HtmlEncode(thongBao);
             pnlFormError.Visible = true;
         }
     }

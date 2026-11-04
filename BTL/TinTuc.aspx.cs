@@ -7,15 +7,17 @@ namespace ShoeStore
 {
     public partial class TinTuc : ShopPage
     {
-        private const int PageSize = 3;
-        public int CurrentNewsPage { get; private set; }
+        private const int KichThuocTrang = 3;
+        public int TrangTinHienTai { get; private set; }
 
-        protected void Page_Load(object sender, EventArgs e)
+        // Xử lý khi trang được tải.
+        protected void Page_Load(object nguonSuKien, EventArgs e)
         {
             BindStaticSections();
             LoadBlogs();
         }
 
+        // Thực hiện việc nạp static sections.
         private void BindStaticSections()
         {
             var all = BlogStore.GetAll();
@@ -33,21 +35,22 @@ namespace ShoeStore
             rptCategories.DataBind();
         }
 
+        // Thực hiện việc tải blogs.
         private void LoadBlogs()
         {
-            PagedResult<BlogItem> page = Paging.Paginate(BlogStore.GetAll(), Paging.PageFromQuery(Request.QueryString["page"]), PageSize);
-            CurrentNewsPage = page.Page;
-            rptBlogs.DataSource = page.Items;
+            PagedResult<BlogItem> trang = Paging.Paginate(BlogStore.GetAll(), Paging.PageFromQuery(Request.QueryString["page"]), KichThuocTrang);
+            TrangTinHienTai = trang.Page;
+            rptBlogs.DataSource = trang.Items;
             rptBlogs.DataBind();
-            rptNewsPages.DataSource = Enumerable.Range(1, page.TotalPages).Select(n => new { Number = n, Url = Paging.PageUrl("TinTuc.aspx", n), Css = n == CurrentNewsPage ? "page-link-custom active" : "page-link-custom" }).ToList();
+            rptNewsPages.DataSource = Enumerable.Range(1, trang.TotalPages).Select(n => new { Number = n, Url = Paging.PageUrl("TinTuc.aspx", n), Css = n == TrangTinHienTai ? "page-link-custom active" : "page-link-custom" }).ToList();
             rptNewsPages.DataBind();
-            pnlNewsPagination.Visible = page.TotalPages > 1;
-            bool previous = CurrentNewsPage > 1;
-            btnNewsPrev.NavigateUrl = Paging.PageUrl("TinTuc.aspx", previous ? CurrentNewsPage - 1 : CurrentNewsPage);
+            pnlNewsPagination.Visible = trang.TotalPages > 1;
+            bool previous = TrangTinHienTai > 1;
+            btnNewsPrev.NavigateUrl = Paging.PageUrl("TinTuc.aspx", previous ? TrangTinHienTai - 1 : TrangTinHienTai);
             btnNewsPrev.CssClass = previous ? "page-link-custom" : "page-link-custom disabled";
             btnNewsPrev.Attributes["onclick"] = previous ? "" : "return false;";
-            bool next = CurrentNewsPage < page.TotalPages;
-            btnNewsNext.NavigateUrl = Paging.PageUrl("TinTuc.aspx", next ? CurrentNewsPage + 1 : CurrentNewsPage);
+            bool next = TrangTinHienTai < trang.TotalPages;
+            btnNewsNext.NavigateUrl = Paging.PageUrl("TinTuc.aspx", next ? TrangTinHienTai + 1 : TrangTinHienTai);
             btnNewsNext.CssClass = next ? "page-link-custom" : "page-link-custom disabled";
             btnNewsNext.Attributes["onclick"] = next ? "" : "return false;";
         }

@@ -1,7 +1,7 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="AdminTabs.ascx.cs" Inherits="ShoeStore.AdminTabs" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="TabQuanTri.ascx.cs" Inherits="ShoeStore.TabQuanTri" %>
 <%-- Thanh tab của khu quản trị: một chỗ duy nhất biết có những khu vực nào,
      nên thêm khu mới không phải sửa bốn trang.
-     href để "#" trong markup và được đặt trong AdminTabs.ascx.cs bằng
+     href để "#" trong markup và được đặt trong TabQuanTri.ascx.cs bằng
      ResolveUrl("~/..."): control nằm ở /Controls/ nên href tương đối sẽ bị
      ghép thành /Controls/QuanTriDonHang.aspx (404). --%>
 <nav class="admin-tabs" aria-label="Khu quản trị">

@@ -8,7 +8,8 @@ namespace ShoeStore
 {
     public partial class TrangChu : ShopPage
     {
-        protected void Page_Load(object sender, EventArgs e)
+        // Xử lý khi trang được tải.
+        protected void Page_Load(object nguonSuKien, EventArgs e)
         {
             if (!IsPostBack)
             {
@@ -17,16 +18,18 @@ namespace ShoeStore
             }
         }
 
-        protected void btnHeroDiscover_Click(object sender, EventArgs e) { Redirect("SanPham.aspx"); }
+        // Xử lý khi người dùng bấm nút.
+        protected void btnHeroDiscover_Click(object nguonSuKien, EventArgs e) { Redirect("SanPham.aspx"); }
 
-        protected void rptProducts_ItemCommand(object source, RepeaterCommandEventArgs e)
+        // Xử lý lệnh trên một dòng dữ liệu.
+        protected void rptProducts_ItemCommand(object nguon, RepeaterCommandEventArgs e)
         {
             if (e.CommandName != "QuickAdd" || !RequireLogin("Vui lòng đăng nhập hoặc đăng ký tài khoản để mua hàng!")) return;
-            ProductItem product = Catalog.Find(Convert.ToInt32(e.CommandArgument));
-            if (product == null) return;
-            string size = product.FirstSize();
-            CartStore.AddProduct(product, size, 1);
-            Toast.Success(this, "Đã thêm " + product.Name + " (Size " + size + ") vào giỏ hàng!");
+            ProductItem sanPham = Catalog.Find(Convert.ToInt32(e.CommandArgument));
+            if (sanPham == null) return;
+            string kichThuoc = sanPham.FirstSize();
+            CartStore.AddProduct(sanPham, kichThuoc, 1);
+            Toast.Success(this, "Đã thêm " + sanPham.Name + " (Size " + kichThuoc + ") vào giỏ hàng!");
         }
     }
 }

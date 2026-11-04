@@ -1,5 +1,5 @@
-﻿<%@ Page Title="Sửa sản phẩm" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="SuaSanPham.aspx.cs" Inherits="ShoeStore.SuaSanPham" %>
-<%@ Register Src="~/Controls/AdminTabs.ascx" TagPrefix="uc" TagName="AdminTabs" %>
+﻿<%@ Page Title="Sửa sản phẩm" Language="C#" MasterPageFile="~/KhungTrang.Master" AutoEventWireup="true" CodeBehind="SuaSanPham.aspx.cs" Inherits="ShoeStore.SuaSanPham" %>
+<%@ Register Src="~/Controls/TabQuanTri.ascx" TagPrefix="uc" TagName="TabQuanTri" %>
 
 <asp:Content ID="HeadCss" ContentPlaceHolderID="HeadContent" runat="server">
     <link rel="stylesheet" href="Content/quantri.css" />
@@ -19,7 +19,7 @@
             </a>
         </div>
 
-        <uc:AdminTabs ID="ucTabs" runat="server" />
+        <uc:TabQuanTri ID="ucTabs" runat="server" />
 
         <section class="admin-card">
 

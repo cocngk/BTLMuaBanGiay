@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ProductCard.ascx.cs" Inherits="ShoeStore.ProductCard" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="TheSanPham.ascx.cs" Inherits="ShoeStore.TheSanPham" %>
 <%-- Thẻ sản phẩm dùng chung (TrangChu / SanPham / Related). Nút bấm bubble Command về Repeater cha. --%>
 <div class="product-card-custom">
     <asp:Panel ID="pnlHot" runat="server" CssClass="badge-hot-pink" Visible="false">
@@ -6,7 +6,7 @@
     </asp:Panel>
 
     <%-- Nút tim tự xử lý postback ngay trong control (không bubble Command về Repeater
-         cha) để chạy được ở mọi trang có ProductCard, kể cả khối "Sản phẩm liên quan"
+         cha) để chạy được ở mọi trang có TheSanPham, kể cả khối "Sản phẩm liên quan"
          không có handler ItemCommand. Dùng ký tự tim giống trang chi tiết sản phẩm. --%>
     <asp:LinkButton ID="btnHeart" runat="server" CssClass="btn-heart-wishlist"
         CausesValidation="false" OnClick="btnHeart_Click" ToolTip="Thêm vào yêu thích"

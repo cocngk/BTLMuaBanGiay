@@ -9,70 +9,77 @@ namespace ShoeStore
 {
     public partial class GioHang : ShopPage
     {
-        protected void Page_Load(object sender, EventArgs e)
+        // Xử lý khi trang được tải.
+        protected void Page_Load(object nguonSuKien, EventArgs e)
         {
             if (!IsPostBack) BindCart();
         }
 
+        // Thực hiện việc nạp giỏ hàng.
         private void BindCart()
         {
-            Cart cart = CartStore.Load();
-            bool empty = cart.IsEmpty;
-            pnlEmptyCart.Visible = empty;
-            pnlCartHasItems.Visible = !empty;
-            if (empty) return;
-            rptCart.DataSource = CartService.Lines(cart);
+            Cart gioHang = CartStore.Load();
+            bool rong = gioHang.IsEmpty;
+            pnlEmptyCart.Visible = rong;
+            pnlCartHasItems.Visible = !rong;
+            if (rong) return;
+            rptCart.DataSource = CartService.Lines(gioHang);
             rptCart.DataBind();
-            litSubTotal.Text = Money.Format(cart.SubTotal());
-            litTotal.Text = Money.Format(cart.SubTotal());
+            litSubTotal.Text = Money.Format(gioHang.SubTotal());
+            litTotal.Text = Money.Format(gioHang.SubTotal());
         }
 
-        private bool TryKey(string key, out int id, out string size)
+        // Thực hiện việc thử khóa.
+        private bool TryKey(string khoa, out int ma, out string kichThuoc)
         {
-            id = 0; size = "";
-            string[] parts = (key ?? "").Split('|');
-            return parts.Length == 2 && int.TryParse(parts[0], out id) && (size = parts[1]) != null;
+            ma = 0; kichThuoc = "";
+            string[] cacPhan = (khoa ?? "").Split('|');
+            return cacPhan.Length == 2 && int.TryParse(cacPhan[0], out ma) && (kichThuoc = cacPhan[1]) != null;
         }
 
-        protected void rptCart_ItemCommand(object source, RepeaterCommandEventArgs e)
+        // Xử lý lệnh trên một dòng dữ liệu.
+        protected void rptCart_ItemCommand(object nguon, RepeaterCommandEventArgs e)
         {
             if (e.CommandName != "Remove") return;
-            int id; string size;
-            if (!TryKey(Convert.ToString(e.CommandArgument), out id, out size)) return;
+            int ma; string kichThuoc;
+            if (!TryKey(Convert.ToString(e.CommandArgument), out ma, out kichThuoc)) return;
             FlushQuantities();
-            Cart cart = CartStore.Load();
-            if (cart.Remove(id, size))
+            Cart gioHang = CartStore.Load();
+            if (gioHang.Remove(ma, kichThuoc))
             {
-                CartStore.Save(cart);
+                CartStore.Save(gioHang);
                 BindCart();
                 Toast.Info(this, "Đã xóa sản phẩm khỏi giỏ hàng!");
             }
         }
 
-        protected void btnUpdateCart_Click(object sender, EventArgs e) { FlushQuantities(); BindCart(); }
+        // Xử lý khi người dùng bấm nút.
+        protected void btnUpdateCart_Click(object nguonSuKien, EventArgs e) { FlushQuantities(); BindCart(); }
 
+        // Thực hiện việc flush quantities.
         private void FlushQuantities()
         {
-            Cart cart = CartStore.Load();
-            if (cart.IsEmpty) return;
-            if (rptCart.Items.Count == 0) { rptCart.DataSource = cart.Lines.ToList(); rptCart.DataBind(); }
+            Cart gioHang = CartStore.Load();
+            if (gioHang.IsEmpty) return;
+            if (rptCart.Items.Count == 0) { rptCart.DataSource = gioHang.Lines.ToList(); rptCart.DataBind(); }
             bool changed = false;
-            foreach (RepeaterItem item in rptCart.Items)
+            foreach (RepeaterItem phanTu in rptCart.Items)
             {
-                HiddenField key = item.FindControl("hfKey") as HiddenField;
-                TextBox text = item.FindControl("txtQuantity") as TextBox;
-                if (key == null || text == null) continue;
-                int id; string size;
-                if (!TryKey(key.Value, out id, out size)) continue;
-                string posted = Request.Form[text.UniqueID];
-                int qty;
-                if (posted == null || !int.TryParse(posted, out qty)) continue;
-                if (CartService.SetQuantity(cart, id, size, qty)) changed = true;
+                HiddenField khoa = phanTu.FindControl("hfKey") as HiddenField;
+                TextBox vanBan = phanTu.FindControl("txtQuantity") as TextBox;
+                if (khoa == null || vanBan == null) continue;
+                int ma; string kichThuoc;
+                if (!TryKey(khoa.Value, out ma, out kichThuoc)) continue;
+                string posted = Request.Form[vanBan.UniqueID];
+                int soLuong;
+                if (posted == null || !int.TryParse(posted, out soLuong)) continue;
+                if (CartService.SetQuantity(gioHang, ma, kichThuoc, soLuong)) changed = true;
             }
-            if (changed) CartStore.Save(cart);
+            if (changed) CartStore.Save(gioHang);
         }
 
-        protected void btnGoToCheckout_Click(object sender, EventArgs e)
+        // Xử lý khi người dùng bấm nút.
+        protected void btnGoToCheckout_Click(object nguonSuKien, EventArgs e)
         {
             if (!RequireLogin("Vui lòng đăng nhập để tiến hành thanh toán!")) return;
             FlushQuantities();

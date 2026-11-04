@@ -29,7 +29,7 @@ namespace ShoeStore
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ShoeStore.AdminTabs ucTabs;
+        protected global::ShoeStore.TabQuanTri ucTabs;
 
         /// <summary>
         /// pnlFilter control.
