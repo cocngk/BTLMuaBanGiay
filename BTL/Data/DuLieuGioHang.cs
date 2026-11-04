@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ShoeStore.Models;
 using System.Web.SessionState;
 using ShoeStore.Helpers;
-
+using ShoeStore.Models;
 
 namespace ShoeStore.Data
 {
+    // Dữ liệu đã chuẩn bị để hiển thị một dòng giỏ hàng.
     public sealed class CartLineView
     {
         public int Id { get; set; }
@@ -21,205 +21,260 @@ namespace ShoeStore.Data
 
     public static class CartService
     {
-        // Thực hiện việc thêm or gộp.
-        public static void AddOrMerge(Cart gioHang, ProductItem sanPham, string kichThuoc, int soLuong)
+        // Thêm sản phẩm hoặc gộp vào dòng cùng cỡ.
+        public static void AddOrMerge(Cart gioHang, ProductItem sanPham,
+            string kichThuoc, int soLuong)
         {
-            if (gioHang != null && sanPham != null) gioHang.AddOrMerge(sanPham.Id, sanPham.Name, sanPham.Price, kichThuoc, soLuong, sanPham.ImageUrl, sanPham.Stock);
+            if (gioHang == null || sanPham == null) return;
+            gioHang.AddOrMerge(sanPham.Id, sanPham.Name, sanPham.Price,
+                kichThuoc, soLuong, sanPham.ImageUrl, sanPham.Stock);
         }
 
-        // Thực hiện việc đặt số lượng.
-        public static bool SetQuantity(Cart gioHang, int ma, string kichThuoc, int soLuong)
+        // Đặt lại số lượng một dòng, trả về true nếu có thay đổi.
+        public static bool SetQuantity(Cart gioHang, int maSanPham,
+            string kichThuoc, int soLuong)
         {
             if (gioHang == null) return false;
-            CartItem dong = gioHang.Lines.FirstOrDefault(x => x.Id == ma && x.Size == kichThuoc);
+
+            CartItem dong = gioHang.Lines.FirstOrDefault(item =>
+                item.Id == maSanPham && item.Size == kichThuoc);
             if (dong == null) return false;
-            int cu = dong.Quantity;
-            gioHang.SetQuantity(ma, kichThuoc, soLuong, StockOf(ma));
-            return cu != dong.Quantity;
+
+            int soLuongCu = dong.Quantity;
+            gioHang.SetQuantity(maSanPham, kichThuoc, soLuong, StockOf(maSanPham));
+            return soLuongCu != dong.Quantity;
         }
 
-        // Thực hiện việc max buyable.
-        public static int MaxBuyable(Cart gioHang, int ma)
+        // Tính số lượng tối đa còn có thể thêm vào giỏ.
+        public static int MaxBuyable(Cart gioHang, int maSanPham)
         {
-            int giaTri = gioHang.RemainingToBuy(ma, StockOf(ma), null);
-            return giaTri > 0 ? giaTri : 1;
+            if (gioHang == null) return 1;
+
+            int conLai = gioHang.RemainingToBuy(
+                maSanPham, StockOf(maSanPham), null);
+            return Math.Max(1, conLai);
         }
 
-        // Thực hiện việc dòng.
+        // Tạo dữ liệu hiển thị cho repeater giỏ hàng.
         public static List<CartLineView> Lines(Cart gioHang)
         {
-            return gioHang.Lines.Select(x => new CartLineView
+            if (gioHang == null) return new List<CartLineView>();
+
+            return gioHang.Lines.Select(dong => new CartLineView
             {
-                Id = x.Id, Name = x.Name, Price = x.Price, Size = x.Size,
-                ImageUrl = x.ImageUrl, Quantity = x.Quantity,
-                Max = Math.Max(1, gioHang.RemainingToBuy(x.Id, StockOf(x.Id), x.Size))
+                Id = dong.Id,
+                Name = dong.Name,
+                Price = dong.Price,
+                Size = dong.Size,
+                ImageUrl = dong.ImageUrl,
+                Quantity = dong.Quantity,
+                Max = Math.Max(1, gioHang.RemainingToBuy(
+                    dong.Id, StockOf(dong.Id), dong.Size))
             }).ToList();
         }
 
-        // Thực hiện việc stock của.
-        private static int StockOf(int ma)
+        // Đọc tồn kho mới nhất của sản phẩm.
+        private static int StockOf(int maSanPham)
         {
-            ProductItem sanPham = Catalog.Find(ma);
-            return sanPham == null ? int.MaxValue : sanPham.Stock;
+            ProductItem sanPham = Catalog.Find(maSanPham);
+            return sanPham == null ? 0 : sanPham.Stock;
         }
     }
-}
 
-
-
-namespace ShoeStore.Data
-{
+    // Kho giỏ hàng chọn session cho khách và SQL cho tài khoản.
     public sealed class CartStore
     {
         private const string KhoaPhien = "Cart";
         private readonly HttpSessionState phien;
 
-        // Thực hiện việc giỏ hàng kho.
-        public CartStore(HttpSessionState phien) { this.phien = phien; }
+        public CartStore(HttpSessionState phien)
+        {
+            this.phien = phien;
+        }
 
-        private string Owner
+        private string ChuTaiKhoan
         {
             get
             {
-                string giaTri = AuthHelper.UserKeyOf(phien);
-                return giaTri.Length == 0 ? null : giaTri;
+                string khoa = AuthHelper.UserKeyOf(phien);
+                return string.IsNullOrEmpty(khoa) ? null : khoa;
             }
         }
 
-        // Thực hiện việc tải.
-        public Cart Load() { return new Cart(Read()); }
-        // Thực hiện việc lưu.
-        public void Save(Cart gioHang) { SaveLines(gioHang == null ? null : gioHang.Lines.ToList()); }
-        // Thực hiện việc xóa.
-        public void Clear() { SaveLines(null); }
-        // Thực hiện việc xóa khách.
-        public void ClearGuest() { phien.Remove(KhoaPhien); }
-
-        // Thực hiện việc thêm sản phẩm.
-        public void AddProduct(ProductItem sanPham, string kichThuoc, int soLuong)
+        // Đọc giỏ hàng hiện tại.
+        public Cart Load()
         {
+            return new Cart(DocDong());
+        }
+
+        // Lưu toàn bộ giỏ hàng.
+        public void Save(Cart gioHang)
+        {
+            SaveLines(gioHang == null ? null : gioHang.Lines.ToList());
+        }
+
+        // Xóa giỏ hàng của tài khoản hoặc khách.
+        public void Clear()
+        {
+            SaveLines(null);
+        }
+
+        // Xóa dữ liệu giỏ tạm của khách sau khi đăng nhập.
+        public void ClearGuest()
+        {
+            if (phien != null) phien.Remove(KhoaPhien);
+        }
+
+        // Thêm một sản phẩm vào giỏ hiện tại.
+        public void AddProduct(ProductItem sanPham, string kichThuoc,
+            int soLuong)
+        {
+            if (sanPham == null) return;
+
             Cart gioHang = Load();
             CartService.AddOrMerge(gioHang, sanPham, kichThuoc, soLuong);
             Save(gioHang);
         }
 
-        // Thực hiện việc gộp khách vào tài khoản.
+        // Gộp giỏ tạm của khách vào giỏ tài khoản.
         public void MergeGuestIntoAccount()
         {
-            if (Owner == null) return;
-            List<CartItem> guest = phien[KhoaPhien] as List<CartItem>;
+            if (ChuTaiKhoan == null || phien == null) return;
+
+            List<CartItem> gioKhach = phien[KhoaPhien] as List<CartItem>;
             phien.Remove(KhoaPhien);
-            if (guest == null) return;
+            if (gioKhach == null || gioKhach.Count == 0) return;
+
             Cart gioHang = Load();
-            foreach (CartItem phanTu in guest)
+            foreach (CartItem dong in gioKhach)
             {
-                ProductItem sanPham = Catalog.Find(phanTu.Id);
-                if (sanPham != null) CartService.AddOrMerge(gioHang, sanPham, phanTu.Size, phanTu.Quantity);
+                ProductItem sanPham = Catalog.Find(dong.Id);
+                if (sanPham != null)
+                    CartService.AddOrMerge(gioHang, sanPham, dong.Size, dong.Quantity);
             }
+
             Save(gioHang);
         }
 
-        // Thực hiện việc đọc.
-        private List<CartItem> Read()
+        private List<CartItem> DocDong()
         {
-            if (Owner == null)
+            if (ChuTaiKhoan == null)
             {
-                List<CartItem> guest = phien[KhoaPhien] as List<CartItem>;
-                return guest == null ? null : new List<CartItem>(guest);
+                List<CartItem> gioKhach = phien == null
+                    ? null
+                    : phien[KhoaPhien] as List<CartItem>;
+                return gioKhach == null
+                    ? new List<CartItem>()
+                    : new List<CartItem>(gioKhach);
             }
 
-            return new SqlCartStore().Load(Owner);
+            return new SqlCartStore().Load(ChuTaiKhoan);
         }
 
-        // Thực hiện việc lưu dòng.
         private void SaveLines(List<CartItem> cacDong)
         {
             bool rong = cacDong == null || cacDong.Count == 0;
-            if (Owner == null)
+            if (ChuTaiKhoan == null)
             {
-                phien[KhoaPhien] = rong ? null : new List<CartItem>(cacDong);
+                if (phien != null)
+                    phien[KhoaPhien] = rong
+                        ? null
+                        : new List<CartItem>(cacDong);
                 return;
             }
 
-            new SqlCartStore().Save(Owner, cacDong);
+            new SqlCartStore().Save(ChuTaiKhoan, cacDong);
         }
     }
-}
 
-
-
-namespace ShoeStore.Data
-{
+    // Kho yêu thích chọn session cho khách và SQL cho tài khoản.
     public sealed class WishlistStore
     {
         private const string KhoaPhien = "Wishlist";
         private readonly HttpSessionState phien;
 
-        // Thực hiện việc yêu thích kho.
-        public WishlistStore(HttpSessionState phien) { this.phien = phien; }
+        public WishlistStore(HttpSessionState phien)
+        {
+            this.phien = phien;
+        }
 
-        private string Owner
+        private string ChuTaiKhoan
         {
             get
             {
-                string giaTri = AuthHelper.UserKeyOf(phien);
-                return giaTri.Length == 0 ? null : giaTri;
+                string khoa = AuthHelper.UserKeyOf(phien);
+                return string.IsNullOrEmpty(khoa) ? null : khoa;
             }
         }
 
-        // Thực hiện việc kiểm tra chứa.
-        public bool Contains(int ma) { return Read().Contains(ma); }
-
-        // Thực hiện việc đổi trạng thái.
-        public bool Toggle(int ma)
+        // Kiểm tra sản phẩm đã nằm trong danh sách yêu thích chưa.
+        public bool Contains(int maSanPham)
         {
-            HashSet<int> phanTu = Read();
-            bool daThich = !phanTu.Remove(ma);
-            if (daThich) phanTu.Add(ma);
-            Save(phanTu);
-            return daThich;
+            return DocDanhSach().Contains(maSanPham);
         }
 
-        // Thực hiện việc xóa.
-        public void Clear() { Save(new HashSet<int>()); }
-        // Thực hiện việc xóa khách.
-        public void ClearGuest() { phien.Remove(KhoaPhien); }
+        // Đổi trạng thái yêu thích, trả về trạng thái sau khi đổi.
+        public bool Toggle(int maSanPham)
+        {
+            HashSet<int> danhSach = DocDanhSach();
+            bool daThem = !danhSach.Remove(maSanPham);
+            if (daThem) danhSach.Add(maSanPham);
+            LuuDanhSach(danhSach);
+            return daThem;
+        }
 
-        // Thực hiện việc gộp khách vào tài khoản.
+        // Xóa toàn bộ danh sách yêu thích.
+        public void Clear()
+        {
+            LuuDanhSach(new HashSet<int>());
+        }
+
+        // Xóa danh sách tạm của khách.
+        public void ClearGuest()
+        {
+            if (phien != null) phien.Remove(KhoaPhien);
+        }
+
+        // Gộp danh sách tạm của khách vào tài khoản.
         public void MergeGuestIntoAccount()
         {
-            if (Owner == null) return;
-            HashSet<int> guest = phien[KhoaPhien] as HashSet<int>;
+            if (ChuTaiKhoan == null || phien == null) return;
+
+            HashSet<int> yeuThichKhach = phien[KhoaPhien] as HashSet<int>;
             phien.Remove(KhoaPhien);
-            if (guest == null) return;
-            HashSet<int> phanTu = Read();
-            phanTu.UnionWith(guest);
-            Save(phanTu);
+            if (yeuThichKhach == null || yeuThichKhach.Count == 0) return;
+
+            HashSet<int> danhSach = DocDanhSach();
+            danhSach.UnionWith(yeuThichKhach);
+            LuuDanhSach(danhSach);
         }
 
-        // Thực hiện việc đọc.
-        private HashSet<int> Read()
+        private HashSet<int> DocDanhSach()
         {
-            if (Owner == null)
+            if (ChuTaiKhoan == null)
             {
-                HashSet<int> guest = phien[KhoaPhien] as HashSet<int>;
-                return guest == null ? new HashSet<int>() : new HashSet<int>(guest);
+                HashSet<int> tam = phien == null
+                    ? null
+                    : phien[KhoaPhien] as HashSet<int>;
+                return tam == null ? new HashSet<int>() : new HashSet<int>(tam);
             }
 
-            return new SqlWishlistStore().Load(Owner);
+            return new SqlWishlistStore().Load(ChuTaiKhoan);
         }
 
-        // Thực hiện việc lưu.
-        private void Save(HashSet<int> phanTu)
+        private void LuuDanhSach(HashSet<int> danhSach)
         {
-            bool rong = phanTu == null || phanTu.Count == 0;
-            if (Owner == null)
+            bool rong = danhSach == null || danhSach.Count == 0;
+            if (ChuTaiKhoan == null)
             {
-                phien[KhoaPhien] = rong ? null : new HashSet<int>(phanTu);
+                if (phien != null)
+                    phien[KhoaPhien] = rong
+                        ? null
+                        : new HashSet<int>(danhSach);
                 return;
             }
 
-            new SqlWishlistStore().Save(Owner, phanTu);
+            new SqlWishlistStore().Save(ChuTaiKhoan, danhSach);
         }
     }
 }

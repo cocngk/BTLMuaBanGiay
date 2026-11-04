@@ -13,6 +13,7 @@ namespace ShoeStore
         // Xử lý khi trang được tải.
         protected void Page_Load(object nguonSuKien, EventArgs e)
         {
+            if (IsPostBack) return;
             BindStaticSections();
             LoadBlogs();
         }
@@ -20,8 +21,10 @@ namespace ShoeStore
         // Thực hiện việc nạp static sections.
         private void BindStaticSections()
         {
-            var all = BlogStore.GetAll();
-            BlogItem featured = all.First();
+            System.Collections.Generic.List<BlogItem> tatCa = BlogStore.GetAll();
+            if (tatCa.Count == 0) return;
+
+            BlogItem featured = tatCa[0];
             imgHero.ImageUrl = ResolveUrl(featured.ImageUrl);
             imgHero.AlternateText = featured.Title;
             litHeroCategory.Text = featured.Category;
@@ -29,20 +32,39 @@ namespace ShoeStore
             litHeroDate.Text = featured.Date;
             litHeroViews.Text = string.Format("{0:N0} lượt xem", featured.Views);
             litHeroDesc.Text = featured.Summary;
-            rptPopular.DataSource = all.OrderByDescending(x => x.Views).Take(2).ToList();
+            rptPopular.DataSource = tatCa
+                .OrderByDescending(x => x.Views)
+                .Take(2)
+                .ToList();
             rptPopular.DataBind();
-            rptCategories.DataSource = all.GroupBy(x => x.Category).Select(x => new { Name = x.Key, Count = x.Count() }).OrderByDescending(x => x.Count).ToList();
+            rptCategories.DataSource = tatCa
+                .GroupBy(x => x.Category)
+                .Select(nhom => new { Name = nhom.Key, Count = nhom.Count() })
+                .OrderByDescending(nhom => nhom.Count)
+                .ToList();
             rptCategories.DataBind();
         }
 
         // Thực hiện việc tải blogs.
         private void LoadBlogs()
         {
-            PagedResult<BlogItem> trang = Paging.Paginate(BlogStore.GetAll(), Paging.PageFromQuery(Request.QueryString["page"]), KichThuocTrang);
+            PagedResult<BlogItem> trang = Paging.Paginate(
+                BlogStore.GetAll(),
+                Paging.PageFromQuery(Request.QueryString["page"]),
+                KichThuocTrang);
             TrangTinHienTai = trang.Page;
             rptBlogs.DataSource = trang.Items;
             rptBlogs.DataBind();
-            rptNewsPages.DataSource = Enumerable.Range(1, trang.TotalPages).Select(n => new { Number = n, Url = Paging.PageUrl("TinTuc.aspx", n), Css = n == TrangTinHienTai ? "page-link-custom active" : "page-link-custom" }).ToList();
+            rptNewsPages.DataSource = Enumerable.Range(1, trang.TotalPages)
+                .Select(n => new
+                {
+                    Number = n,
+                    Url = Paging.PageUrl("TinTuc.aspx", n),
+                    Css = n == TrangTinHienTai
+                        ? "page-link-custom active"
+                        : "page-link-custom"
+                })
+                .ToList();
             rptNewsPages.DataBind();
             pnlNewsPagination.Visible = trang.TotalPages > 1;
             bool previous = TrangTinHienTai > 1;

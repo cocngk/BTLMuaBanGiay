@@ -23,7 +23,8 @@ namespace ShoeStore
         {
             string trang = Path.GetFileName(Request.Url.AbsolutePath).ToLowerInvariant();
             List<ShoeStore.Models.MenuItem> danhSachMenu = ShoeStore.Models.MenuItem.MainMenu();
-            foreach (ShoeStore.Models.MenuItem menu in danhSachMenu) menu.IsActive = menu.Url.Equals(trang, StringComparison.OrdinalIgnoreCase);
+            foreach (ShoeStore.Models.MenuItem menu in danhSachMenu)
+                menu.IsActive = menu.Url.Equals(trang, StringComparison.OrdinalIgnoreCase);
             rptMenu.DataSource = danhSachMenu;
             rptMenu.DataBind();
             cartIcon.Attributes["class"] = trang.Contains("giohang") ? "cart-icon-btn active" : "cart-icon-btn";
@@ -51,6 +52,7 @@ namespace ShoeStore
             if (nguoiDung != null) nguoiDung.Visible = logged;
             if (ten != null && logged) ten.Text = AuthHelper.CurrentUserName();
             lnkAdmin.Visible = AuthHelper.IsAdmin();
+
             int soLuong = new CartStore(Session).Load().TotalQuantity();
             cartCount.Visible = soLuong > 0;
             cartCount.InnerText = soLuong > 99 ? "99+" : soLuong.ToString();
@@ -60,7 +62,8 @@ namespace ShoeStore
         protected void btnLogout_Click(object nguonSuKien, EventArgs e)
         {
             AuthHelper.SignOut();
-            Response.Redirect("TrangChu.aspx");
+            Response.Redirect("TrangChu.aspx", false);
+            Context.ApplicationInstance.CompleteRequest();
         }
     }
 }

@@ -28,7 +28,11 @@ namespace ShoeStore
     {
         private const int KichThuocTrang = 10;
         private readonly OrderAdminService dichVu = new OrderAdminService();
-        private int TrangHienTai { get { return ViewState["Page"] == null ? 1 : (int)ViewState["Page"]; } set { ViewState["Page"] = value; } }
+        private int TrangHienTai
+        {
+            get { return ViewState["Page"] == null ? 1 : (int)ViewState["Page"]; }
+            set { ViewState["Page"] = value; }
+        }
 
         // Xử lý khi trang được tải.
         protected void Page_Load(object nguonSuKien, EventArgs e)
@@ -43,7 +47,8 @@ namespace ShoeStore
         {
             ddlStatus.Items.Clear();
             ddlStatus.Items.Add(new ListItem("Tất cả trạng thái", ""));
-            foreach (string trangThai in Order.AllStatuses()) ddlStatus.Items.Add(new ListItem(trangThai, trangThai));
+            foreach (string trangThai in Order.AllStatuses())
+                ddlStatus.Items.Add(new ListItem(trangThai, trangThai));
         }
 
         // Thực hiện việc nạp danh sách.
@@ -52,7 +57,14 @@ namespace ShoeStore
             List<Order> all = dichVu.All();
             List<Order> filtered = OrderAdminService.FilterByStatus(all, ddlStatus.SelectedValue);
             string tuKhoa = txtSearch.Text.Trim();
-            if (tuKhoa.Length > 0) filtered = filtered.Where(x => Contains(x.Code, tuKhoa) || Contains(x.CustomerName, tuKhoa) || Contains(x.Phone, tuKhoa)).ToList();
+            if (tuKhoa.Length > 0)
+            {
+                filtered = filtered.Where(x =>
+                    Contains(x.Code, tuKhoa)
+                    || Contains(x.CustomerName, tuKhoa)
+                    || Contains(x.Phone, tuKhoa))
+                    .ToList();
+            }
             PagedResult<Order> trang = Paging.Paginate(filtered, TrangHienTai, KichThuocTrang);
             TrangHienTai = trang.Page;
             rptOrders.DataSource = trang.Items.Select(ToRow).ToList();
@@ -75,7 +87,20 @@ namespace ShoeStore
         private static AdminOrderRow ToRow(Order donHang)
         {
             List<OrderLine> cacDong = donHang.Lines ?? new List<OrderLine>();
-            return new AdminOrderRow { Code = donHang.Code, CreatedAtText = donHang.CreatedAt.ToString("dd/MM/yyyy HH:mm"), CustomerName = donHang.CustomerName, Phone = donHang.Phone, Address = donHang.Address, Quantity = donHang.TotalQuantity(), TotalText = Money.Format(donHang.Total()), Status = donHang.Status, StatusClass = StatusClass(donHang.Status), ItemSummary = cacDong.Count + " món · xem chi tiết", Lines = cacDong };
+            return new AdminOrderRow
+            {
+                Code = donHang.Code,
+                CreatedAtText = donHang.CreatedAt.ToString("dd/MM/yyyy HH:mm"),
+                CustomerName = donHang.CustomerName,
+                Phone = donHang.Phone,
+                Address = donHang.Address,
+                Quantity = donHang.TotalQuantity(),
+                TotalText = Money.Format(donHang.Total()),
+                Status = donHang.Status,
+                StatusClass = StatusClass(donHang.Status),
+                ItemSummary = cacDong.Count + " món · xem chi tiết",
+                Lines = cacDong
+            };
         }
 
         // Thực hiện việc trạng thái lớp.
@@ -88,13 +113,34 @@ namespace ShoeStore
         }
 
         // Thực hiện việc kiểm tra chứa.
-        private static bool Contains(string giaTri, string tuKhoa) { return !string.IsNullOrEmpty(giaTri) && giaTri.IndexOf(tuKhoa, StringComparison.OrdinalIgnoreCase) >= 0; }
+        private static bool Contains(string giaTri, string tuKhoa)
+        {
+            return !string.IsNullOrEmpty(giaTri)
+                && giaTri.IndexOf(tuKhoa, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
         // Xử lý khi người dùng bấm nút.
-        protected void btnFilter_Click(object nguonSuKien, EventArgs e) { if (RequireAdmin()) { TrangHienTai = 1; BindList(); } }
+        protected void btnFilter_Click(object nguonSuKien, EventArgs e)
+        {
+            if (!RequireAdmin()) return;
+            TrangHienTai = 1;
+            BindList();
+        }
+
         // Xử lý khi người dùng bấm nút.
-        protected void btnPrev_Click(object nguonSuKien, EventArgs e) { if (RequireAdmin()) { TrangHienTai = Math.Max(1, TrangHienTai - 1); BindList(); } }
+        protected void btnPrev_Click(object nguonSuKien, EventArgs e)
+        {
+            if (!RequireAdmin()) return;
+            TrangHienTai = Math.Max(1, TrangHienTai - 1);
+            BindList();
+        }
+
         // Xử lý khi người dùng bấm nút.
-        protected void btnNext_Click(object nguonSuKien, EventArgs e) { if (RequireAdmin()) { TrangHienTai++; BindList(); } }
+        protected void btnNext_Click(object nguonSuKien, EventArgs e)
+        {
+            if (!RequireAdmin()) return;
+            TrangHienTai++;
+            BindList();
+        }
 
         // Xử lý khi một dòng dữ liệu được liên kết.
         protected void rptOrders_ItemDataBound(object nguonSuKien, RepeaterItemEventArgs e)
@@ -104,7 +150,11 @@ namespace ShoeStore
             DropDownList trangThai = e.Item.FindControl("ddlRowStatus") as DropDownList;
             Repeater cacDong = e.Item.FindControl("rptLines") as Repeater;
             if (row == null) return;
-            if (cacDong != null) { cacDong.DataSource = row.Lines; cacDong.DataBind(); }
+            if (cacDong != null)
+            {
+                cacDong.DataSource = row.Lines;
+                cacDong.DataBind();
+            }
             if (trangThai != null)
             {
                 trangThai.DataSource = Order.AllStatuses();
@@ -120,8 +170,10 @@ namespace ShoeStore
             DropDownList trangThai = e.Item.FindControl("ddlRowStatus") as DropDownList;
             if (trangThai == null) return;
             StatusChangeResult ketQua = dichVu.ChangeStatus(Convert.ToString(e.CommandArgument), trangThai.SelectedValue);
-            if (ketQua.Ok && ketQua.Outcome == StatusChangeOutcome.Updated) Toast.Success(this, ketQua.Message);
-            else Toast.Info(this, ketQua.Message);
+            if (ketQua.Ok && ketQua.Outcome == StatusChangeOutcome.Updated)
+                Toast.Success(this, ketQua.Message);
+            else
+                Toast.Info(this, ketQua.Message);
             BindList();
         }
     }

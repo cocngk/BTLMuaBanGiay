@@ -14,17 +14,26 @@ namespace ShoeStore
         protected void Page_Load(object nguonSuKien, EventArgs e)
         {
             if (IsPostBack) return;
-            if (!string.IsNullOrEmpty(Request.QueryString["code"])) ShowOrder(Request.QueryString["code"]);
+            string maTruyVan = Request.QueryString["code"];
+            if (!string.IsNullOrEmpty(maTruyVan)) ShowOrder(maTruyVan);
             LoadMyOrders();
         }
 
         // Xử lý khi người dùng bấm nút.
-        protected void btnLookup_Click(object nguonSuKien, EventArgs e) { ShowOrder(txtCode.Text); }
+        protected void btnLookup_Click(object nguonSuKien, EventArgs e)
+        {
+            ShowOrder(txtCode.Text);
+        }
 
         // Thực hiện việc hiển thị đơn hàng.
         private void ShowOrder(string ma)
         {
-            if (string.IsNullOrWhiteSpace(ma)) { Toast.Info(this, "Vui lòng nhập mã đơn cần tra cứu."); return; }
+            if (string.IsNullOrWhiteSpace(ma))
+            {
+                Toast.Info(this, "Vui lòng nhập mã đơn cần tra cứu.");
+                return;
+            }
+
             Order donHang = danhSachDonHang.FindByCode(ma);
             if (donHang == null)
             {
@@ -36,7 +45,7 @@ namespace ShoeStore
             litLookupStatus.Text = donHang.Status;
             litLookupDate.Text = donHang.CreatedAt.ToString("dd/MM/yyyy HH:mm");
             litLookupTotal.Text = Money.Format(donHang.Total());
-            rptLookupLines.DataSource = donHang.Lines;
+            rptLookupLines.DataSource = donHang.Lines ?? new List<OrderLine>();
             rptLookupLines.DataBind();
             pnlLookup.Visible = true;
         }
@@ -44,9 +53,18 @@ namespace ShoeStore
         // Thực hiện việc tải my đơn hàng.
         private void LoadMyOrders()
         {
-            if (!AuthHelper.IsLoggedIn()) { pnlLoginHint.Visible = true; return; }
+            if (!AuthHelper.IsLoggedIn())
+            {
+                pnlLoginHint.Visible = true;
+                return;
+            }
+
             List<Order> danhSach = danhSachDonHang.ByUser(AuthHelper.CurrentUserKey());
-            if (danhSach.Count == 0) { pnlNoOrders.Visible = true; return; }
+            if (danhSach.Count == 0)
+            {
+                pnlNoOrders.Visible = true;
+                return;
+            }
             litOrderCount.Text = danhSach.Count.ToString();
             rptOrders.DataSource = danhSach;
             rptOrders.DataBind();

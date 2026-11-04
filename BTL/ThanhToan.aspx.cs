@@ -38,6 +38,7 @@ namespace ShoeStore
         protected void btnConfirmCheckout_Click(object nguonSuKien, EventArgs e)
         {
             if (!Page.IsValid) return;
+
             OrderResult ketQua = new OrderIntake(CartStore, new ApplicationOrderStore()).Place(new OrderInput
             {
                 Username = AuthHelper.CurrentUserKey(),
@@ -46,8 +47,17 @@ namespace ShoeStore
                 Address = txtAddress.Text.Trim(),
                 PaymentMethod = rblPaymentMethod.SelectedValue
             });
-            if (ketQua.IsEmptyCart) { BindSummary(); return; }
-            if (!ketQua.IsPlaced) { Toast.Info(this, ketQua.Error); return; }
+            if (ketQua.IsEmptyCart)
+            {
+                BindSummary();
+                return;
+            }
+            if (!ketQua.IsPlaced)
+            {
+                Toast.Info(this, ketQua.Error);
+                return;
+            }
+
             Toast.ShowAndRedirect(this, "Đặt hàng thành công! Mã đơn " + ketQua.Order.Code + ". Chúng tôi sẽ gọi lại để xác nhận.", "success", "DonHang.aspx?code=" + Server.UrlEncode(ketQua.Order.Code));
         }
     }

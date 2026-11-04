@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.UI.WebControls;
 using ShoeStore.Data;
 using ShoeStore.Helpers;
@@ -10,7 +11,11 @@ namespace ShoeStore
     public partial class QuanTriSanPham : ShopPage
     {
         private const int KichThuocTrang = 12;
-        private int TrangHienTai { get { return ViewState["Page"] == null ? 1 : (int)ViewState["Page"]; } set { ViewState["Page"] = value; } }
+        private int TrangHienTai
+        {
+            get { return ViewState["Page"] == null ? 1 : (int)ViewState["Page"]; }
+            set { ViewState["Page"] = value; }
+        }
 
         // Xử lý khi trang được tải.
         protected void Page_Load(object nguonSuKien, EventArgs e)
@@ -25,7 +30,7 @@ namespace ShoeStore
         {
             CatalogQuery truyVan = new CatalogQuery { Keyword = txtSearch.Text.Trim(), Sort = "NameAsc" };
             List<ProductItem> all = Catalog.All();
-            List<ProductItem> filtered = new List<ProductItem>(truyVan.Apply(all));
+            List<ProductItem> filtered = truyVan.Apply(all).ToList();
             PagedResult<ProductItem> trang = Paging.Paginate(filtered, TrangHienTai, KichThuocTrang);
             TrangHienTai = trang.Page;
             rptProducts.DataSource = trang.Items;
@@ -34,7 +39,9 @@ namespace ShoeStore
             pnlTable.Visible = !rong;
             pnlEmpty.Visible = rong;
             pnlPager.Visible = trang.TotalPages > 1;
-            litCount.Text = filtered.Count == all.Count ? all.Count + " sản phẩm" : filtered.Count + " / " + all.Count + " sản phẩm";
+            litCount.Text = filtered.Count == all.Count
+                ? all.Count + " sản phẩm"
+                : filtered.Count + " / " + all.Count + " sản phẩm";
             litEmpty.Text = truyVan.Keyword.Length == 0 ? "Danh mục đang trống. Bấm \"Thêm sản phẩm\" để bắt đầu." : "Không có sản phẩm nào khớp với \"" + truyVan.Keyword + "\".";
             litPage.Text = trang.Page.ToString();
             litTotalPages.Text = trang.TotalPages.ToString();
@@ -45,11 +52,28 @@ namespace ShoeStore
         }
 
         // Xử lý khi người dùng bấm nút.
-        protected void btnSearch_Click(object nguonSuKien, EventArgs e) { if (RequireAdmin()) { TrangHienTai = 1; BindList(); } }
+        protected void btnSearch_Click(object nguonSuKien, EventArgs e)
+        {
+            if (!RequireAdmin()) return;
+            TrangHienTai = 1;
+            BindList();
+        }
+
         // Xử lý khi người dùng bấm nút.
-        protected void btnPrev_Click(object nguonSuKien, EventArgs e) { if (RequireAdmin()) { TrangHienTai = Math.Max(1, TrangHienTai - 1); BindList(); } }
+        protected void btnPrev_Click(object nguonSuKien, EventArgs e)
+        {
+            if (!RequireAdmin()) return;
+            TrangHienTai = Math.Max(1, TrangHienTai - 1);
+            BindList();
+        }
+
         // Xử lý khi người dùng bấm nút.
-        protected void btnNext_Click(object nguonSuKien, EventArgs e) { if (RequireAdmin()) { TrangHienTai++; BindList(); } }
+        protected void btnNext_Click(object nguonSuKien, EventArgs e)
+        {
+            if (!RequireAdmin()) return;
+            TrangHienTai++;
+            BindList();
+        }
 
         // Xử lý lệnh trên một dòng dữ liệu.
         protected void rptProducts_ItemCommand(object nguon, RepeaterCommandEventArgs e)
@@ -68,7 +92,10 @@ namespace ShoeStore
         protected string StockClass(object giaTri)
         {
             int stock;
-            return int.TryParse(Convert.ToString(giaTri), out stock) && stock <= 3 ? "stock-badge is-low" : "stock-badge";
+            return int.TryParse(Convert.ToString(giaTri), out stock)
+                && stock <= 3
+                ? "stock-badge is-low"
+                : "stock-badge";
         }
     }
 }

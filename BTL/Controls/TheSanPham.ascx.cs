@@ -22,12 +22,14 @@ namespace ShoeStore
         protected override void OnDataBinding(EventArgs e)
         {
             base.OnDataBinding(e);
+
+            string tenSanPham = ProductName ?? "";
             string duongDan = ResolveUrl("~/ChiTietSanPham.aspx") + "?id=" + ProductId;
             lnkImage.HRef = duongDan;
             lnkName.HRef = duongDan;
             imgThumb.ImageUrl = ResolveUrl(ImageUrl);
-            imgThumb.AlternateText = ProductName ?? "";
-            litCardName.Text = ProductName ?? "";
+            imgThumb.AlternateText = tenSanPham;
+            litCardName.Text = tenSanPham;
             litCardDesc.Text = Description ?? "";
             litCardPrice.Text = Money.Format(Price);
             pnlHot.Visible = IsHot;

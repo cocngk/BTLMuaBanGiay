@@ -117,6 +117,12 @@ namespace ShoeStore
             if (!RequireLogin("Vui lòng đăng nhập hoặc đăng ký tài khoản để mua hàng!")) return;
             ProductItem sanPham = ProductFromQuery();
             if (sanPham == null) return;
+            if (sanPham.Stock <= 0)
+            {
+                Toast.Info(this, "Sản phẩm này hiện đã hết hàng.");
+                return;
+            }
+
             string kichThuoc = SelectedSize(sanPham);
             CartStore.AddProduct(sanPham, kichThuoc, Quantity(sanPham));
             Toast.Success(this, "Đã thêm " + sanPham.Name + " (Size " + kichThuoc + ") vào giỏ hàng!");
@@ -128,6 +134,12 @@ namespace ShoeStore
             if (!RequireLogin("Vui lòng đăng nhập để tiến hành thanh toán!")) return;
             ProductItem sanPham = ProductFromQuery();
             if (sanPham == null) return;
+            if (sanPham.Stock <= 0)
+            {
+                Toast.Info(this, "Sản phẩm này hiện đã hết hàng.");
+                return;
+            }
+
             CartStore.AddProduct(sanPham, SelectedSize(sanPham), Quantity(sanPham));
             Redirect("ThanhToan.aspx");
         }

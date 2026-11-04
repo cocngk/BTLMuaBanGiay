@@ -32,9 +32,14 @@ namespace ShoeStore
         // Thực hiện việc thử khóa.
         private bool TryKey(string khoa, out int ma, out string kichThuoc)
         {
-            ma = 0; kichThuoc = "";
+            ma = 0;
+            kichThuoc = "";
             string[] cacPhan = (khoa ?? "").Split('|');
-            return cacPhan.Length == 2 && int.TryParse(cacPhan[0], out ma) && (kichThuoc = cacPhan[1]) != null;
+            if (cacPhan.Length != 2 || !int.TryParse(cacPhan[0], out ma))
+                return false;
+
+            kichThuoc = cacPhan[1].Trim();
+            return ma > 0 && kichThuoc.Length > 0;
         }
 
         // Xử lý lệnh trên một dòng dữ liệu.
@@ -54,7 +59,11 @@ namespace ShoeStore
         }
 
         // Xử lý khi người dùng bấm nút.
-        protected void btnUpdateCart_Click(object nguonSuKien, EventArgs e) { FlushQuantities(); BindCart(); }
+        protected void btnUpdateCart_Click(object nguonSuKien, EventArgs e)
+        {
+            FlushQuantities();
+            BindCart();
+        }
 
         // Thực hiện việc flush quantities.
         private void FlushQuantities()
@@ -72,7 +81,8 @@ namespace ShoeStore
                 if (!TryKey(khoa.Value, out ma, out kichThuoc)) continue;
                 string posted = Request.Form[vanBan.UniqueID];
                 int soLuong;
-                if (posted == null || !int.TryParse(posted, out soLuong)) continue;
+                if (posted == null || !int.TryParse(posted, out soLuong))
+                    continue;
                 if (CartService.SetQuantity(gioHang, ma, kichThuoc, soLuong)) changed = true;
             }
             if (changed) CartStore.Save(gioHang);

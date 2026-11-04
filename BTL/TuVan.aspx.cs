@@ -12,8 +12,10 @@ namespace ShoeStore
         {
             if (!IsPostBack)
             {
-                ListItem phanTu = ddlTopic.Items.FindByValue(Request.QueryString["topic"]);
-                if (phanTu != null) ddlTopic.SelectedValue = phanTu.Value;
+                string chuDe = Request.QueryString["topic"];
+                ListItem phanTu = ddlTopic.Items.FindByValue(chuDe);
+                if (phanTu != null)
+                    ddlTopic.SelectedValue = phanTu.Value;
             }
         }
 
@@ -27,6 +29,7 @@ namespace ShoeStore
                 Toast.Info(this, "Số điện thoại phải có từ 9 đến 11 chữ số!");
                 return;
             }
+
             string topic = ddlTopic.SelectedItem == null ? "" : ddlTopic.SelectedItem.Text;
             string ten = txtName.Text.Trim();
             txtName.Text = txtPhone.Text = txtContent.Text = "";
