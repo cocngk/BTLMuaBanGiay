@@ -115,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\Catalog.cs" />
+    <Compile Include="Data\ProductReviewStore.cs" />
     <Compile Include="Data\ProductSeed.cs" />
     <Compile Include="Data\CartService.cs" />
     <Compile Include="Data\BlogStore.cs" />
@@ -133,11 +134,14 @@
     <Compile Include="Models\BlogItem.cs" />
     <Compile Include="Models\Checkout.cs" />
     <Compile Include="Models\MenuItem.cs" />
+    <Compile Include="Models\ProductReview.cs" />
     <Compile Include="Models\ShopInfo.cs" />
     <Compile Include="Models\FooterLink.cs" />
     <Compile Include="Models\SocialLink.cs" />
     <Compile Include="Models\Order.cs" />
-    <Compile Include="Pages\ShopPage.cs" />
+    <Compile Include="Pages\ShopPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Pages\CatalogFilterControls.cs" />
     <Compile Include="Services\OrderIntake.cs" />
     <Compile Include="Services\OrderAdminService.cs" />
@@ -166,12 +170,14 @@
     </Compile>
     <Compile Include="Controls\SearchBox.ascx.cs">
       <DependentUpon>SearchBox.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Controls\SearchBox.ascx.designer.cs">
       <DependentUpon>SearchBox.ascx</DependentUpon>
     </Compile>
     <Compile Include="Controls\ProductCard.ascx.cs">
       <DependentUpon>ProductCard.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Controls\ProductCard.ascx.designer.cs">
       <DependentUpon>ProductCard.ascx</DependentUpon>
@@ -280,6 +286,7 @@
     </Compile>
     <Compile Include="Controls\AdminTabs.ascx.cs">
       <DependentUpon>AdminTabs.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Controls\AdminTabs.ascx.designer.cs">
       <DependentUpon>AdminTabs.ascx</DependentUpon>

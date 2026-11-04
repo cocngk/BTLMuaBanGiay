@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using ShoeStore.Data;
@@ -22,7 +21,10 @@ namespace ShoeStore
 
         private void LoadProductDetails()
         {
-            if (Request.QueryString["id"] != null && int.TryParse(Request.QueryString["id"], out int id))
+            int id;
+
+            if (Request.QueryString["id"] != null &&
+                int.TryParse(Request.QueryString["id"], out id))
             {
                 ProductItem product = Catalog.Find(id);
 
@@ -34,66 +36,78 @@ namespace ShoeStore
                     imgProduct.ImageUrl = ResolveUrl(product.LargeImageUrl());
                     BindColourways(product);
                     imgProduct.AlternateText = product.Name;
+
                     litBrand.Text = product.Brand;
-                    lnkViewAllRelated.NavigateUrl = "SanPham.aspx?brand=" + Server.UrlEncode(product.Brand);
-                    lnkViewAllRelated.Text = "Xem thêm " + product.Brand + " &rarr;";
+                    lnkViewAllRelated.NavigateUrl =
+                        "SanPham.aspx?brand=" + Server.UrlEncode(product.Brand);
+                    lnkViewAllRelated.Text =
+                        "Xem thêm " + product.Brand + " &rarr;";
+
                     litName.Text = product.Name;
                     litBreadcrumb.Text = product.Name;
                     litSku.Text = "SNK-" + product.Id.ToString("D4");
                     litPrice.Text = Money.Format(product.Price);
-                    litDescription.Text = product.Description + " Được làm từ chất liệu cao cấp, độ bền hoàn hảo và thiết kế tối ưu nâng tầm phong cách thời trang năng động cho bạn.";
+
+                    litDescription.Text = product.Description +
+                        " Được làm từ chất liệu cao cấp, độ bền hoàn hảo và thiết kế tối ưu nâng tầm phong cách thời trang năng động cho bạn.";
 
                     ApplySeo(product);
 
-                    // Giá gốc / giảm giá
-                    if (product.OldPrice.HasValue && product.OldPrice.Value > product.Price)
+                    if (product.OldPrice.HasValue &&
+                        product.OldPrice.Value > product.Price)
                     {
                         pnlDiscount.Visible = true;
                         litOldPrice.Text = Money.Format(product.OldPrice.Value);
-                        int pct = (int)Math.Round((1 - product.Price / product.OldPrice.Value) * 100);
+
+                        int pct = (int)Math.Round(
+                            (1 - product.Price / product.OldPrice.Value) * 100);
+
                         litDiscountPct.Text = "-" + pct + "%";
                     }
 
-                    // Tồn kho.
-                    //
-                    // Số in ra là số lớn nhất còn mua được (tồn kho trừ phần đã
-                    // có trong giỏ), đúng số mà ô số lượng dùng. Trước đây in
-                    // product.Stock nên khi giỏ đã có sẵn hàng, pill báo "còn 5
-                    // đôi" trong khi ô số lượng chỉ cho thêm tới 2 — hai số
-                    // khác nhau cho cùng một sự thật, ngay trên một màn hình.
                     int canBuy = MaxBuyable(product);
                     hfMaxQty.Value = canBuy.ToString();
+
                     if (product.Stock <= 0)
                     {
-                        litStock.Text = "<span class=\"stock-pill out\">Hết hàng</span>";
+                        litStock.Text =
+                            "<span class=\"stock-pill out\">Hết hàng</span>";
+
                         btnAddToCart.Enabled = false;
                         btnBuyNow.Enabled = false;
                         txtQuantity.Enabled = false;
                     }
                     else if (product.Stock <= 5)
                     {
-                        // Ngưỡng "sắp hết" xét theo tồn kho của shop, không theo
-                        // số còn mua được — nếu không, mỗi lần thêm vào giỏ thì
-                        // pill lại đổi màu, đọc như thông báo lỗi.
-                        litStock.Text = "<span class=\"stock-pill low\">Sắp hết hàng — chỉ còn " + canBuy + " đôi</span>";
+                        litStock.Text =
+                            "<span class=\"stock-pill low\">Sắp hết hàng — chỉ còn " +
+                            canBuy + " đôi</span>";
                     }
                     else
                     {
-                        litStock.Text = "<span class=\"stock-pill in\">Còn hàng • sẵn sàng giao ngay</span>";
+                        litStock.Text =
+                            "<span class=\"stock-pill in\">Còn hàng • sẵn sàng giao ngay</span>";
                     }
 
-                    // Size theo data thật, mặc định size đầu tiên
                     List<string> sizes = product.SizeList();
-                    if (sizes.Count == 0) sizes.Add(product.FirstSize());
+
+                    if (sizes.Count == 0)
+                        sizes.Add(product.FirstSize());
+
                     hfSelectedSize.Value = sizes[0];
-                    rptSizes.DataSource = sizes.Select(s => new { Size = s }).ToList();
+
+                    rptSizes.DataSource =
+                        sizes.Select(s => new { Size = s }).ToList();
+
                     rptSizes.DataBind();
 
-                    // Sản phẩm liên quan: luật nằm trong Catalog, trang chỉ lấy ra.
                     rptRelated.DataSource = Catalog.RelatedTo(product.Id, 4);
                     rptRelated.DataBind();
 
                     RenderWishlist(product.Id);
+
+                    // Tải đánh giá của sản phẩm
+                    LoadReviews(product.Id);
                 }
                 else
                 {
@@ -111,93 +125,108 @@ namespace ShoeStore
         private string ResolveSize(ProductItem product)
         {
             List<string> sizes = product.SizeList();
-            return !string.IsNullOrEmpty(hfSelectedSize.Value) && sizes.Contains(hfSelectedSize.Value)
+
+            return !string.IsNullOrEmpty(hfSelectedSize.Value) &&
+                   sizes.Contains(hfSelectedSize.Value)
                 ? hfSelectedSize.Value
                 : product.FirstSize();
         }
 
-        /// <summary>
-        /// Dựng dải chọn màu từ dữ liệu. Chỉ hiện khi sản phẩm thật sự có từ hai
-        /// màu trở lên — không dựng màu giả chỉ để lấp chỗ.
-        /// </summary>
         private void BindColourways(ProductItem product)
         {
-            if (product.Colourways == null || product.Colourways.Count < 2)
+            if (product.Colourways == null ||
+                product.Colourways.Count < 2)
             {
                 pnlColourways.Visible = false;
                 return;
             }
 
             pnlColourways.Visible = true;
+
             rptColourways.DataSource = product.Colourways
-                .Select((c, i) => new { Name = c.Name, Small = c.Small, Large = c.Large,
-                                        Active = i == 0 ? " colourway-chip active" : " colourway-chip",
-                                        Alt = product.Name + " — màu " + c.Name })
+                .Select((c, i) => new
+                {
+                    Name = c.Name,
+                    Small = c.Small,
+                    Large = c.Large,
+                    Active = i == 0
+                        ? " colourway-chip active"
+                        : " colourway-chip",
+                    Alt = product.Name + " — màu " + c.Name
+                })
                 .ToList();
+
             rptColourways.DataBind();
         }
 
-        /// <summary>Title và meta description lấy theo sản phẩm đang xem.</summary>
         private void ApplySeo(ProductItem product)
         {
-            this.Title = product.Name + " - " + product.Brand + " | " + ShopInfo.BrandName;
+            this.Title = product.Name + " - " +
+                product.Brand + " | " + ShopInfo.BrandName;
 
             HtmlMeta meta = new HtmlMeta();
             meta.Name = "description";
-            meta.Content = product.Name + " chính hãng " + product.Brand + " - " + product.Description;
+            meta.Content = product.Name + " chính hãng " +
+                product.Brand + " - " + product.Description;
+
             this.Header.Controls.Add(meta);
         }
 
-        /// <summary>Vẽ nút yêu thích theo trạng thái đã lưu, không phải đổi màu cho vui.</summary>
         private void RenderWishlist(int productId)
         {
             bool liked = Wishlist.Contains(productId);
-            btnWishlist.Text = liked ? "\u2665" : "\u2661";
-            btnWishlist.CssClass = liked ? "btn-wishlist-detail active" : "btn-wishlist-detail";
-            btnWishlist.ToolTip = liked ? "Bỏ khỏi yêu thích" : "Thêm vào yêu thích";
 
-            // Khách chưa đăng nhập bấm tim sẽ được mời đăng nhập (xem btnWishlist_Click),
-            // nên nói trước bằng tooltip thay vì để bấm rồi mới biết.
+            btnWishlist.Text = liked ? "\u2665" : "\u2661";
+
+            btnWishlist.CssClass = liked
+                ? "btn-wishlist-detail active"
+                : "btn-wishlist-detail";
+
+            btnWishlist.ToolTip = liked
+                ? "Bỏ khỏi yêu thích"
+                : "Thêm vào yêu thích";
+
             if (!AuthHelper.IsLoggedIn())
             {
-                btnWishlist.ToolTip = "Đăng nhập để lưu vào yêu thích";
+                btnWishlist.ToolTip =
+                    "Đăng nhập để lưu vào yêu thích";
             }
         }
 
         protected void btnWishlist_Click(object sender, EventArgs e)
         {
-            // Yêu thích là dữ liệu của tài khoản (lưu theo UserKey, không theo phiên),
-            // nên khách vãng lai không có chỗ nào để xem lại. Hỏi đăng nhập ngay thay
-            // vì ghi tạm vào session rồi người dùng tưởng đã lưu.
-            if (!RequireLogin("Vui lòng đăng nhập để lưu sản phẩm vào danh sách yêu thích!"))
+            if (!RequireLogin(
+                "Vui lòng đăng nhập để lưu sản phẩm vào danh sách yêu thích!"))
             {
                 return;
             }
 
             int id = Convert.ToInt32(Request.QueryString["id"]);
+
             Wishlist.Toggle(id);
             RenderWishlist(id);
         }
 
-        /// <summary>
-        /// Số đơn vị còn mua được của sản phẩm này: tồn kho trừ phần đã có trong giỏ
-        /// (cộng mọi size). Dùng chung một luật với trang giỏ hàng qua Cart.RemainingToBuy
-        /// để nút +/- ở đây không cho thêm quá hàng tồn.
-        /// </summary>
         private int MaxBuyable(ProductItem product)
         {
-            return CartService.MaxBuyable(CartStore.Load(), product.Id);
+            return CartService.MaxBuyable(
+                CartStore.Load(),
+                product.Id);
         }
 
         private int ResolveQty(ProductItem product)
         {
-            int qty = int.TryParse(txtQuantity.Text, out int q) ? (q > 0 ? q : 1) : 1;
+            int qty = int.TryParse(txtQuantity.Text, out int q)
+                ? (q > 0 ? q : 1)
+                : 1;
+
             return Cart.ClampQty(qty, MaxBuyable(product));
         }
 
         protected void btnAddToCart_Click(object sender, EventArgs e)
         {
-            if (!RequireLogin("Vui lòng đăng nhập hoặc đăng ký tài khoản để mua hàng!"))
+            if (!RequireLogin(
+                "Vui lòng đăng nhập hoặc đăng ký tài khoản để mua hàng!"))
             {
                 return;
             }
@@ -208,15 +237,22 @@ namespace ShoeStore
             if (product != null)
             {
                 string size = ResolveSize(product);
-                CartStore.AddProduct(product, size, ResolveQty(product));
+
+                CartStore.AddProduct(
+                    product,
+                    size,
+                    ResolveQty(product));
+
                 Toast.Success(this,
-                    "Đã thêm " + product.Name + " (Size " + size + ") vào giỏ hàng!");
+                    "Đã thêm " + product.Name +
+                    " (Size " + size + ") vào giỏ hàng!");
             }
         }
 
         protected void btnBuyNow_Click(object sender, EventArgs e)
         {
-            if (!RequireLogin("Vui lòng đăng nhập để tiến hành thanh toán!"))
+            if (!RequireLogin(
+                "Vui lòng đăng nhập để tiến hành thanh toán!"))
             {
                 return;
             }
@@ -226,12 +262,157 @@ namespace ShoeStore
 
             if (product != null)
             {
-                // Gộp vào giỏ hiện có (không xóa giỏ cũ) rồi sang thanh toán
                 string size = ResolveSize(product);
-                CartStore.AddProduct(product, size, ResolveQty(product));
+
+                CartStore.AddProduct(
+                    product,
+                    size,
+                    ResolveQty(product));
+
                 Redirect("ThanhToan.aspx");
             }
         }
 
+        // Kiểm tra khách hàng đã mua và nhận sản phẩm hay chưa
+        private bool HasPurchasedProduct(int productId)
+        {
+            if (!AuthHelper.IsLoggedIn())
+                return false;
+
+            string userKey = AuthHelper.CurrentUserKey();
+
+            List<Order> orders =
+                new ApplicationOrderStore().ByUser(userKey);
+
+            return orders.Any(order =>
+                order.Status == Order.DeliveredStatus &&
+                order.Lines != null &&
+                order.Lines.Any(line =>
+                    line.ProductId == productId));
+        }
+
+        // Hiển thị đánh giá của sản phẩm
+        private void LoadReviews(int productId)
+        {
+            List<ProductReview> reviews =
+                ProductReviewStore.GetByProduct(productId);
+
+            litAverageRating.Text =
+                ProductReviewStore.GetAverage(productId).ToString("0.0");
+
+            litReviewCount.Text = reviews.Count + " đánh giá";
+
+            rptReviews.DataSource = reviews;
+            rptReviews.DataBind();
+
+            pnlNoReviews.Visible = reviews.Count == 0;
+
+            bool canReview = HasPurchasedProduct(productId);
+
+            pnlReviewForm.Visible = canReview;
+            pnlReviewLogin.Visible = !canReview;
+
+            if (canReview)
+            {
+                ProductReview oldReview = ProductReviewStore.Find(
+                    productId,
+                    AuthHelper.CurrentUserKey());
+
+                if (oldReview != null)
+                {
+                    ddlRating.SelectedValue =
+                        oldReview.Rating.ToString();
+
+                    txtReview.Text = oldReview.Comment;
+                }
+            }
+        }
+
+        // Gửi đánh giá
+        protected void btnSubmitReview_Click(object sender, EventArgs e)
+        {
+            if (!AuthHelper.IsLoggedIn())
+            {
+                litReviewMessage.Text =
+                    "Bạn cần đăng nhập trước khi đánh giá.";
+
+                return;
+            }
+
+            int productId;
+
+            if (!int.TryParse(
+                Request.QueryString["id"],
+                out productId))
+            {
+                return;
+            }
+
+            // Kiểm tra lại đơn hàng ở phía máy chủ
+            if (!HasPurchasedProduct(productId))
+            {
+                litReviewMessage.Text =
+                    "Bạn cần mua và nhận sản phẩm trước khi đánh giá.";
+
+                return;
+            }
+
+            int rating;
+
+            if (!int.TryParse(ddlRating.SelectedValue, out rating) ||
+                rating < 1 || rating > 5)
+            {
+                litReviewMessage.Text =
+                    "Vui lòng chọn số sao từ 1 đến 5.";
+
+                return;
+            }
+
+            string comment = txtReview.Text.Trim();
+
+            if (comment.Length < 5)
+            {
+                litReviewMessage.Text =
+                    "Nhận xét cần có ít nhất 5 ký tự.";
+
+                return;
+            }
+
+            if (comment.Length > 1000)
+            {
+                litReviewMessage.Text =
+                    "Nhận xét không được vượt quá 1000 ký tự.";
+
+                return;
+            }
+
+            UserAccount account = AuthHelper.CurrentAccount();
+
+            if (account == null)
+            {
+                litReviewMessage.Text =
+                    "Không tìm thấy thông tin tài khoản.";
+
+                return;
+            }
+
+            ProductReview review = new ProductReview
+            {
+                ProductId = productId,
+                UserKey = AuthHelper.CurrentUserKey(),
+                CustomerName = account.DisplayName,
+                Rating = rating,
+                Comment = comment,
+                CreatedAt = DateTime.Now
+            };
+
+            ProductReviewStore.Save(review);
+
+            // Tải lại danh sách rồi mới hiện thông báo thành công
+            LoadReviews(productId);
+
+            litReviewMessage.Text =
+                "Cảm ơn bạn! Đánh giá đã được gửi thành công.";
+        }
     }
 }

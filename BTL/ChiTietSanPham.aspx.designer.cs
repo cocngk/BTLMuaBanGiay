@@ -15,24 +15,6 @@ namespace ShoeStore
     {
 
         /// <summary>
-        /// HeadCss control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Content HeadCss;
-
-        /// <summary>
-        /// Content1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Content Content1;
-
-        /// <summary>
         /// litBreadcrumb control.
         /// </summary>
         /// <remarks>
@@ -69,6 +51,24 @@ namespace ShoeStore
         protected global::System.Web.UI.WebControls.Image imgProduct;
 
         /// <summary>
+        /// pnlColourways control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlColourways;
+
+        /// <summary>
+        /// rptColourways control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptColourways;
+
+        /// <summary>
         /// litBrand control.
         /// </summary>
         /// <remarks>
@@ -87,15 +87,6 @@ namespace ShoeStore
         protected global::System.Web.UI.WebControls.Literal litName;
 
         /// <summary>
-        /// litPrice control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litPrice;
-
-        /// <summary>
         /// litSku control.
         /// </summary>
         /// <remarks>
@@ -104,7 +95,14 @@ namespace ShoeStore
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal litSku;
 
-
+        /// <summary>
+        /// litPrice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litPrice;
 
         /// <summary>
         /// pnlDiscount control.
@@ -143,13 +141,13 @@ namespace ShoeStore
         protected global::System.Web.UI.WebControls.Literal litStock;
 
         /// <summary>
-        /// rptSizes control.
+        /// hfSelectedSize control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptSizes;
+        protected global::System.Web.UI.WebControls.HiddenField hfSelectedSize;
 
         /// <summary>
         /// hfMaxQty control.
@@ -160,34 +158,14 @@ namespace ShoeStore
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hfMaxQty;
 
-
-
         /// <summary>
-        /// rptRelated control.
+        /// rptSizes control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptRelated;
-
-        /// <summary>
-        /// lnkViewAllRelated control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkViewAllRelated;
-
-        /// <summary>
-        /// hfSelectedSize control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hfSelectedSize;
+        protected global::System.Web.UI.WebControls.Repeater rptSizes;
 
         /// <summary>
         /// txtQuantity control.
@@ -197,6 +175,15 @@ namespace ShoeStore
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtQuantity;
+
+        /// <summary>
+        /// btnWishlist control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnWishlist;
 
         /// <summary>
         /// btnAddToCart control.
@@ -224,32 +211,113 @@ namespace ShoeStore
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal litDescription;
+
         /// <summary>
-        /// btnWishlist control.
+        /// litAverageRating control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnWishlist;
+        protected global::System.Web.UI.WebControls.Label litAverageRating;
 
         /// <summary>
-        /// pnlColourways control.
+        /// litReviewCount control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlColourways;
+        protected global::System.Web.UI.WebControls.Label litReviewCount;
 
         /// <summary>
-        /// rptColourways control.
+        /// pnlReviewLogin control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptColourways;
+        protected global::System.Web.UI.WebControls.Panel pnlReviewLogin;
 
+        /// <summary>
+        /// pnlReviewForm control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlReviewForm;
+
+        /// <summary>
+        /// ddlRating control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlRating;
+
+        /// <summary>
+        /// txtReview control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtReview;
+
+        /// <summary>
+        /// btnSubmitReview control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnSubmitReview;
+
+        /// <summary>
+        /// litReviewMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label litReviewMessage;
+
+        /// <summary>
+        /// pnlNoReviews control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlNoReviews;
+
+        /// <summary>
+        /// rptReviews control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptReviews;
+
+        /// <summary>
+        /// lnkViewAllRelated control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkViewAllRelated;
+
+        /// <summary>
+        /// rptRelated control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptRelated;
     }
 }
