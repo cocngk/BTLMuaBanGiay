@@ -1,280 +1,49 @@
-
-<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Master.cs" Inherits="ShoeStore.SiteMaster" %>
-<%@ Register Src="~/Controls/HopTimKiem.ascx" TagPrefix="uc" TagName="HopTimKiem" %>
-<%@ Import Namespace="ShoeStore.Models" %>
-<%@ Import Namespace="ShoeStore.Helpers" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Master.cs" Inherits="ShoeStore.SiteMaster" %>
 
 <!DOCTYPE html>
 <html>
 <head runat="server">
-    <title>SneakerX - Giày Dép Chính Hãng</title>
+    <title>SneakerX - Giày chính hãng</title>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Icon và font để trong site, không gọi ra ngoài, chạy được khi offline -->
-    <link rel="stylesheet" href="Content/vendor/fontawesome/css/all.min.css" />
-    <link rel="stylesheet" href="Content/fonts/phong-chu.css" />
-    <link rel="stylesheet" href="Content/bien-thiet-ke.css" />
-    <link rel="stylesheet" href="Content/trang-web.css" />
-
-    
-
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="Content/site.css" />
     <asp:ContentPlaceHolder ID="HeadContent" runat="server"></asp:ContentPlaceHolder>
 </head>
-
 <body>
     <form id="form1" runat="server">
-        <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true" />
 
-        <header class="header-container">
-            <a href="TrangChu.aspx" class="logo-area">
-                <div class="logo-icon">
-                    <i class="fa-solid fa-shoe-prints"></i>
-                </div>
-                <span class="logo-text">SneakerX</span>
-            </a>
+        <header class="top">
+            <a class="logo" href="TrangChu.aspx">SneakerX</a>
 
-            <ul class="nav-center">
-                <asp:Repeater ID="rptMenu" runat="server">
-                    <ItemTemplate>
-                        <li class="nav-item">
-                            <a href='<%# Eval("Url") %>' class='<%# (bool)Eval("IsActive") ? "active" : "" %>'>
-                                <i class='<%# Eval("IconClass") %>'></i> <%# Eval("Title") %>
-                            </a>
-                        </li>
-                    </ItemTemplate>
-                </asp:Repeater>
-            </ul>
+            <nav>
+                <a href="TrangChu.aspx">Trang chủ</a>
+                <a href="SanPham.aspx">Sản phẩm</a>
+                <a href="GioHang.aspx">Giỏ hàng (<asp:Literal ID="litSoGio" runat="server" Text="0" />)</a>
+                <a href="TaiKhoan.aspx">Tài khoản</a>
+                <asp:PlaceHolder ID="phnQuanTri" runat="server" Visible="false">
+                    <a href="QuanTriSanPham.aspx">Quản trị</a>
+                </asp:PlaceHolder>
+            </nav>
 
-            <div class="header-right">
-                <uc:HopTimKiem ID="ucHeaderSearch" runat="server" />
-
-                <a href="GioHang.aspx" id="cartIcon" runat="server" class="cart-icon-btn" title="Giỏ hàng">
-                    <i class="fa-solid fa-bag-shopping"></i>
-                    <span id="cartCount" runat="server" class="cart-count" visible="false"></span>
-                </a>
-
-                <asp:Panel ID="pnlGuest" runat="server" CssClass="auth-buttons-group">
-                    <a href="DangNhap.aspx" class="btn-header-login">
-                        <i class="fa-solid fa-user"></i> Đăng nhập
-                    </a>
-
-                    <a href="DangKy.aspx" class="btn-header-register">
-                        <i class="fa-solid fa-user-plus"></i> Đăng ký
-                    </a>
-                </asp:Panel>
-
-                <asp:Panel ID="pnlUser" runat="server" CssClass="user-logged-box" Visible="false">
-                    <div class="user-avatar-circle">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-
-                    <span class="user-name-text">
-                        <asp:Literal ID="litUsername" runat="server"></asp:Literal>
-                    </span>
-
-                    <a href="DonHang.aspx" class="btn-logout-icon" title="Đơn hàng của tôi">
-                        <i class="fa-solid fa-receipt"></i>
-                    </a>
-
-                    <a href="TaiKhoan.aspx" class="btn-logout-icon" title="Tài khoản của tôi">
-                        <i class="fa-solid fa-user-gear"></i>
-                    </a>
-
-                    <%-- Chỉ hiện với tài khoản quản trị. Ẩn ở đây chỉ là giao diện:
-                         mỗi trang quản trị vẫn tự kiểm tra quyền ở server. --%>
-                    <asp:HyperLink ID="lnkAdmin" runat="server" NavigateUrl="QuanTriSanPham.aspx"
-                        CssClass="btn-logout-icon" ToolTip="Khu quản trị" Visible="false">
-                        <i class="fa-solid fa-gauge-high"></i>
-                    </asp:HyperLink>
-
-                    <asp:LinkButton
-                        ID="btnLogout"
-                        runat="server"
-                        CssClass="btn-logout-icon"
-                        OnClick="btnLogout_Click"
-                        CausesValidation="false"
-                        title="Đăng xuất">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                    </asp:LinkButton>
-                </asp:Panel>
+            <div class="thanh-cong-cu">
+                <asp:TextBox ID="txtTimKiem" runat="server" CssClass="o-tim" placeholder="Tìm giày..."></asp:TextBox>
+                <asp:Button ID="btnTimKiem" runat="server" Text="Tìm" CssClass="nut nho" OnClick="btnTimKiem_Click" />
+                <asp:Literal ID="litTaiKhoan" runat="server" />
+                <asp:LinkButton ID="btnThoat" runat="server" Text="Thoát" CssClass="nut-link" Visible="false" OnClick="btnThoat_Click" />
             </div>
         </header>
 
-        <div class="main-wrapper">
+        <main class="khung">
             <asp:ContentPlaceHolder ID="MainContent" runat="server"></asp:ContentPlaceHolder>
-        </div>
+        </main>
 
-        <footer class="footer">
-            <div class="footer-inner">
-                <div class="footer-col footer-brand-col">
-                    <a href="TrangChu.aspx" class="footer-logo">
-                        <span class="footer-logo-icon"><i class="fa-solid fa-shoe-prints"></i></span>
-                        <span class="footer-logo-text"><%= ShopInfo.BrandName %></span>
-                    </a>
-                    <p class="footer-tagline"><%= ShopInfo.Tagline %></p>
-                    <div class="footer-social">
-                        <asp:Repeater ID="rptSocial" runat="server">
-                            <ItemTemplate>
-                                <a href='<%# Eval("Url") %>' class="footer-social-btn" title='<%# Eval("Label") %>'>
-                                    <i class='<%# Eval("IconClass") %>'></i>
-                                </a>
-                            </ItemTemplate>
-                        </asp:Repeater>
-                    </div>
-                </div>
-
-                <div class="footer-col">
-                    <h4 class="footer-heading">Liên kết</h4>
-                    <ul class="footer-links">
-                        <asp:Repeater ID="rptFooterPages" runat="server">
-                            <ItemTemplate>
-                                <li><a href='<%# Eval("Url") %>'><%# Eval("Title") %></a></li>
-                            </ItemTemplate>
-                        </asp:Repeater>
-                    </ul>
-                </div>
-
-                <div class="footer-col">
-                    <h4 class="footer-heading">Hỗ trợ</h4>
-                    <ul class="footer-links">
-                        <asp:Repeater ID="rptFooterPolicies" runat="server">
-                            <ItemTemplate>
-                                <li><a href='<%# Eval("Url") %>'><%# Eval("Title") %></a></li>
-                            </ItemTemplate>
-                        </asp:Repeater>
-                    </ul>
-                </div>
-
-                <div class="footer-col">
-                    <h4 class="footer-heading">Liên hệ</h4>
-                    <ul class="footer-contact-list">
-                        <li>
-                            <i class="fa-solid fa-headset"></i>
-                            <span>Hotline <a href="tel:19006789"><%= ShopInfo.Hotline %></a></span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-mobile-screen"></i>
-                            <span>Zalo <%= ShopInfo.Mobile %></span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-envelope"></i>
-                            <span><a href="mailto:<%= ShopInfo.Email %>"><%= ShopInfo.Email %></a></span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-location-dot"></i>
-                            <span><%= ShopInfo.Address %></span>
-                        </li>
-                        <li>
-                            <i class="fa-regular fa-clock"></i>
-                            <span><%= ShopInfo.OpeningHours %></span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                <p>&copy; <%= ShopInfo.CurrentYear %> <%= ShopInfo.BrandName %>. Tất cả quyền được bảo lưu.</p>
-            </div>
+        <footer class="chan">
+            <p>SneakerX - Bài tập lớn môn Lập trình web</p>
+            <p>
+                Lượt truy cập: <asp:Literal ID="litLuotTruyCap" runat="server" Text="0" />
+                &middot; Đang online: <asp:Literal ID="litDangOnline" runat="server" Text="0" />
+            </p>
         </footer>
-
-        <!-- Nơi hiện thông báo -->
-        <div id="toastContainer" class="toast-container"></div>
-
-        <!-- Hàm toast dùng chung cho các trang -->
-        <script type="text/javascript">
-            function openLoginModal() {
-                window.location.href = 'DangNhap.aspx';
-            }
-
-            document.addEventListener('DOMContentLoaded', function () {
-                // Search: chỉ submit khi chữ khác lúc mở trang;
-                // bấm khi chưa gõ/chưa đổi thì focus + bôi đen để sửa
-                document.querySelectorAll('.search-pill input, .search-inner input').forEach(function (inp) {
-                    inp.dataset.initial = inp.value;
-                });
-            });
-
-            function headerSearchSubmit(btn) {
-                var wrap = null;
-                if (btn.closest) {
-                    wrap = btn.closest('.search-pill') || btn.closest('.search-inner');
-                }
-                var input = wrap ? wrap.querySelector('input') : null;
-                if (!input) return true;
-                var cur = input.value.trim();
-                if (cur === '' || cur === (input.dataset.initial || '')) {
-                    input.focus();
-                    try { input.select(); } catch (e) {}
-                    return false;
-                }
-                return true;
-            }
-
-            // Sinh từ Helpers.Money để client và server luôn hiện cùng một cách.
-            <%= Money.JsFormatter %>
-
-            function showToast(message, type) {
-                type = type || 'error';
-
-                var container = document.getElementById('toastContainer');
-
-                if (!container) {
-                    return;
-                }
-
-                var toast = document.createElement('div');
-                toast.className = 'toast-message ' + type;
-
-                var iconClass = 'fa-triangle-exclamation';
-
-                if (type === 'success') {
-                    iconClass = 'fa-circle-check';
-                } else if (type === 'info') {
-                    iconClass = 'fa-circle-info';
-                }
-
-                var content = document.createElement('div');
-                content.className = 'toast-content';
-
-                var icon = document.createElement('i');
-                icon.className = 'fa-solid ' + iconClass;
-
-                var text = document.createElement('span');
-                text.textContent = message;
-
-                content.appendChild(icon);
-                content.appendChild(text);
-
-                var closeButton = document.createElement('button');
-                closeButton.type = 'button';
-                closeButton.className = 'btn-close-toast';
-                closeButton.textContent = '\u00D7';
-                closeButton.setAttribute('aria-label', 'Đóng thông báo');
-
-                closeButton.onclick = function () {
-                    if (toast.parentNode) {
-                        toast.parentNode.removeChild(toast);
-                    }
-                };
-
-                toast.appendChild(content);
-                toast.appendChild(closeButton);
-                container.appendChild(toast);
-
-                setTimeout(function () {
-                    if (toast.parentNode) {
-                        toast.style.opacity = '0';
-                        toast.style.transform = 'translateX(110%)';
-
-                        setTimeout(function () {
-                            if (toast.parentNode) {
-                                toast.parentNode.removeChild(toast);
-                            }
-                        }, 300);
-                    }
-                }, 3500);
-            }
-        </script>
 
     </form>
 </body>

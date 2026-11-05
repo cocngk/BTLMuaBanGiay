@@ -1,12 +1,37 @@
-# SQL Server setup
+# Cơ sở dữ liệu
 
-1. Mở `ShoeStore.sql` bằng SQL Server Management Studio và chạy một lần.
-2. Sửa `connectionStrings/ShoeStoreDb` trong `Web.config` cho đúng SQL Server của máy.
-3. Khởi động website. `Global.asax` sẽ tự thêm sản phẩm mẫu và hai tài khoản mẫu khi bảng còn trống.
+Chỉ có **một file**: `ShoeStore.sql`.
 
-Tài khoản mẫu:
+## Cách chạy
 
-- `admin` / `123`
-- `sneakerx` / `123`
+1. Mở SQL Server Management Studio.
+2. Mở file `ShoeStore.sql`.
+3. Bấm **Execute** (F5).
 
-Không đưa mật khẩu SQL Server vào Git. Nếu dùng SQL Login thay vì Windows Authentication, đặt connection string ở môi trường triển khai hoặc biến cấu hình riêng.
+Script tự làm hết: tạo database `ShoeStore` nếu chưa có, xóa 4 bảng cũ, tạo lại 4 bảng, thêm 2 tài khoản và 12 sản phẩm mẫu. Chạy lại nhiều lần cũng được.
+
+## 4 bảng
+
+| Bảng | Nội dung |
+|---|---|
+| `Users` | Tài khoản: tên đăng nhập, mật khẩu đã băm, họ tên, email, điện thoại, cờ quản trị |
+| `Products` | Sản phẩm: tên, hãng, giá, tồn kho, danh sách size, ảnh |
+| `Orders` | Đơn hàng: mã đơn, người nhận, địa chỉ, hình thức thanh toán, tổng tiền |
+| `OrderLines` | Chi tiết đơn: mỗi dòng là một sản phẩm trong đơn |
+
+## Tài khoản mẫu
+
+| Tên đăng nhập | Mật khẩu | Quyền |
+|---|---|---|
+| `admin` | `admin123` | Quản trị |
+| `khach` | `khach123` | Khách |
+
+## Kết nối
+
+Chuỗi kết nối nằm trong `BTL/Web.config`, dùng Windows Authentication:
+
+```
+Data Source=localhost;Initial Catalog=ShoeStore;Integrated Security=True;TrustServerCertificate=True
+```
+
+Máy khác dùng SQL Server khác thì sửa `Data Source` tại đây.

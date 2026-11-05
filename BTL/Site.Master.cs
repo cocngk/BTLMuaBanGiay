@@ -1,69 +1,58 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Web.UI.WebControls;
-using ShoeStore.Data;
-using ShoeStore.Helpers;
-using ShoeStore.Models;
+﻿using System;
+using System.Web;
 
 namespace ShoeStore
 {
+    // Site.Master: phần đầu trang, menu, ô tìm kiếm và chân trang.
     public partial class SiteMaster : System.Web.UI.MasterPage
     {
-        // Xử lý khi trang được tải.
-        protected void Page_Load(object nguonSuKien, EventArgs e)
+        protected void Page_Load(object sender, EventArgs e)
         {
-            BindMenu();
-            BindFooter();
-            UpdateUserState();
+            // Số món trong giỏ, cập nhật ở mọi trang
+            litSoGio.Text = Gio.SoMon().ToString();
+
+            // Hai biến Application đếm lượt truy cập, khai báo trong Global.asax
+            litLuotTruyCap.Text = Convert.ToString(Application["LuotTruyCap"]);
+            litDangOnline.Text = Convert.ToString(Application["DangOnline"]);
+
+            // Trạng thái đăng nhập lấy từ Session
+            string tenDangNhap = Session["Username"] as string;
+
+            if (tenDangNhap == null)
+            {
+                litTaiKhoan.Text = "<a href=\"DangNhap.aspx\">Đăng nhập</a> | <a href=\"DangKy.aspx\">Đăng ký</a>";
+                btnThoat.Visible = false;
+                phnQuanTri.Visible = false;
+            }
+            else
+            {
+                litTaiKhoan.Text = "Xin chào, <b>" + Server.HtmlEncode(tenDangNhap) + "</b>";
+                btnThoat.Visible = true;
+                phnQuanTri.Visible = Session["IsAdmin"] != null && (bool)Session["IsAdmin"];
+            }
         }
 
-        // Thực hiện việc nạp menu.
-        private void BindMenu()
+        // Bấm nút Tìm: chuyển sang trang sản phẩm kèm từ khóa.
+        protected void btnTimKiem_Click(object sender, EventArgs e)
         {
-            string trang = Path.GetFileName(Request.Url.AbsolutePath).ToLowerInvariant();
-            List<ShoeStore.Models.MenuItem> danhSachMenu = ShoeStore.Models.MenuItem.MainMenu();
-            foreach (ShoeStore.Models.MenuItem menu in danhSachMenu)
-                menu.IsActive = menu.Url.Equals(trang, StringComparison.OrdinalIgnoreCase);
-            rptMenu.DataSource = danhSachMenu;
-            rptMenu.DataBind();
-            cartIcon.Attributes["class"] = trang.Contains("giohang") ? "cart-icon-btn active" : "cart-icon-btn";
+            string tuKhoa = txtTimKiem.Text.Trim();
+            Response.Redirect("SanPham.aspx?search=" + Server.UrlEncode(tuKhoa));
         }
 
-        // Thực hiện việc nạp chân trang.
-        private void BindFooter()
+        // Bấm Thoát: xóa Session và xóa cookie nhớ đăng nhập.
+        protected void btnThoat_Click(object sender, EventArgs e)
         {
-            rptSocial.DataSource = ShopInfo.SocialLinks();
-            rptSocial.DataBind();
-            rptFooterPages.DataSource = ShopInfo.PageLinks();
-            rptFooterPages.DataBind();
-            rptFooterPolicies.DataSource = ShopInfo.PolicyLinks();
-            rptFooterPolicies.DataBind();
-        }
+            Session.Clear();
+            Session.Abandon();
 
-        // Thực hiện việc cập nhật người dùng trạng thái.
-        private void UpdateUserState()
-        {
-            Panel guest = FindControl("pnlGuest") as Panel;
-            Panel nguoiDung = FindControl("pnlUser") as Panel;
-            Literal ten = FindControl("litUsername") as Literal;
-            bool logged = AuthHelper.IsLoggedIn();
-            if (guest != null) guest.Visible = !logged;
-            if (nguoiDung != null) nguoiDung.Visible = logged;
-            if (ten != null && logged) ten.Text = AuthHelper.CurrentUserName();
-            lnkAdmin.Visible = AuthHelper.IsAdmin();
+            HttpCookie cookie = Request.Cookies["nhodangnhap"];
+            if (cookie != null)
+            {
+                cookie.Expires = DateTime.Now.AddDays(-1);
+                Response.Cookies.Add(cookie);
+            }
 
-            int soLuong = new CartStore(Session).Load().TotalQuantity();
-            cartCount.Visible = soLuong > 0;
-            cartCount.InnerText = soLuong > 99 ? "99+" : soLuong.ToString();
-        }
-
-        // Xử lý khi người dùng bấm nút.
-        protected void btnLogout_Click(object nguonSuKien, EventArgs e)
-        {
-            AuthHelper.SignOut();
-            Response.Redirect("TrangChu.aspx", false);
-            Context.ApplicationInstance.CompleteRequest();
+            Response.Redirect("TrangChu.aspx");
         }
     }
 }

@@ -1,64 +1,123 @@
-using System;
-using System.Linq;
-using ShoeStore.Data;
-using ShoeStore.Helpers;
-using ShoeStore.Models;
-using ShoeStore.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 
 namespace ShoeStore
 {
-    public partial class ThanhToan : ShopPage
+    // Trang đặt hàng: ghi đơn vào bảng Orders và OrderLines, trừ tồn kho, xóa giỏ.
+    public partial class ThanhToan : System.Web.UI.Page
     {
-        // Xử lý khi trang được tải.
-        protected void Page_Load(object nguonSuKien, EventArgs e)
+        private string TenDangNhap
         {
-            if (!RequireLogin("Vui lòng đăng nhập để tiếp tục thanh toán!"))
-            {
-                pnlEmpty.Visible = false;
-                pnlCheckout.Visible = false;
-                return;
-            }
-            if (!IsPostBack) BindSummary();
+            get { return Convert.ToString(Session["Username"]); }
         }
 
-        // Thực hiện việc nạp summary.
-        private void BindSummary()
+        protected void Page_Load(object sender, EventArgs e)
         {
-            Cart gioHang = CartStore.Load();
-            pnlEmpty.Visible = gioHang.IsEmpty;
-            pnlCheckout.Visible = !gioHang.IsEmpty;
-            if (gioHang.IsEmpty) return;
-            rptSummary.DataSource = gioHang.Lines.ToList();
-            rptSummary.DataBind();
-            litSubTotal.Text = Money.Format(gioHang.SubTotal());
-            litTotal.Text = Money.Format(gioHang.SubTotal());
+            if (Session["Username"] == null)
+            {
+                Response.Redirect("DangNhap.aspx?return=ThanhToan.aspx");
+                return;
+            }
+
+            if (IsPostBack) return;
+
+            // Đặt hàng xong thì hiện mã đơn
+            string maDon = Request.QueryString["ma"];
+            if (!string.IsNullOrEmpty(maDon))
+            {
+                HienKetQua(maDon);
+                return;
+            }
+
+            List<MatHang> danhSach = Gio.Doc();
+
+            if (danhSach.Count == 0)
+            {
+                pnlDatHang.Visible = false;
+                pnlTrong.Visible = true;
+                return;
+            }
+
+            rptTomTat.DataSource = danhSach;
+            rptTomTat.DataBind();
+
+            litTong.Text = string.Format("{0:N0} đ", Gio.TongTien());
+            txtHoTen.Text = Convert.ToString(Session["FullName"]);
         }
 
-        // Xử lý khi người dùng bấm nút.
-        protected void btnConfirmCheckout_Click(object nguonSuKien, EventArgs e)
+        // Hiện thông tin đơn vừa đặt.
+        private void HienKetQua(string maDon)
         {
-            if (!Page.IsValid) return;
+            DataTable bang = KetNoi.Bang(
+                "SELECT * FROM Orders WHERE Code = @ma AND Username = @ten",
+                KetNoi.P("@ma", maDon),
+                KetNoi.P("@ten", TenDangNhap));
 
-            OrderResult ketQua = new OrderIntake(CartStore, new ApplicationOrderStore()).Place(new OrderInput
+            if (bang.Rows.Count == 0) return;
+
+            pnlDatHang.Visible = false;
+            pnlXong.Visible = true;
+
+            litMaDon.Text = Server.HtmlEncode(Convert.ToString(bang.Rows[0]["Code"]));
+            litTongXong.Text = string.Format("{0:N0} đ", bang.Rows[0]["Total"]);
+        }
+
+        protected void btnDatHang_Click(object sender, EventArgs e)
+        {
+            if (txtHoTen.Text.Trim() == "" || txtDienThoai.Text.Trim() == "" || txtDiaChi.Text.Trim() == "")
             {
-                Username = AuthHelper.CurrentUserKey(),
-                CustomerName = txtName.Text.Trim(),
-                Phone = txtPhone.Text.Trim(),
-                Address = txtAddress.Text.Trim(),
-                PaymentMethod = rblPaymentMethod.SelectedValue
-            });
-            if (ketQua.IsEmptyCart)
-            {
-                BindSummary();
+                litThongBao.Text = "<span class=\"thong-bao\">Vui lòng nhập đủ họ tên, điện thoại và địa chỉ.</span>";
                 return;
             }
-            if (!ketQua.IsPlaced)
+
+            List<MatHang> danhSach = Gio.Doc();
+
+            if (danhSach.Count == 0)
             {
-                Toast.Info(this, ketQua.Error);
+                Response.Redirect("ThanhToan.aspx");
                 return;
             }
 
-            Toast.ShowAndRedirect(this, "Đặt hàng thành công! Mã đơn " + ketQua.Order.Code + ". Chúng tôi sẽ gọi lại để xác nhận.", "success", "DonHang.aspx?code=" + Server.UrlEncode(ketQua.Order.Code));
+            string maDon = "DH" + DateTime.Now.ToString("yyyyMMddHHmmssfff");
+
+            // Ghi đơn hàng
+            KetNoi.ThucThi(
+                "INSERT INTO Orders (Code, Username, CustomerName, Phone, Address, PaymentMethod, Total) "
+                + "VALUES (@ma, @ten, @hoTen, @dienThoai, @diaChi, @thanhToan, @tong)",
+                KetNoi.P("@ma", maDon),
+                KetNoi.P("@ten", TenDangNhap),
+                KetNoi.P("@hoTen", txtHoTen.Text.Trim()),
+                KetNoi.P("@dienThoai", txtDienThoai.Text.Trim()),
+                KetNoi.P("@diaChi", txtDiaChi.Text.Trim()),
+                KetNoi.P("@thanhToan", rblThanhToan.SelectedValue),
+                KetNoi.P("@tong", Gio.TongTien()));
+
+            int maDonId = Convert.ToInt32(KetNoi.Mot(
+                "SELECT Id FROM Orders WHERE Code = @ma", KetNoi.P("@ma", maDon)));
+
+            // Ghi từng dòng và trừ tồn kho
+            foreach (MatHang hang in danhSach)
+            {
+                KetNoi.ThucThi(
+                    "INSERT INTO OrderLines (OrderId, ProductId, ProductName, Size, Price, Quantity) "
+                    + "VALUES (@don, @sanPham, @ten, @size, @gia, @soLuong)",
+                    KetNoi.P("@don", maDonId),
+                    KetNoi.P("@sanPham", hang.MaSanPham),
+                    KetNoi.P("@ten", hang.Ten),
+                    KetNoi.P("@size", hang.Size),
+                    KetNoi.P("@gia", hang.Gia),
+                    KetNoi.P("@soLuong", hang.SoLuong));
+
+                KetNoi.ThucThi(
+                    "UPDATE Products SET Stock = Stock - @soLuong WHERE Id = @id AND Stock >= @soLuong",
+                    KetNoi.P("@soLuong", hang.SoLuong),
+                    KetNoi.P("@id", hang.MaSanPham));
+            }
+
+            Gio.XoaHet();
+
+            Response.Redirect("ThanhToan.aspx?ma=" + Server.UrlEncode(maDon));
         }
     }
 }

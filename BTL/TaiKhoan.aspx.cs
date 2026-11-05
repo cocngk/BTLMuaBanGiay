@@ -1,101 +1,108 @@
-using System;
-using ShoeStore.Helpers;
+﻿using System;
+using System.Data;
 
 namespace ShoeStore
 {
-    public partial class TaiKhoan : ShopPage
+    // Trang tài khoản: xem và sửa thông tin, đổi mật khẩu, xem đơn hàng của mình.
+    public partial class TaiKhoan : System.Web.UI.Page
     {
-        // Xử lý khi trang được tải.
-        protected void Page_Load(object nguonSuKien, EventArgs e)
+        private string TenDangNhap
         {
-            if (!RequireLogin("Vui lòng đăng nhập để xem tài khoản của bạn.")) return;
-            pnlPage.Visible = true;
-            if (!IsPostBack) LoadAccount();
+            get { return Convert.ToString(Session["Username"]); }
         }
 
-        // Thực hiện việc tải tài khoản.
-        private void LoadAccount()
+        protected void Page_Load(object sender, EventArgs e)
         {
-            UserAccount taiKhoan = AuthHelper.CurrentAccount();
-            if (taiKhoan == null)
+            if (Session["Username"] == null)
             {
-                pnlPage.Visible = false;
-                Toast.ShowAndRedirect(this, "Phiên đăng nhập không còn hợp lệ. Vui lòng đăng nhập lại.", "info", "DangNhap.aspx");
+                Response.Redirect("DangNhap.aspx?return=TaiKhoan.aspx");
                 return;
             }
-            litName.Text = taiKhoan.DisplayName;
-            litUsername.Text = taiKhoan.Username;
-            litEmail.Text = taiKhoan.Email;
-            litPhone.Text = string.IsNullOrEmpty(taiKhoan.Phone) ? "Chưa cập nhật" : taiKhoan.Phone;
-            litRole.Text = taiKhoan.IsAdmin ? "Quản trị viên" : "Khách hàng";
-            spnRole.Attributes["class"] = taiKhoan.IsAdmin ? "account-role is-admin" : "account-role";
-            pnlAdminEntry.Visible = taiKhoan.IsAdmin;
-            txtFullName.Text = taiKhoan.FullName ?? "";
-            txtUsername.Text = taiKhoan.Username;
-            txtEmail.Text = taiKhoan.Email;
-            txtPhone.Text = taiKhoan.Phone ?? "";
+
+            if (!IsPostBack) HienThongTin();
         }
 
-        // Xử lý khi người dùng bấm nút.
-        protected void btnSaveProfile_Click(object nguonSuKien, EventArgs e)
+        // Điền thông tin tài khoản và danh sách đơn hàng.
+        private void HienThongTin()
         {
-            if (!RequireLogin("Vui lòng đăng nhập để sửa hồ sơ.")
-                || !Page.IsValid) return;
+            DataTable bang = KetNoi.Bang(
+                "SELECT * FROM Users WHERE Username = @ten", KetNoi.P("@ten", TenDangNhap));
 
-            ProfileUpdateOutcome ketQua = AuthHelper.TryUpdateProfile(
-                AuthHelper.CurrentUserKey(),
-                txtFullName.Text.Trim(),
-                txtEmail.Text.Trim(),
-                txtPhone.Text.Trim());
-            if (ketQua == ProfileUpdateOutcome.Updated)
-            {
-                AuthHelper.RefreshDisplayName();
-                Toast.ShowAndRedirect(this, "Đã cập nhật hồ sơ.", "success", "TaiKhoan.aspx");
-            }
-            else
-            {
-                ErrorProfile(ketQua == ProfileUpdateOutcome.EmailTaken
-                    ? "Email này đã được một tài khoản khác dùng. Vui lòng chọn email khác."
-                    : "Không tìm thấy tài khoản của bạn. Vui lòng đăng nhập lại.");
-            }
+            if (bang.Rows.Count == 0) return;
+
+            DataRow nguoiDung = bang.Rows[0];
+
+            litTenDangNhap.Text = Server.HtmlEncode(Convert.ToString(nguoiDung["Username"]));
+            txtHoTen.Text = Convert.ToString(nguoiDung["FullName"]);
+            txtEmail.Text = Convert.ToString(nguoiDung["Email"]);
+            txtDienThoai.Text = Convert.ToString(nguoiDung["Phone"]);
+
+            DataTable donHang = KetNoi.Bang(
+                "SELECT * FROM Orders WHERE Username = @ten ORDER BY Id DESC",
+                KetNoi.P("@ten", TenDangNhap));
+
+            rptDonHang.DataSource = donHang;
+            rptDonHang.DataBind();
+
+            litChuaCoDon.Text = donHang.Rows.Count == 0
+                ? "<p class=\"nhan\">Bạn chưa có đơn hàng nào.</p>"
+                : "";
         }
 
-        // Xử lý khi người dùng bấm nút.
-        protected void btnChangePassword_Click(object nguonSuKien, EventArgs e)
+        // Lưu họ tên, email, điện thoại.
+        protected void btnLuu_Click(object sender, EventArgs e)
         {
-            if (!RequireLogin("Vui lòng đăng nhập để đổi mật khẩu.")
-                || !Page.IsValid) return;
+            KetNoi.ThucThi(
+                "UPDATE Users SET FullName = @hoTen, Email = @email, Phone = @dienThoai "
+                + "WHERE Username = @ten",
+                KetNoi.P("@hoTen", txtHoTen.Text.Trim()),
+                KetNoi.P("@email", txtEmail.Text.Trim()),
+                KetNoi.P("@dienThoai", txtDienThoai.Text.Trim()),
+                KetNoi.P("@ten", TenDangNhap));
 
-            PasswordChangeOutcome ketQua = AuthHelper.TryChangePassword(
-                AuthHelper.CurrentUserKey(),
-                txtCurrentPassword.Text,
-                txtNewPassword.Text);
-            if (ketQua == PasswordChangeOutcome.Changed)
-            {
-                Toast.ShowAndRedirect(this,
-                    "Đã đổi mật khẩu. Hãy dùng mật khẩu mới ở lần đăng nhập sau.",
-                    "success", "TaiKhoan.aspx");
-            }
-            else
-            {
-                ErrorPassword(ketQua == PasswordChangeOutcome.WrongPassword
-                    ? "Mật khẩu hiện tại không đúng."
-                    : "Không tìm thấy tài khoản của bạn. Vui lòng đăng nhập lại.");
-            }
+            HienThongTin();
+            litThongBao.Text = "<span class=\"thong-bao tot\">Đã lưu thay đổi.</span>";
         }
 
-        // Thực hiện việc error hồ sơ.
-        private void ErrorProfile(string vanBan)
+        // Đổi mật khẩu: phải nhập đúng mật khẩu hiện tại.
+        protected void btnDoiMatKhau_Click(object sender, EventArgs e)
         {
-            litProfileError.Text = vanBan;
-            pnlProfileError.Visible = true;
-        }
+            DataTable bang = KetNoi.Bang(
+                "SELECT PasswordHash FROM Users WHERE Username = @ten",
+                KetNoi.P("@ten", TenDangNhap));
 
-        // Thực hiện việc error mật khẩu.
-        private void ErrorPassword(string vanBan)
-        {
-            litPasswordError.Text = vanBan;
-            pnlPasswordError.Visible = true;
+            if (bang.Rows.Count == 0) return;
+
+            string maBamCu = Convert.ToString(bang.Rows[0]["PasswordHash"]);
+
+            if (MatKhau.Bam(txtMatKhauCu.Text) != maBamCu)
+            {
+                litThongBaoMatKhau.Text = "<span class=\"thong-bao\">Mật khẩu hiện tại không đúng.</span>";
+                return;
+            }
+
+            if (txtMatKhauMoi.Text.Length < 6)
+            {
+                litThongBaoMatKhau.Text = "<span class=\"thong-bao\">Mật khẩu mới phải có ít nhất 6 ký tự.</span>";
+                return;
+            }
+
+            if (txtMatKhauMoi.Text != txtNhapLai.Text)
+            {
+                litThongBaoMatKhau.Text = "<span class=\"thong-bao\">Hai lần nhập mật khẩu mới không giống nhau.</span>";
+                return;
+            }
+
+            KetNoi.ThucThi(
+                "UPDATE Users SET PasswordHash = @matKhau WHERE Username = @ten",
+                KetNoi.P("@matKhau", MatKhau.Bam(txtMatKhauMoi.Text)),
+                KetNoi.P("@ten", TenDangNhap));
+
+            txtMatKhauCu.Text = "";
+            txtMatKhauMoi.Text = "";
+            txtNhapLai.Text = "";
+
+            litThongBaoMatKhau.Text = "<span class=\"thong-bao tot\">Đã đổi mật khẩu.</span>";
         }
     }
 }

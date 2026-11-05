@@ -1,56 +1,58 @@
-using System;
-using System.Web;
-using ShoeStore.Helpers;
+﻿using System;
 
 namespace ShoeStore
 {
-    public partial class DangKy : ShopPage
+    // Đăng ký tài khoản mới.
+    public partial class DangKy : System.Web.UI.Page
     {
-        // Xử lý khi người dùng bấm nút.
-        protected void btnRegister_Click(object nguonSuKien, EventArgs e)
+        protected void Page_Load(object sender, EventArgs e)
         {
-            if (!Page.IsValid) return;
+        }
 
-            UserAccount taiKhoan = MemoryUserStore.NewUser(
-                txtFullName.Text.Trim(),
-                txtUsername.Text.Trim(),
-                txtEmail.Text.Trim(),
-                txtPhone.Text.Trim(),
-                txtPassword.Text);
-            AddUserOutcome ketQua = AuthHelper.TryAdd(taiKhoan);
-            if (ketQua == AddUserOutcome.UsernameTaken)
+        protected void btnDangKy_Click(object sender, EventArgs e)
+        {
+            string tenDangNhap = txtTenDangNhap.Text.Trim();
+            string matKhau = txtMatKhau.Text;
+
+            if (tenDangNhap.Length < 3)
             {
-                ShowError("Tên đăng nhập đã tồn tại! Vui lòng chọn tên khác.");
-                return;
-            }
-            if (ketQua == AddUserOutcome.EmailTaken)
-            {
-                ShowError("Email này đã được đăng ký!");
+                litThongBao.Text = "<span class=\"thong-bao\">Tên đăng nhập phải có ít nhất 3 ký tự.</span>";
                 return;
             }
 
-            AuthHelper.SignIn(taiKhoan);
-            Toast.ShowAndRedirect(this, "Đăng ký thành công! Bạn đã đăng nhập.", "success", "TrangChu.aspx");
-        }
-
-        // Thực hiện việc hiển thị error.
-        private void ShowError(string thongBao)
-        {
-            litFormError.Text = HttpUtility.HtmlEncode(thongBao);
-            pnlFormError.Visible = true;
-        }
-
-        [System.Web.Services.WebMethod]
-        // Kiểm tra trùng tên đăng nhập và email khi người dùng nhập form.
-        public static object CheckDuplicate(string tenDangNhap, string email)
-        {
-            string ten = (tenDangNhap ?? "").Trim();
-            string diaChi = (email ?? "").Trim();
-            return new
+            if (matKhau.Length < 6)
             {
-                userTaken = ten.Length > 0 && AuthHelper.UsernameExists(ten),
-                emailTaken = diaChi.Length > 0 && AuthHelper.EmailExists(diaChi)
-            };
+                litThongBao.Text = "<span class=\"thong-bao\">Mật khẩu phải có ít nhất 6 ký tự.</span>";
+                return;
+            }
+
+            if (matKhau != txtNhapLai.Text)
+            {
+                litThongBao.Text = "<span class=\"thong-bao\">Hai lần nhập mật khẩu không giống nhau.</span>";
+                return;
+            }
+
+            // Kiểm tra trùng tên đăng nhập
+            object daCo = KetNoi.Mot(
+                "SELECT COUNT(*) FROM Users WHERE Username = @ten",
+                KetNoi.P("@ten", tenDangNhap));
+
+            if (Convert.ToInt32(daCo) > 0)
+            {
+                litThongBao.Text = "<span class=\"thong-bao\">Tên đăng nhập này đã có người dùng.</span>";
+                return;
+            }
+
+            KetNoi.ThucThi(
+                "INSERT INTO Users (Username, PasswordHash, FullName, Email, Phone, IsAdmin) "
+                + "VALUES (@ten, @matKhau, @hoTen, @email, @dienThoai, 0)",
+                KetNoi.P("@ten", tenDangNhap),
+                KetNoi.P("@matKhau", MatKhau.Bam(matKhau)),
+                KetNoi.P("@hoTen", txtHoTen.Text.Trim()),
+                KetNoi.P("@email", txtEmail.Text.Trim()),
+                KetNoi.P("@dienThoai", txtDienThoai.Text.Trim()));
+
+            Response.Redirect("DangNhap.aspx?dangky=1");
         }
     }
 }
