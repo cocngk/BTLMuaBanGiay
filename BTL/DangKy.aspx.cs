@@ -33,24 +33,21 @@ namespace ShoeStore
             }
 
             // Kiểm tra trùng tên đăng nhập
-            object daCo = KetNoi.Mot(
-                "SELECT COUNT(*) FROM Users WHERE Username = @ten",
-                KetNoi.P("@ten", tenDangNhap));
-
-            if (Convert.ToInt32(daCo) > 0)
+            if (DuLieu.TimNguoiDung(tenDangNhap) != null)
             {
                 litThongBao.Text = "<span class=\"thong-bao\">Tên đăng nhập này đã có người dùng.</span>";
                 return;
             }
 
-            KetNoi.ThucThi(
-                "INSERT INTO Users (Username, PasswordHash, FullName, Email, Phone, IsAdmin) "
-                + "VALUES (@ten, @matKhau, @hoTen, @email, @dienThoai, 0)",
-                KetNoi.P("@ten", tenDangNhap),
-                KetNoi.P("@matKhau", MatKhau.Bam(matKhau)),
-                KetNoi.P("@hoTen", txtHoTen.Text.Trim()),
-                KetNoi.P("@email", txtEmail.Text.Trim()),
-                KetNoi.P("@dienThoai", txtDienThoai.Text.Trim()));
+            NguoiDung nguoiDung = new NguoiDung();
+            nguoiDung.Username = tenDangNhap;
+            nguoiDung.Password = matKhau;
+            nguoiDung.FullName = txtHoTen.Text.Trim();
+            nguoiDung.Email = txtEmail.Text.Trim();
+            nguoiDung.Phone = txtDienThoai.Text.Trim();
+            nguoiDung.IsAdmin = false;
+
+            DuLieu.ThemNguoiDung(nguoiDung);
 
             Response.Redirect("DangNhap.aspx?dangky=1");
         }

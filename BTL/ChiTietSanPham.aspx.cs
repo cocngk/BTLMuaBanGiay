@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 
 namespace ShoeStore
 {
@@ -20,10 +19,9 @@ namespace ShoeStore
         {
             if (IsPostBack) return;
 
-            DataTable bang = KetNoi.Bang(
-                "SELECT * FROM Products WHERE Id = @id", KetNoi.P("@id", MaSanPham));
+            SanPhamItem sanPham = DuLieu.TimSanPham(MaSanPham);
 
-            if (bang.Rows.Count == 0)
+            if (sanPham == null)
             {
                 pnlSanPham.Visible = false;
                 litThongBao.Text = "<p class=\"thong-bao\">Không tìm thấy sản phẩm.</p>"
@@ -31,24 +29,16 @@ namespace ShoeStore
                 return;
             }
 
-            DataRow sanPham = bang.Rows[0];
+            imgAnh.ImageUrl = sanPham.ImageUrl;
+            litTen.Text = Server.HtmlEncode(sanPham.Name);
+            litHang.Text = Server.HtmlEncode(sanPham.Brand);
+            litGia.Text = string.Format("{0:N0} đ", sanPham.Price);
+            litMoTa.Text = Server.HtmlEncode(sanPham.Description);
+            litTonKho.Text = sanPham.Stock.ToString();
 
-            imgAnh.ImageUrl = Convert.ToString(sanPham["ImageUrl"]);
-            litTen.Text = Server.HtmlEncode(Convert.ToString(sanPham["Name"]));
-            litHang.Text = Server.HtmlEncode(Convert.ToString(sanPham["Brand"]));
-            litGia.Text = string.Format("{0:N0} đ", sanPham["Price"]);
-            litMoTa.Text = Server.HtmlEncode(Convert.ToString(sanPham["Description"]));
-            litTonKho.Text = Convert.ToString(sanPham["Stock"]);
-
-            // Danh sách size lưu trong cột Sizes, cách nhau bằng dấu phẩy
-            foreach (string size in Convert.ToString(sanPham["Sizes"]).Split(','))
+            // Danh sách size lưu trong một chuỗi, cách nhau bằng dấu phẩy
+            foreach (string size in sanPham.Sizes.Split(','))
                 ddlSize.Items.Add(size.Trim());
-
-            // Giữ lại thông tin sản phẩm cho lần bấm nút (postback)
-            ViewState["ten"] = Convert.ToString(sanPham["Name"]);
-            ViewState["gia"] = Convert.ToDecimal(sanPham["Price"]);
-            ViewState["anh"] = Convert.ToString(sanPham["ImageUrl"]);
-            ViewState["ton"] = Convert.ToInt32(sanPham["Stock"]);
         }
 
         // Bấm Thêm vào giỏ hàng.
@@ -60,6 +50,14 @@ namespace ShoeStore
                 return;
             }
 
+            SanPhamItem sanPham = DuLieu.TimSanPham(MaSanPham);
+
+            if (sanPham == null)
+            {
+                litKetQua.Text = "<span class=\"thong-bao\">Không tìm thấy sản phẩm.</span>";
+                return;
+            }
+
             int soLuong;
             if (!int.TryParse(txtSoLuong.Text, out soLuong) || soLuong < 1)
             {
@@ -67,25 +65,23 @@ namespace ShoeStore
                 return;
             }
 
-            int ton = Convert.ToInt32(ViewState["ton"]);
-
-            if (ton <= 0)
+            if (sanPham.Stock <= 0)
             {
                 litKetQua.Text = "<span class=\"thong-bao\">Sản phẩm này đã hết hàng.</span>";
                 return;
             }
 
-            if (soLuong > ton)
+            if (soLuong > sanPham.Stock)
             {
-                litKetQua.Text = "<span class=\"thong-bao\">Chỉ còn " + ton + " đôi.</span>";
+                litKetQua.Text = "<span class=\"thong-bao\">Chỉ còn " + sanPham.Stock + " đôi.</span>";
                 return;
             }
 
             MatHang hang = new MatHang();
-            hang.MaSanPham = MaSanPham;
-            hang.Ten = Convert.ToString(ViewState["ten"]);
-            hang.Gia = Convert.ToDecimal(ViewState["gia"]);
-            hang.Anh = Convert.ToString(ViewState["anh"]);
+            hang.MaSanPham = sanPham.Id;
+            hang.Ten = sanPham.Name;
+            hang.Gia = sanPham.Price;
+            hang.Anh = sanPham.ImageUrl;
             hang.Size = ddlSize.SelectedValue;
             hang.SoLuong = soLuong;
 

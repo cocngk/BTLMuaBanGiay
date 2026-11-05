@@ -71,7 +71,6 @@
     <Content Include="Content\images\gallery\*.jpg" />
     <Content Include="Content\images\hero\*.jpg" />
     <Content Include="Content\images\blogs\*.jpg" />
-    <Content Include="Database\ShoeStore.sql" />
     <Content Include="ChiTietSanPham.aspx" />
     <Content Include="DangKy.aspx" />
     <Content Include="DangNhap.aspx" />
@@ -87,8 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Gio.cs" />
-    <Compile Include="KetNoi.cs" />
-    <Compile Include="MatKhau.cs" />
+    <Compile Include="DuLieu.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

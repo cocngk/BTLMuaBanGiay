@@ -1,7 +1,7 @@
 # Bản đơn giản — đối chiếu với slide môn Lập trình web
 
 Nhánh `don-gian-slide`: viết lại toàn bộ phần code theo đúng mức của 5 file PDF trong thư mục `Docs/`.
-Không có lớp trung gian, không có thư viện riêng — mỗi trang `.aspx` gọi thẳng SQL trong code-behind.
+Không có lớp trung gian, không có thư viện riêng, không có cơ sở dữ liệu — dữ liệu nằm trong bộ nhớ.
 
 ## 1. Mỗi khái niệm trong slide nằm ở đâu
 
@@ -9,9 +9,10 @@ Không có lớp trung gian, không có thư viện riêng — mỗi trang `.asp
 |---|---|---|
 | Tạo trang `.aspx`, code-behind | 10 trang, mỗi trang 1 file `.aspx` + 1 file `.aspx.cs` | `*.aspx`, `*.aspx.cs` |
 | `Page_Load` và `IsPostBack` | Mọi trang đều có | `TrangChu.aspx.cs`, … |
-| `web.config`: `appSettings`, `connectionStrings` | Chuỗi kết nối `ShoeStoreDb` | `Web.config` |
+| `web.config`: `appSettings` | Cấu hình chung (không còn chuỗi kết nối) | `Web.config` |
 | `web.config`: `maxRequestLength`, `executionTimeout` | Cấu hình trong `httpRuntime` | `Web.config` |
 | `web.config`: `X-Frame-Options`, `X-XSS-Protection` | Hai header trong `httpProtocol` | `Web.config` |
+| `web.config`: `sessionState` | Phiên làm việc 30 phút | `Web.config` |
 | `Session` | Đăng nhập, giỏ hàng | `DangNhap.aspx.cs`, `Gio.cs` |
 | `Cookie` | "Nhớ đăng nhập" 7 ngày | `DangNhap.aspx.cs`, `Site.Master.cs` |
 | `Application` | Đếm lượt truy cập, số người online | `Global.asax.cs`, `Site.Master.cs` |
@@ -22,7 +23,7 @@ Không có lớp trung gian, không có thư viện riêng — mỗi trang `.asp
 | `Server.HtmlEncode` | Mọi chỗ in dữ liệu người dùng nhập | `SanPham.aspx.cs`, `DangNhap.aspx.cs`, … |
 | `Server.UrlEncode` | Mã hóa từ khóa và đường dẫn quay lại | `Site.Master.cs`, `ChiTietSanPham.aspx.cs` |
 | Điều khiển dữ liệu (`Repeater`, `GridView`) | Danh sách sản phẩm, giỏ hàng, bảng quản trị | `TrangChu.aspx`, `SanPham.aspx`, `GioHang.aspx`, `QuanTriSanPham.aspx` |
-| ADO.NET (`SqlConnection`, `SqlCommand`) | 4 hàm dùng chung | `KetNoi.cs` |
+| Mảng, danh sách, vòng lặp | Toàn bộ dữ liệu của cửa hàng | `DuLieu.cs`, `Gio.cs` |
 
 ## 2. Ba bài tập trong slide, làm thật trong project
 
@@ -32,9 +33,20 @@ Không có lớp trung gian, không có thư viện riêng — mỗi trang `.asp
 | Nhớ đăng nhập bằng `Cookie` | Ô "Nhớ đăng nhập 7 ngày" → `Response.Cookies["nhodangnhap"]`; mở lại trang tự điền tên |
 | Đếm lượt truy cập bằng `Application` | `Global.asax.cs` giữ `Application["LuotTruyCap"]`, hiện ở chân trang mọi trang |
 
-## 3. Cơ sở dữ liệu: 4 bảng
+## 3. Dữ liệu: ba danh sách trong bộ nhớ
 
-`Users` — `Products` — `Orders` — `OrderLines`. Chi tiết trong `BTL/Database/README.md`.
+Không dùng SQL Server, không cần cài đặt gì thêm. `DuLieu.cs` giữ ba danh sách:
+
+| Danh sách | Nội dung |
+|---|---|
+| `NguoiDungs` | Tài khoản: tên đăng nhập, mật khẩu, họ tên, email, điện thoại, cờ quản trị |
+| `SanPhams` | Sản phẩm: tên, hãng, giá, tồn kho, danh sách size, ảnh |
+| `DonHangs` | Đơn hàng, mỗi đơn có danh sách dòng `Lines` |
+
+Dữ liệu mẫu (2 tài khoản, 12 sản phẩm) được tạo một lần trong hàm khởi tạo tĩnh của `DuLieu`.
+Mật khẩu lưu thẳng, so sánh thẳng — đúng như ví dụ đăng nhập trong slide.
+
+**Lưu ý:** vì dữ liệu nằm trong bộ nhớ nên mất khi ứng dụng khởi động lại (đóng Visual Studio, sửa `Web.config`, hoặc IIS tự recycle). Đơn hàng tạo trong lúc chạy chỉ sống trong phiên làm việc đó.
 
 ## 4. Mười trang
 
@@ -53,15 +65,17 @@ Không có lớp trung gian, không có thư viện riêng — mỗi trang `.asp
 
 ## 5. Cách chạy
 
-1. Chạy `BTL/Database/ShoeStore.sql` trong SQL Server Management Studio.
-2. Mở `BTL.sln` bằng Visual Studio, bấm F5.
-3. Đăng nhập `admin / admin123` để vào khu quản trị.
+1. Mở `BTL.sln` bằng Visual Studio.
+2. Bấm F5.
+3. Đăng nhập `admin / admin123` để vào khu quản trị, hoặc `khach / khach123` để mua hàng.
+
+Không cần chạy script SQL, không cần cấu hình chuỗi kết nối.
 
 ## 6. Đã bỏ so với bản cũ
 
-Bản cũ (nhánh `viet-lai-webforms`) có 18 trang và các tầng `Data/`, `Services/`, `Models/`, `Helpers/`, `Controls/`.
-Bản này bỏ: tin tức, tư vấn, chính sách, tra cứu đơn hàng, quản trị người dùng, quản trị đơn hàng,
-đánh giá sản phẩm, danh sách yêu thích, nhiều màu sắc cho một sản phẩm,
-giỏ hàng lưu trong SQL cho tài khoản, gộp giỏ khách vào giỏ tài khoản.
+Bản cũ (nhánh `viet-lai-webforms`) có 18 trang, các tầng `Data/`, `Services/`, `Models/`, `Helpers/`, `Controls/`, và SQL Server với 8 bảng.
+Bản này bỏ: cơ sở dữ liệu, băm mật khẩu, tin tức, tư vấn, chính sách, tra cứu đơn hàng,
+quản trị người dùng, quản trị đơn hàng, đánh giá sản phẩm, danh sách yêu thích,
+nhiều màu sắc cho một sản phẩm, giỏ hàng lưu cho tài khoản, gộp giỏ khách vào giỏ tài khoản.
 
 Muốn xem lại bản cũ: `git checkout viet-lai-webforms`.

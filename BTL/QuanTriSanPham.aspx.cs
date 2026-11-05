@@ -3,7 +3,7 @@ using System.Web.UI.WebControls;
 
 namespace ShoeStore
 {
-    // Trang quản trị: chỉ tài khoản IsAdmin = 1 mới vào được.
+    // Trang quản trị: chỉ tài khoản IsAdmin = true mới vào được.
     public partial class QuanTriSanPham : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
@@ -31,7 +31,7 @@ namespace ShoeStore
 
         private void HienDanhSach()
         {
-            gvSanPham.DataSource = KetNoi.Bang("SELECT * FROM Products ORDER BY Id");
+            gvSanPham.DataSource = DuLieu.SanPhams;
             gvSanPham.DataBind();
         }
 
@@ -40,9 +40,7 @@ namespace ShoeStore
         {
             if (e.CommandName != "Xoa") return;
 
-            KetNoi.ThucThi(
-                "DELETE FROM Products WHERE Id = @id",
-                KetNoi.P("@id", Convert.ToInt32(e.CommandArgument)));
+            DuLieu.XoaSanPham(Convert.ToInt32(e.CommandArgument));
 
             Response.Redirect("QuanTriSanPham.aspx?xoa=1");
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 
 namespace ShoeStore
 {
@@ -10,10 +9,7 @@ namespace ShoeStore
         {
             if (!IsPostBack)
             {
-                DataTable bang = KetNoi.Bang(
-                    "SELECT TOP 8 * FROM Products WHERE IsHot = 1 ORDER BY Id");
-
-                rptSanPham.DataSource = bang;
+                rptSanPham.DataSource = DuLieu.SanPhamNoiBat(8);
                 rptSanPham.DataBind();
             }
         }

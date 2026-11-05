@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data;
+using System.Collections.Generic;
 
 namespace ShoeStore
 {
@@ -25,26 +25,21 @@ namespace ShoeStore
         // Điền thông tin tài khoản và danh sách đơn hàng.
         private void HienThongTin()
         {
-            DataTable bang = KetNoi.Bang(
-                "SELECT * FROM Users WHERE Username = @ten", KetNoi.P("@ten", TenDangNhap));
+            NguoiDung nguoiDung = DuLieu.TimNguoiDung(TenDangNhap);
 
-            if (bang.Rows.Count == 0) return;
+            if (nguoiDung == null) return;
 
-            DataRow nguoiDung = bang.Rows[0];
+            litTenDangNhap.Text = Server.HtmlEncode(nguoiDung.Username);
+            txtHoTen.Text = nguoiDung.FullName;
+            txtEmail.Text = nguoiDung.Email;
+            txtDienThoai.Text = nguoiDung.Phone;
 
-            litTenDangNhap.Text = Server.HtmlEncode(Convert.ToString(nguoiDung["Username"]));
-            txtHoTen.Text = Convert.ToString(nguoiDung["FullName"]);
-            txtEmail.Text = Convert.ToString(nguoiDung["Email"]);
-            txtDienThoai.Text = Convert.ToString(nguoiDung["Phone"]);
+            List<DonHang> danhSach = DuLieu.DonHangCua(TenDangNhap);
 
-            DataTable donHang = KetNoi.Bang(
-                "SELECT * FROM Orders WHERE Username = @ten ORDER BY Id DESC",
-                KetNoi.P("@ten", TenDangNhap));
-
-            rptDonHang.DataSource = donHang;
+            rptDonHang.DataSource = danhSach;
             rptDonHang.DataBind();
 
-            litChuaCoDon.Text = donHang.Rows.Count == 0
+            litChuaCoDon.Text = danhSach.Count == 0
                 ? "<p class=\"nhan\">Bạn chưa có đơn hàng nào.</p>"
                 : "";
         }
@@ -52,13 +47,15 @@ namespace ShoeStore
         // Lưu họ tên, email, điện thoại.
         protected void btnLuu_Click(object sender, EventArgs e)
         {
-            KetNoi.ThucThi(
-                "UPDATE Users SET FullName = @hoTen, Email = @email, Phone = @dienThoai "
-                + "WHERE Username = @ten",
-                KetNoi.P("@hoTen", txtHoTen.Text.Trim()),
-                KetNoi.P("@email", txtEmail.Text.Trim()),
-                KetNoi.P("@dienThoai", txtDienThoai.Text.Trim()),
-                KetNoi.P("@ten", TenDangNhap));
+            NguoiDung nguoiDung = DuLieu.TimNguoiDung(TenDangNhap);
+
+            if (nguoiDung == null) return;
+
+            nguoiDung.FullName = txtHoTen.Text.Trim();
+            nguoiDung.Email = txtEmail.Text.Trim();
+            nguoiDung.Phone = txtDienThoai.Text.Trim();
+
+            Session["FullName"] = nguoiDung.FullName;
 
             HienThongTin();
             litThongBao.Text = "<span class=\"thong-bao tot\">Đã lưu thay đổi.</span>";
@@ -67,15 +64,11 @@ namespace ShoeStore
         // Đổi mật khẩu: phải nhập đúng mật khẩu hiện tại.
         protected void btnDoiMatKhau_Click(object sender, EventArgs e)
         {
-            DataTable bang = KetNoi.Bang(
-                "SELECT PasswordHash FROM Users WHERE Username = @ten",
-                KetNoi.P("@ten", TenDangNhap));
+            NguoiDung nguoiDung = DuLieu.TimNguoiDung(TenDangNhap);
 
-            if (bang.Rows.Count == 0) return;
+            if (nguoiDung == null) return;
 
-            string maBamCu = Convert.ToString(bang.Rows[0]["PasswordHash"]);
-
-            if (MatKhau.Bam(txtMatKhauCu.Text) != maBamCu)
+            if (nguoiDung.Password != txtMatKhauCu.Text)
             {
                 litThongBaoMatKhau.Text = "<span class=\"thong-bao\">Mật khẩu hiện tại không đúng.</span>";
                 return;
@@ -93,10 +86,7 @@ namespace ShoeStore
                 return;
             }
 
-            KetNoi.ThucThi(
-                "UPDATE Users SET PasswordHash = @matKhau WHERE Username = @ten",
-                KetNoi.P("@matKhau", MatKhau.Bam(txtMatKhauMoi.Text)),
-                KetNoi.P("@ten", TenDangNhap));
+            nguoiDung.Password = txtMatKhauMoi.Text;
 
             txtMatKhauCu.Text = "";
             txtMatKhauMoi.Text = "";

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 
 namespace ShoeStore
 {
@@ -37,26 +36,23 @@ namespace ShoeStore
         // Điền sẵn thông tin sản phẩm đang sửa.
         private void NapSanPham()
         {
-            DataTable bang = KetNoi.Bang(
-                "SELECT * FROM Products WHERE Id = @id", KetNoi.P("@id", MaSanPham));
+            SanPhamItem sanPham = DuLieu.TimSanPham(MaSanPham);
 
-            if (bang.Rows.Count == 0)
+            if (sanPham == null)
             {
                 litThongBao.Text = "<span class=\"thong-bao\">Không tìm thấy sản phẩm.</span>";
                 return;
             }
 
-            DataRow sanPham = bang.Rows[0];
-
             litTieuDe.Text = "Sửa sản phẩm";
-            txtTen.Text = Convert.ToString(sanPham["Name"]);
-            txtHang.Text = Convert.ToString(sanPham["Brand"]);
-            txtGia.Text = Convert.ToString(sanPham["Price"]);
-            txtTon.Text = Convert.ToString(sanPham["Stock"]);
-            txtSize.Text = Convert.ToString(sanPham["Sizes"]);
-            txtAnh.Text = Convert.ToString(sanPham["ImageUrl"]);
-            txtMoTa.Text = Convert.ToString(sanPham["Description"]);
-            chkNoiBat.Checked = Convert.ToBoolean(sanPham["IsHot"]);
+            txtTen.Text = sanPham.Name;
+            txtHang.Text = sanPham.Brand;
+            txtGia.Text = sanPham.Price.ToString();
+            txtTon.Text = sanPham.Stock.ToString();
+            txtSize.Text = sanPham.Sizes;
+            txtAnh.Text = sanPham.ImageUrl;
+            txtMoTa.Text = sanPham.Description;
+            chkNoiBat.Checked = sanPham.IsHot;
         }
 
         protected void btnLuu_Click(object sender, EventArgs e)
@@ -91,38 +87,36 @@ namespace ShoeStore
                 return;
             }
 
-            if (MaSanPham > 0)
+            // Sửa sản phẩm đang có
+            SanPhamItem sanPham = MaSanPham > 0 ? DuLieu.TimSanPham(MaSanPham) : null;
+
+            if (sanPham == null)
             {
-                KetNoi.ThucThi(
-                    "UPDATE Products SET Name = @ten, Brand = @hang, Price = @gia, Stock = @ton, "
-                    + "Sizes = @size, ImageUrl = @anh, Description = @moTa, IsHot = @noiBat "
-                    + "WHERE Id = @id",
-                    KetNoi.P("@ten", ten),
-                    KetNoi.P("@hang", hang),
-                    KetNoi.P("@gia", gia),
-                    KetNoi.P("@ton", ton),
-                    KetNoi.P("@size", size),
-                    KetNoi.P("@anh", txtAnh.Text.Trim()),
-                    KetNoi.P("@moTa", txtMoTa.Text.Trim()),
-                    KetNoi.P("@noiBat", chkNoiBat.Checked),
-                    KetNoi.P("@id", MaSanPham));
+                // Không có thì thêm mới
+                sanPham = new SanPhamItem();
+                GanGiaTri(sanPham, ten, hang, gia, ton, size);
+                DuLieu.ThemSanPham(sanPham);
             }
             else
             {
-                KetNoi.ThucThi(
-                    "INSERT INTO Products (Name, Brand, Price, Stock, Sizes, ImageUrl, Description, IsHot) "
-                    + "VALUES (@ten, @hang, @gia, @ton, @size, @anh, @moTa, @noiBat)",
-                    KetNoi.P("@ten", ten),
-                    KetNoi.P("@hang", hang),
-                    KetNoi.P("@gia", gia),
-                    KetNoi.P("@ton", ton),
-                    KetNoi.P("@size", size),
-                    KetNoi.P("@anh", txtAnh.Text.Trim()),
-                    KetNoi.P("@moTa", txtMoTa.Text.Trim()),
-                    KetNoi.P("@noiBat", chkNoiBat.Checked));
+                GanGiaTri(sanPham, ten, hang, gia, ton, size);
             }
 
             Response.Redirect("QuanTriSanPham.aspx");
+        }
+
+        // Chép dữ liệu từ form vào sản phẩm.
+        private void GanGiaTri(SanPhamItem sanPham, string ten, string hang,
+            decimal gia, int ton, string size)
+        {
+            sanPham.Name = ten;
+            sanPham.Brand = hang;
+            sanPham.Price = gia;
+            sanPham.Stock = ton;
+            sanPham.Sizes = size;
+            sanPham.ImageUrl = txtAnh.Text.Trim();
+            sanPham.Description = txtMoTa.Text.Trim();
+            sanPham.IsHot = chkNoiBat.Checked;
         }
     }
 }

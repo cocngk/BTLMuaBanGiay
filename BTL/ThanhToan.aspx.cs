@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 
 namespace ShoeStore
 {
-    // Trang đặt hàng: ghi đơn vào bảng Orders và OrderLines, trừ tồn kho, xóa giỏ.
+    // Trang đặt hàng: ghi đơn vào danh sách DonHangs, trừ tồn kho, xóa giỏ.
     public partial class ThanhToan : System.Web.UI.Page
     {
         private string TenDangNhap
@@ -49,18 +48,15 @@ namespace ShoeStore
         // Hiện thông tin đơn vừa đặt.
         private void HienKetQua(string maDon)
         {
-            DataTable bang = KetNoi.Bang(
-                "SELECT * FROM Orders WHERE Code = @ma AND Username = @ten",
-                KetNoi.P("@ma", maDon),
-                KetNoi.P("@ten", TenDangNhap));
+            DonHang donHang = DuLieu.TimDonHang(maDon);
 
-            if (bang.Rows.Count == 0) return;
+            if (donHang == null || donHang.Username != TenDangNhap) return;
 
             pnlDatHang.Visible = false;
             pnlXong.Visible = true;
 
-            litMaDon.Text = Server.HtmlEncode(Convert.ToString(bang.Rows[0]["Code"]));
-            litTongXong.Text = string.Format("{0:N0} đ", bang.Rows[0]["Total"]);
+            litMaDon.Text = Server.HtmlEncode(donHang.Code);
+            litTongXong.Text = string.Format("{0:N0} đ", donHang.Total);
         }
 
         protected void btnDatHang_Click(object sender, EventArgs e)
@@ -79,45 +75,36 @@ namespace ShoeStore
                 return;
             }
 
-            string maDon = "DH" + DateTime.Now.ToString("yyyyMMddHHmmssfff");
-
-            // Ghi đơn hàng
-            KetNoi.ThucThi(
-                "INSERT INTO Orders (Code, Username, CustomerName, Phone, Address, PaymentMethod, Total) "
-                + "VALUES (@ma, @ten, @hoTen, @dienThoai, @diaChi, @thanhToan, @tong)",
-                KetNoi.P("@ma", maDon),
-                KetNoi.P("@ten", TenDangNhap),
-                KetNoi.P("@hoTen", txtHoTen.Text.Trim()),
-                KetNoi.P("@dienThoai", txtDienThoai.Text.Trim()),
-                KetNoi.P("@diaChi", txtDiaChi.Text.Trim()),
-                KetNoi.P("@thanhToan", rblThanhToan.SelectedValue),
-                KetNoi.P("@tong", Gio.TongTien()));
-
-            int maDonId = Convert.ToInt32(KetNoi.Mot(
-                "SELECT Id FROM Orders WHERE Code = @ma", KetNoi.P("@ma", maDon)));
+            DonHang donHang = new DonHang();
+            donHang.Code = "DH" + DateTime.Now.ToString("yyyyMMddHHmmssfff");
+            donHang.CreatedAt = DateTime.Now;
+            donHang.Username = TenDangNhap;
+            donHang.CustomerName = txtHoTen.Text.Trim();
+            donHang.Phone = txtDienThoai.Text.Trim();
+            donHang.Address = txtDiaChi.Text.Trim();
+            donHang.PaymentMethod = rblThanhToan.SelectedValue;
+            donHang.Total = Gio.TongTien();
 
             // Ghi từng dòng và trừ tồn kho
             foreach (MatHang hang in danhSach)
             {
-                KetNoi.ThucThi(
-                    "INSERT INTO OrderLines (OrderId, ProductId, ProductName, Size, Price, Quantity) "
-                    + "VALUES (@don, @sanPham, @ten, @size, @gia, @soLuong)",
-                    KetNoi.P("@don", maDonId),
-                    KetNoi.P("@sanPham", hang.MaSanPham),
-                    KetNoi.P("@ten", hang.Ten),
-                    KetNoi.P("@size", hang.Size),
-                    KetNoi.P("@gia", hang.Gia),
-                    KetNoi.P("@soLuong", hang.SoLuong));
+                DongDon dong = new DongDon();
+                dong.ProductId = hang.MaSanPham;
+                dong.ProductName = hang.Ten;
+                dong.Size = hang.Size;
+                dong.Price = hang.Gia;
+                dong.Quantity = hang.SoLuong;
+                donHang.Lines.Add(dong);
 
-                KetNoi.ThucThi(
-                    "UPDATE Products SET Stock = Stock - @soLuong WHERE Id = @id AND Stock >= @soLuong",
-                    KetNoi.P("@soLuong", hang.SoLuong),
-                    KetNoi.P("@id", hang.MaSanPham));
+                SanPhamItem sanPham = DuLieu.TimSanPham(hang.MaSanPham);
+                if (sanPham != null && sanPham.Stock >= hang.SoLuong)
+                    sanPham.Stock = sanPham.Stock - hang.SoLuong;
             }
 
+            DuLieu.ThemDonHang(donHang);
             Gio.XoaHet();
 
-            Response.Redirect("ThanhToan.aspx?ma=" + Server.UrlEncode(maDon));
+            Response.Redirect("ThanhToan.aspx?ma=" + Server.UrlEncode(donHang.Code));
         }
     }
 }

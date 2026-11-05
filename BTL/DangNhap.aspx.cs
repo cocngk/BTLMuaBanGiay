@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Data;
 using System.Web;
 
 namespace ShoeStore
 {
-    // Đăng nhập: kiểm tra mật khẩu trong bảng Users, lưu tên vào Session.
+    // Đăng nhập: tìm tài khoản trong danh sách, so mật khẩu, lưu tên vào Session.
     // Nếu chọn "Nhớ đăng nhập" thì lưu tên vào Cookie 7 ngày.
     public partial class DangNhap : System.Web.UI.Page
     {
@@ -35,28 +34,24 @@ namespace ShoeStore
                 return;
             }
 
-            DataTable bang = KetNoi.Bang(
-                "SELECT * FROM Users WHERE Username = @ten",
-                KetNoi.P("@ten", tenDangNhap));
+            NguoiDung nguoiDung = DuLieu.TimNguoiDung(tenDangNhap);
 
-            if (bang.Rows.Count == 0)
+            if (nguoiDung == null)
             {
                 litThongBao.Text = "<span class=\"thong-bao\">Tài khoản không tồn tại.</span>";
                 return;
             }
 
-            DataRow nguoiDung = bang.Rows[0];
-
-            if (MatKhau.Bam(matKhau) != Convert.ToString(nguoiDung["PasswordHash"]))
+            if (nguoiDung.Password != matKhau)
             {
                 litThongBao.Text = "<span class=\"thong-bao\">Mật khẩu không đúng.</span>";
                 return;
             }
 
             // Lưu trạng thái đăng nhập vào Session
-            Session["Username"] = Convert.ToString(nguoiDung["Username"]);
-            Session["FullName"] = Convert.ToString(nguoiDung["FullName"]);
-            Session["IsAdmin"] = Convert.ToBoolean(nguoiDung["IsAdmin"]);
+            Session["Username"] = nguoiDung.Username;
+            Session["FullName"] = nguoiDung.FullName;
+            Session["IsAdmin"] = nguoiDung.IsAdmin;
 
             // Nhớ đăng nhập bằng Cookie
             if (chkNho.Checked)
