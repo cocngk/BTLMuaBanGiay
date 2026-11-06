@@ -167,6 +167,11 @@
             flex-shrink: 0;
         }
 
+        .header-right .cart-icon-btn[hidden],
+        .nav-center .nav-item[hidden] {
+            display: none !important;
+        }
+
         .cart-icon-btn:hover,
         .cart-icon-btn.active {
             background: var(--brand);

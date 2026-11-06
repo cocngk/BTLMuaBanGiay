@@ -31,6 +31,30 @@ namespace ShoeStore
             gvOrders.DataBind();
         }
 
+        protected string StatusCssClass(object statusValue)
+        {
+            string status = Convert.ToString(statusValue);
+            switch (status)
+            {
+                case "Đang giao": return "status-pill is-shipping";
+                case "Đã giao": return "status-pill is-delivered";
+                case "Đã hủy": return "status-pill is-cancelled";
+                default: return "status-pill is-pending";
+            }
+        }
+
+        protected void gvOrders_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType != DataControlRowType.DataRow) return;
+
+            DonHang order = e.Row.DataItem as DonHang;
+            DropDownList ddl = e.Row.FindControl("ddlStatus") as DropDownList;
+            if (order == null || ddl == null) return;
+
+            ListItem current = ddl.Items.FindByValue(order.Status ?? string.Empty);
+            if (current != null) ddl.SelectedValue = current.Value;
+        }
+
         private static bool Has(string value, string query) => !string.IsNullOrEmpty(value) && value.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0;
 
         protected void btnSearch_Click(object sender, EventArgs e)

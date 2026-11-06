@@ -71,6 +71,13 @@ namespace ShoeStore
             Luu(danhSach);
         }
 
+        // Mua ngay là một lượt thanh toán riêng, không cộng với giỏ còn lại từ lần trước.
+        public static void DatMuaNgay(MatHang hang)
+        {
+            if (Phien == null) return;
+            Phien[Khoa] = new List<MatHang> { hang };
+        }
+
         // Đổi số lượng của một dòng.
         public static void DoiSoLuong(int maSanPham, string size, int soLuong)
         {

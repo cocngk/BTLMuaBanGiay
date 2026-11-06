@@ -58,6 +58,7 @@
             <th>Mã đơn</th>
             <th>Ngày đặt</th>
             <th>Tổng tiền</th>
+            <th>Trạng thái</th>
         </tr>
         <asp:Repeater ID="rptDonHang" runat="server">
             <ItemTemplate>
@@ -65,6 +66,7 @@
                     <td><%# Eval("Code") %></td>
                     <td><%# Eval("CreatedAt", "{0:dd/MM/yyyy HH:mm}") %></td>
                     <td><%# Eval("Total", "{0:N0} đ") %></td>
+                    <td><span class="order-status"><%#: Eval("Status") %></span></td>
                 </tr>
             </ItemTemplate>
         </asp:Repeater>

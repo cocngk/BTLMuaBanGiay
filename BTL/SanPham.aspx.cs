@@ -124,7 +124,7 @@ namespace ShoeStore
 
             string size = (product.Sizes ?? string.Empty).Split(',')
                 .Select(value => value.Trim()).FirstOrDefault(value => value.Length > 0) ?? "38";
-            Gio.Them(new MatHang
+            MatHang hangMua = new MatHang
             {
                 MaSanPham = product.Id,
                 Ten = product.Name,
@@ -132,14 +132,17 @@ namespace ShoeStore
                 Size = size,
                 SoLuong = 1,
                 Anh = product.ImageUrl
-            });
+            };
 
             if (e.CommandName == "BuyNow")
             {
+                Gio.DatMuaNgay(hangMua);
                 Response.Redirect("ThanhToan.aspx", false);
                 Context.ApplicationInstance.CompleteRequest();
                 return;
             }
+
+            Gio.Them(hangMua);
 
             litActionMessage.Text = "<p class=\"shop-action-message\">Đã thêm "
                 + Server.HtmlEncode(product.Name) + " vào giỏ hàng.</p>";

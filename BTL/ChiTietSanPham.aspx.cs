@@ -176,13 +176,14 @@ namespace ShoeStore
                 : (kichThuocHopLe.Length > 0 ? kichThuocHopLe[0] : "38");
             hang.SoLuong = soLuong;
 
-            Gio.Them(hang);
-
             if (muaNgay)
             {
+                Gio.DatMuaNgay(hang);
                 Response.Redirect("ThanhToan.aspx");
                 return;
             }
+
+            Gio.Them(hang);
 
             litKetQua.Text = "<span class=\"thong-bao tot\">Đã thêm "
                 + Server.HtmlEncode(hang.Ten) + " (size " + Server.HtmlEncode(hang.Size)

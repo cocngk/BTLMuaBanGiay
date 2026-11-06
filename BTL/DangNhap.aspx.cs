@@ -80,8 +80,33 @@ namespace ShoeStore
                 Response.Cookies.Add(cookie);
             }
 
-            Response.Redirect("TrangChu.aspx", false);
+            string trangTruoc = Request.QueryString["return"];
+            if (string.IsNullOrWhiteSpace(trangTruoc))
+                trangTruoc = Request.QueryString["ReturnUrl"];
+
+            string noiChuyenDen = LaDuongDanNoiBo(trangTruoc) ? trangTruoc : "TrangChu.aspx";
+            Response.Redirect(noiChuyenDen, false);
             Context.ApplicationInstance.CompleteRequest();
+        }
+
+        private bool LaDuongDanNoiBo(string duongDan)
+        {
+            if (string.IsNullOrWhiteSpace(duongDan)) return false;
+            if (duongDan.StartsWith("//", StringComparison.Ordinal)
+                || duongDan.StartsWith("\\\\", StringComparison.Ordinal)
+                || duongDan.IndexOf('\\') >= 0
+                || duongDan.IndexOf('\r') >= 0
+                || duongDan.IndexOf('\n') >= 0)
+                return false;
+
+            Uri uriTuyetDoi;
+            if (Uri.TryCreate(duongDan, UriKind.Absolute, out uriTuyetDoi))
+                return uriTuyetDoi.Scheme == Request.Url.Scheme
+                    && uriTuyetDoi.Host == Request.Url.Host
+                    && uriTuyetDoi.Port == Request.Url.Port;
+
+            Uri uriTuongDoi;
+            return Uri.TryCreate(duongDan, UriKind.Relative, out uriTuongDoi);
         }
     }
 }

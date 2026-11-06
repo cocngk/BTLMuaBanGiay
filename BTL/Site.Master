@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="Content/css/phong-chu.css" />
     <link rel="stylesheet" href="Content/css/site.css?v=20261106-2" />
     <link rel="stylesheet" href="Content/css/trang-web.css?v=20261106-2" />
+    <script src="Content/js/header-search.js?v=1" defer></script>
     <asp:ContentPlaceHolder ID="HeadContent" runat="server"></asp:ContentPlaceHolder>
 </head>
 <body>
@@ -25,7 +26,7 @@
             <ul class="nav-center">
                 <li class="nav-item"><a href="TrangChu.aspx"><i class="fa-solid fa-house" aria-hidden="true"></i> Trang chủ</a></li>
                 <li class="nav-item"><a href="SanPham.aspx"><i class="fa-solid fa-shoe-prints" aria-hidden="true"></i> Sản phẩm</a></li>
-                <li class="nav-item"><a href="GioHang.aspx"><i class="fa-solid fa-bag-shopping" aria-hidden="true"></i> Giỏ hàng</a></li>
+                <li class="nav-item" hidden="hidden"><a href="GioHang.aspx"><i class="fa-solid fa-bag-shopping" aria-hidden="true"></i> Giỏ hàng</a></li>
                 <li class="nav-item"><a href="TaiKhoan.aspx"><i class="fa-solid fa-user" aria-hidden="true"></i> Tài khoản</a></li>
                 <asp:PlaceHolder ID="phnQuanTri" runat="server" Visible="false">
                     <li class="nav-item"><a href="QuanTriSanPham.aspx"><i class="fa-solid fa-gauge-high" aria-hidden="true"></i> Quản trị</a></li>
@@ -33,11 +34,11 @@
             </ul>
 
             <div class="header-right">
-                <div class="search-pill">
-                    <asp:TextBox ID="txtTimKiem" runat="server" placeholder="Tìm giày..." aria-label="Tìm giày"></asp:TextBox>
-                    <asp:LinkButton ID="btnTimKiem" runat="server" CssClass="btn-search-icon" OnClick="btnTimKiem_Click" CausesValidation="false" aria-label="Tìm kiếm"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></asp:LinkButton>
-                </div>
-                <a href="GioHang.aspx" class="cart-icon-btn" title="Giỏ hàng" aria-label="Giỏ hàng">
+                <asp:Panel ID="pnlTimKiem" runat="server" CssClass="search-pill" DefaultButton="btnTimKiem">
+                    <asp:TextBox ID="txtTimKiem" runat="server" placeholder="Tìm giày..." aria-label="Tìm giày" onfocus="moOTimKiemHeader(this)" onblur="dongOTimKiemHeaderSauKhiMatFocus(this)"></asp:TextBox>
+                    <asp:LinkButton ID="btnTimKiem" runat="server" CssClass="btn-search-icon" OnClientClick="return bamKinhLupHeader(this);" OnClick="btnTimKiem_Click" CausesValidation="false" aria-label="Tìm kiếm"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></asp:LinkButton>
+                </asp:Panel>
+                <a href="GioHang.aspx" class="cart-icon-btn" title="Giỏ hàng" aria-label="Giỏ hàng" hidden="hidden">
                     <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i><span class="cart-count"><asp:Literal ID="litSoGio" runat="server" Text="0" /></span>
                 </a>
                 <div class="auth-buttons-group">
