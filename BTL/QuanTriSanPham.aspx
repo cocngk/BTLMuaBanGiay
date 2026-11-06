@@ -1,8 +1,12 @@
 ﻿<%@ Page Title="Quản trị sản phẩm" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="QuanTriSanPham.aspx.cs" Inherits="ShoeStore.QuanTriSanPham" %>
+<%@ Register Src="~/Controls/TabQuanTri.ascx" TagPrefix="uc" TagName="TabQuanTri" %>
 
 <asp:Content ID="NoiDung" ContentPlaceHolderID="MainContent" runat="server">
 
+    <link rel="stylesheet" href="Content/css/quantri.css" />
+    <section class="admin-page">
     <h1>Quản trị sản phẩm</h1>
+    <uc:TabQuanTri ID="ucTabs" runat="server" ActiveTab="products" />
 
     <asp:Literal ID="litThongBao" runat="server" />
 
@@ -10,10 +14,11 @@
         <a class="nut" href="SuaSanPham.aspx">Thêm sản phẩm</a>
     </p>
 
+    <div class="admin-table-wrap">
     <asp:GridView ID="gvSanPham" runat="server"
         AutoGenerateColumns="false"
         DataKeyNames="Id"
-        CssClass="bang"
+        CssClass="admin-table"
         GridLines="None"
         OnRowCommand="gvSanPham_RowCommand">
         <Columns>
@@ -35,5 +40,7 @@
             </asp:TemplateField>
         </Columns>
     </asp:GridView>
+    </div>
+    </section>
 
 </asp:Content>

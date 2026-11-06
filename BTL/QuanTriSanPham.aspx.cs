@@ -38,11 +38,20 @@ namespace ShoeStore
         // Bấm nút Xóa trên một dòng.
         protected void gvSanPham_RowCommand(object sender, GridViewCommandEventArgs e)
         {
+            if (Session["Username"] == null || Session["IsAdmin"] == null || !Convert.ToBoolean(Session["IsAdmin"]))
+            {
+                Response.Redirect("DangNhap.aspx?return=QuanTriSanPham.aspx", false);
+                Context.ApplicationInstance.CompleteRequest();
+                return;
+            }
             if (e.CommandName != "Xoa") return;
 
-            DuLieu.XoaSanPham(Convert.ToInt32(e.CommandArgument));
+            int id;
+            if (!int.TryParse(Convert.ToString(e.CommandArgument), out id)) return;
+            DuLieu.XoaSanPham(id);
 
-            Response.Redirect("QuanTriSanPham.aspx?xoa=1");
+            Response.Redirect("QuanTriSanPham.aspx?xoa=1", false);
+            Context.ApplicationInstance.CompleteRequest();
         }
     }
 }

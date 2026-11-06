@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Web;
+using System.Web.Security;
 
 namespace ShoeStore
 {
-    // Đăng nhập: tìm tài khoản trong danh sách, so mật khẩu, lưu tên vào Session.
-    // Nếu chọn "Nhớ đăng nhập" thì lưu tên vào Cookie 7 ngày.
+    // Đăng nhập bằng tên/email; tùy chọn ghi nhớ dùng Forms Authentication ticket 7 ngày.
     public partial class DangNhap : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
@@ -14,37 +14,39 @@ namespace ShoeStore
             if (Request.QueryString["dangky"] == "1")
                 litThongBao.Text = "<span class=\"thong-bao tot\">Đăng ký thành công, mời bạn đăng nhập.</span>";
 
-            // Lần sau mở trang, nếu có cookie thì điền sẵn tên đăng nhập
-            HttpCookie cookie = Request.Cookies["nhodangnhap"];
-            if (cookie != null)
-            {
-                txtTenDangNhap.Text = cookie.Value;
-                chkNho.Checked = true;
-            }
+            chkNho.Checked = Request.Cookies[FormsAuthentication.FormsCookieName] != null;
         }
 
         protected void btnDangNhap_Click(object sender, EventArgs e)
         {
+            lblTenDangNhapError.Text = string.Empty;
+            lblMatKhauError.Text = string.Empty;
             string tenDangNhap = txtTenDangNhap.Text.Trim();
             string matKhau = txtMatKhau.Text;
 
-            if (tenDangNhap == "" || matKhau == "")
+            if (tenDangNhap == "")
             {
-                litThongBao.Text = "<span class=\"thong-bao\">Vui lòng nhập tên đăng nhập và mật khẩu.</span>";
-                return;
+                lblTenDangNhapError.Text = "Vui lòng nhập tên đăng nhập hoặc email.";
             }
+            if (matKhau == "")
+            {
+                lblMatKhauError.Text = "Vui lòng nhập mật khẩu.";
+            }
+            if (tenDangNhap == "" || matKhau == "")
+                return;
 
-            NguoiDung nguoiDung = DuLieu.TimNguoiDung(tenDangNhap);
+            NguoiDung nguoiDung = DuLieu.TimNguoiDung(tenDangNhap)
+                ?? DuLieu.TimNguoiDungTheoEmail(tenDangNhap);
 
             if (nguoiDung == null)
             {
-                litThongBao.Text = "<span class=\"thong-bao\">Tài khoản không tồn tại.</span>";
+                lblTenDangNhapError.Text = "Tài khoản hoặc email không tồn tại.";
                 return;
             }
 
             if (nguoiDung.Password != matKhau)
             {
-                litThongBao.Text = "<span class=\"thong-bao\">Mật khẩu không đúng.</span>";
+                lblMatKhauError.Text = "Mật khẩu không đúng.";
                 return;
             }
 
@@ -53,22 +55,33 @@ namespace ShoeStore
             Session["FullName"] = nguoiDung.FullName;
             Session["IsAdmin"] = nguoiDung.IsAdmin;
 
-            // Nhớ đăng nhập bằng Cookie
+            // Cookie xác thực có chữ ký/mã hóa của ASP.NET, không lưu tên hay mật khẩu dạng thô.
             if (chkNho.Checked)
             {
-                HttpCookie cookie = new HttpCookie("nhodangnhap");
-                cookie.Value = tenDangNhap;
-                cookie.Expires = DateTime.Now.AddDays(7);
+                DateTime hetHan = DateTime.Now.AddDays(7);
+                var ticket = new FormsAuthenticationTicket(
+                    1, nguoiDung.Username, DateTime.Now, hetHan, true, string.Empty,
+                    FormsAuthentication.FormsCookiePath);
+                HttpCookie cookie = new HttpCookie(FormsAuthentication.FormsCookieName,
+                    FormsAuthentication.Encrypt(ticket));
+                cookie.Expires = hetHan;
                 cookie.HttpOnly = true;
+                cookie.Secure = Request.IsSecureConnection;
+                cookie.Path = FormsAuthentication.FormsCookiePath;
+                Response.Cookies.Add(cookie);
+            }
+            else
+            {
+                HttpCookie cookie = new HttpCookie(FormsAuthentication.FormsCookieName, string.Empty);
+                cookie.Expires = DateTime.Now.AddDays(-1);
+                cookie.HttpOnly = true;
+                cookie.Secure = Request.IsSecureConnection;
+                cookie.Path = FormsAuthentication.FormsCookiePath;
                 Response.Cookies.Add(cookie);
             }
 
-            // Quay lại trang người dùng đang xem, hoặc về trang chủ
-            string quayLai = Request.QueryString["return"];
-            if (string.IsNullOrEmpty(quayLai) || quayLai.Contains("://"))
-                quayLai = "TrangChu.aspx";
-
-            Response.Redirect(quayLai);
+            Response.Redirect("TrangChu.aspx", false);
+            Context.ApplicationInstance.CompleteRequest();
         }
     }
 }

@@ -6,43 +6,92 @@
     <title>SneakerX - Giày chính hãng</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="Content/site.css" />
+    <link rel="stylesheet" href="Content/vendor/fontawesome/css/all.min.css" />
+    <link rel="stylesheet" href="Content/css/bien-thiet-ke.css" />
+    <link rel="stylesheet" href="Content/css/phong-chu.css" />
+    <link rel="stylesheet" href="Content/css/site.css?v=20261106-2" />
+    <link rel="stylesheet" href="Content/css/trang-web.css?v=20261106-2" />
     <asp:ContentPlaceHolder ID="HeadContent" runat="server"></asp:ContentPlaceHolder>
 </head>
 <body>
     <form id="form1" runat="server">
 
-        <header class="top">
-            <a class="logo" href="TrangChu.aspx">SneakerX</a>
+        <header class="header-container">
+            <a href="TrangChu.aspx" class="logo-area" aria-label="SneakerX - Trang chủ">
+                <span class="logo-icon"><i class="fa-solid fa-shoe-prints" aria-hidden="true"></i></span>
+                <span class="logo-text">SneakerX</span>
+            </a>
 
-            <nav>
-                <a href="TrangChu.aspx">Trang chủ</a>
-                <a href="SanPham.aspx">Sản phẩm</a>
-                <a href="GioHang.aspx">Giỏ hàng (<asp:Literal ID="litSoGio" runat="server" Text="0" />)</a>
-                <a href="TaiKhoan.aspx">Tài khoản</a>
+            <ul class="nav-center">
+                <li class="nav-item"><a href="TrangChu.aspx"><i class="fa-solid fa-house" aria-hidden="true"></i> Trang chủ</a></li>
+                <li class="nav-item"><a href="SanPham.aspx"><i class="fa-solid fa-shoe-prints" aria-hidden="true"></i> Sản phẩm</a></li>
+                <li class="nav-item"><a href="GioHang.aspx"><i class="fa-solid fa-bag-shopping" aria-hidden="true"></i> Giỏ hàng</a></li>
+                <li class="nav-item"><a href="TaiKhoan.aspx"><i class="fa-solid fa-user" aria-hidden="true"></i> Tài khoản</a></li>
                 <asp:PlaceHolder ID="phnQuanTri" runat="server" Visible="false">
-                    <a href="QuanTriSanPham.aspx">Quản trị</a>
+                    <li class="nav-item"><a href="QuanTriSanPham.aspx"><i class="fa-solid fa-gauge-high" aria-hidden="true"></i> Quản trị</a></li>
                 </asp:PlaceHolder>
-            </nav>
+            </ul>
 
-            <div class="thanh-cong-cu">
-                <asp:TextBox ID="txtTimKiem" runat="server" CssClass="o-tim" placeholder="Tìm giày..."></asp:TextBox>
-                <asp:Button ID="btnTimKiem" runat="server" Text="Tìm" CssClass="nut nho" OnClick="btnTimKiem_Click" />
-                <asp:Literal ID="litTaiKhoan" runat="server" />
-                <asp:LinkButton ID="btnThoat" runat="server" Text="Thoát" CssClass="nut-link" Visible="false" OnClick="btnThoat_Click" />
+            <div class="header-right">
+                <div class="search-pill">
+                    <asp:TextBox ID="txtTimKiem" runat="server" placeholder="Tìm giày..." aria-label="Tìm giày"></asp:TextBox>
+                    <asp:LinkButton ID="btnTimKiem" runat="server" CssClass="btn-search-icon" OnClick="btnTimKiem_Click" CausesValidation="false" aria-label="Tìm kiếm"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></asp:LinkButton>
+                </div>
+                <a href="GioHang.aspx" class="cart-icon-btn" title="Giỏ hàng" aria-label="Giỏ hàng">
+                    <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i><span class="cart-count"><asp:Literal ID="litSoGio" runat="server" Text="0" /></span>
+                </a>
+                <div class="auth-buttons-group">
+                    <asp:Literal ID="litTaiKhoan" runat="server" />
+                    <asp:LinkButton ID="btnThoat" runat="server" CssClass="btn-header-login" Visible="false" OnClick="btnThoat_Click" CausesValidation="false" ToolTip="Đăng xuất"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i></asp:LinkButton>
+                </div>
             </div>
         </header>
 
-        <main class="khung">
+        <main class="main-wrapper">
             <asp:ContentPlaceHolder ID="MainContent" runat="server"></asp:ContentPlaceHolder>
         </main>
 
-        <footer class="chan">
-            <p>SneakerX - Bài tập lớn môn Lập trình web</p>
-            <p>
-                Lượt truy cập: <asp:Literal ID="litLuotTruyCap" runat="server" Text="0" />
-                &middot; Đang online: <asp:Literal ID="litDangOnline" runat="server" Text="0" />
-            </p>
+        <footer class="footer">
+            <div class="footer-inner">
+                <div class="footer-col footer-brand-col">
+                    <a href="TrangChu.aspx" class="footer-logo"><span class="footer-logo-icon"><i class="fa-solid fa-shoe-prints" aria-hidden="true"></i></span><span class="footer-logo-text">SneakerX</span></a>
+                    <p class="footer-tagline">Giày thể thao chính hãng, đổi trả 30 ngày, giao hàng toàn quốc.</p>
+                    <div class="footer-social" aria-label="Mạng xã hội">
+                        <a href="#" class="footer-social-btn" aria-label="Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
+                        <a href="#" class="footer-social-btn" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+                        <a href="#" class="footer-social-btn" aria-label="TikTok"><i class="fa-brands fa-tiktok" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4 class="footer-heading">Liên kết</h4>
+                    <ul class="footer-links">
+                        <li><a href="TrangChu.aspx">Trang chủ</a></li>
+                        <li><a href="SanPham.aspx">Sản phẩm</a></li>
+                        <li><a href="GioHang.aspx">Giỏ hàng</a></li>
+                        <li><a href="TaiKhoan.aspx">Tài khoản</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4 class="footer-heading">Hỗ trợ</h4>
+                    <ul class="footer-links">
+                        <li><a href="TaiKhoan.aspx">Tài khoản của tôi</a></li>
+                        <li><a href="GioHang.aspx">Hướng dẫn đặt hàng</a></li>
+                        <li><a href="mailto:hotro@sneakerx.com">Liên hệ hỗ trợ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4 class="footer-heading">Liên hệ</h4>
+                    <ul class="footer-contact-list">
+                        <li><i class="fa-solid fa-headset" aria-hidden="true"></i><span>Hotline <a href="tel:19006789">1900 6789</a></span></li>
+                        <li><i class="fa-solid fa-envelope" aria-hidden="true"></i><span><a href="mailto:hotro@sneakerx.com">hotro@sneakerx.com</a></span></li>
+                        <li><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>128 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh</span></li>
+                        <li><i class="fa-regular fa-clock" aria-hidden="true"></i><span>8:00 – 21:00, cả 7 ngày trong tuần</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <%= DateTime.Now.Year %> SneakerX. Tất cả quyền được bảo lưu. &nbsp;·&nbsp; Lượt truy cập: <asp:Literal ID="litLuotTruyCap" runat="server" Text="0" /> &nbsp;·&nbsp; Đang online: <asp:Literal ID="litDangOnline" runat="server" Text="0" /></p>
+            </div>
         </footer>
 
     </form>

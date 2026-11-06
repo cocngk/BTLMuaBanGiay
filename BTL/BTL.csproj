@@ -66,7 +66,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\site.css" />
+    <Content Include="Content\css\**\*.*" />
+    <Content Include="Content\fonts\**\*.*" />
+    <Content Include="Content\js\**\*.*" />
+    <Content Include="Content\vendor\fontawesome\**\*.*" />
     <Content Include="Content\images\products\*.jpg" />
     <Content Include="Content\images\gallery\*.jpg" />
     <Content Include="Content\images\hero\*.jpg" />
@@ -76,6 +79,9 @@
     <Content Include="DangNhap.aspx" />
     <Content Include="GioHang.aspx" />
     <Content Include="QuanTriSanPham.aspx" />
+    <Content Include="QuanTriDonHang.aspx" />
+    <Content Include="QuanTriNguoiDung.aspx" />
+    <Content Include="Controls\TabQuanTri.ascx" />
     <Content Include="SanPham.aspx" />
     <Content Include="SuaSanPham.aspx" />
     <Content Include="TaiKhoan.aspx" />
@@ -133,6 +139,12 @@
     <Compile Include="QuanTriSanPham.aspx.designer.cs">
       <DependentUpon>QuanTriSanPham.aspx</DependentUpon>
     </Compile>
+    <Compile Include="QuanTriDonHang.aspx.cs"><DependentUpon>QuanTriDonHang.aspx</DependentUpon><SubType>ASPXCodeBehind</SubType></Compile>
+    <Compile Include="QuanTriDonHang.aspx.designer.cs"><DependentUpon>QuanTriDonHang.aspx</DependentUpon></Compile>
+    <Compile Include="QuanTriNguoiDung.aspx.cs"><DependentUpon>QuanTriNguoiDung.aspx</DependentUpon><SubType>ASPXCodeBehind</SubType></Compile>
+    <Compile Include="QuanTriNguoiDung.aspx.designer.cs"><DependentUpon>QuanTriNguoiDung.aspx</DependentUpon></Compile>
+    <Compile Include="Controls\TabQuanTri.ascx.cs"><DependentUpon>TabQuanTri.ascx</DependentUpon><SubType>ASPXCodeBehind</SubType></Compile>
+    <Compile Include="Controls\TabQuanTri.ascx.designer.cs"><DependentUpon>TabQuanTri.ascx</DependentUpon></Compile>
     <Compile Include="SanPham.aspx.cs">
       <DependentUpon>SanPham.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

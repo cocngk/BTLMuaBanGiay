@@ -28,6 +28,7 @@
 
         <h2>Đơn hàng của bạn</h2>
 
+        <div class="checkout-table-wrap">
         <table class="bang">
             <tr>
                 <th>Sản phẩm</th>
@@ -48,6 +49,7 @@
                 </ItemTemplate>
             </asp:Repeater>
         </table>
+        </div>
 
         <p class="tong">
             <span>Tổng cộng</span>

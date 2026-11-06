@@ -27,7 +27,15 @@ namespace ShoeStore
         public int Stock { get; set; }
         public string Sizes { get; set; }
         public string ImageUrl { get; set; }
+        public List<AnhSanPham> Gallery { get; set; }
         public bool IsHot { get; set; }
+    }
+
+    // Một ảnh trong gallery; ảnh lớn và ảnh thumbnail được lưu cùng nhau.
+    public class AnhSanPham
+    {
+        public string ThumbnailUrl { get; set; }
+        public string ImageUrl { get; set; }
     }
 
     // Một dòng trong đơn hàng.
@@ -52,7 +60,24 @@ namespace ShoeStore
         public string Address { get; set; }
         public string PaymentMethod { get; set; }
         public decimal Total { get; set; }
+        public string Status { get; set; }
         public List<DongDon> Lines = new List<DongDon>();
+    }
+
+    // Đánh giá được lưu trong bộ nhớ, cùng vòng đời với dữ liệu mẫu của ứng dụng.
+    public class DanhGiaSanPham
+    {
+        public int ProductId { get; set; }
+        public string Username { get; set; }
+        public string CustomerName { get; set; }
+        public int Rating { get; set; }
+        public string Comment { get; set; }
+        public DateTime CreatedAt { get; set; }
+
+        public string Stars
+        {
+            get { return new string('★', Rating) + new string('☆', 5 - Rating); }
+        }
     }
 
     // Toàn bộ dữ liệu nằm trong bộ nhớ, không dùng cơ sở dữ liệu.
@@ -62,10 +87,23 @@ namespace ShoeStore
         public static List<NguoiDung> NguoiDungs = new List<NguoiDung>();
         public static List<SanPhamItem> SanPhams = new List<SanPhamItem>();
         public static List<DonHang> DonHangs = new List<DonHang>();
+        public static List<DanhGiaSanPham> DanhGias = new List<DanhGiaSanPham>();
 
         private static int maNguoiDung = 0;
         private static int maSanPham = 0;
         private static int maDonHang = 0;
+        private static readonly object KhoaNguoiDung = new object();
+
+        private static List<AnhSanPham> Anh(params string[] duongDanThumbnail)
+        {
+            return duongDanThumbnail.Select(duongDan => new AnhSanPham
+            {
+                ThumbnailUrl = "Content/images/" + duongDan,
+                ImageUrl = "Content/images/" + duongDan
+                    .Replace("-t.jpg", ".jpg")
+                    .Replace("-sm.jpg", "-lg.jpg")
+            }).ToList();
+        }
 
         // Hàm này tự chạy một lần khi có chỗ đầu tiên dùng tới DuLieu.
         static DuLieu()
@@ -79,14 +117,51 @@ namespace ShoeStore
 
         public static NguoiDung TimNguoiDung(string tenDangNhap)
         {
-            return NguoiDungs.FirstOrDefault(nd => nd.Username == tenDangNhap);
+            if (string.IsNullOrWhiteSpace(tenDangNhap)) return null;
+            lock (KhoaNguoiDung)
+                return NguoiDungs.FirstOrDefault(nd => string.Equals(
+                    nd.Username, tenDangNhap.Trim(), StringComparison.OrdinalIgnoreCase));
+        }
+
+        public static NguoiDung TimNguoiDungTheoEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email)) return null;
+            lock (KhoaNguoiDung)
+                return NguoiDungs.FirstOrDefault(nd => string.Equals(
+                    nd.Email, email.Trim(), StringComparison.OrdinalIgnoreCase));
+        }
+
+        public static bool EmailDaTonTai(string email)
+        {
+            return TimNguoiDungTheoEmail(email) != null;
+        }
+
+        // Kiểm tra trùng và thêm tài khoản trong cùng khóa để tránh đăng ký trùng khi có request đồng thời.
+        public static bool ThuThemTaiKhoan(NguoiDung nguoiDung, out bool trungTen, out bool trungEmail)
+        {
+            lock (KhoaNguoiDung)
+            {
+                trungTen = NguoiDungs.Any(nd => string.Equals(
+                    nd.Username, nguoiDung.Username, StringComparison.OrdinalIgnoreCase));
+                trungEmail = NguoiDungs.Any(nd => string.Equals(
+                    nd.Email, nguoiDung.Email, StringComparison.OrdinalIgnoreCase));
+                if (trungTen || trungEmail) return false;
+
+                maNguoiDung++;
+                nguoiDung.Id = maNguoiDung;
+                NguoiDungs.Add(nguoiDung);
+                return true;
+            }
         }
 
         public static void ThemNguoiDung(NguoiDung nguoiDung)
         {
-            maNguoiDung = maNguoiDung + 1;
-            nguoiDung.Id = maNguoiDung;
-            NguoiDungs.Add(nguoiDung);
+            lock (KhoaNguoiDung)
+            {
+                maNguoiDung++;
+                nguoiDung.Id = maNguoiDung;
+                NguoiDungs.Add(nguoiDung);
+            }
         }
 
         // ------------------------------------------------------------------
@@ -145,12 +220,35 @@ namespace ShoeStore
         {
             maDonHang = maDonHang + 1;
             donHang.Id = maDonHang;
+            if (string.IsNullOrWhiteSpace(donHang.Status)) donHang.Status = "Chờ xác nhận";
             DonHangs.Add(donHang);
         }
 
         public static DonHang TimDonHang(string maDon)
         {
             return DonHangs.FirstOrDefault(don => don.Code == maDon);
+        }
+
+        public static List<DanhGiaSanPham> DanhGiaTheoSanPham(int maSanPham)
+        {
+            return DanhGias.Where(dg => dg.ProductId == maSanPham)
+                .OrderByDescending(dg => dg.CreatedAt)
+                .ToList();
+        }
+
+        public static void LuuDanhGia(DanhGiaSanPham danhGia)
+        {
+            DanhGiaSanPham hienTai = DanhGias.FirstOrDefault(dg =>
+                dg.ProductId == danhGia.ProductId && dg.Username == danhGia.Username);
+
+            if (hienTai == null) DanhGias.Add(danhGia);
+            else
+            {
+                hienTai.CustomerName = danhGia.CustomerName;
+                hienTai.Rating = danhGia.Rating;
+                hienTai.Comment = danhGia.Comment;
+                hienTai.CreatedAt = danhGia.CreatedAt;
+            }
         }
 
         // Đơn hàng của một tài khoản, mới nhất trước.
@@ -188,18 +286,18 @@ namespace ShoeStore
                 IsAdmin = false
             });
 
-            ThemSanPham(new SanPhamItem { Name = "Nike Air Force 1", Brand = "Nike", Description = "Da chính hãng, đế cao su bám đường và đệm êm cả ngày.", Price = 2900000, Stock = 12, Sizes = "38,39,40,41", ImageUrl = "Content/images/products/nike-1-sm.jpg", IsHot = true });
-            ThemSanPham(new SanPhamItem { Name = "Nike Air Jordan 1", Brand = "Nike", Description = "Dòng giày bóng rổ nổi tiếng nhất của Nike, da cao cấp và đệm êm.", Price = 4500000, Stock = 3, Sizes = "40,41,42,43", ImageUrl = "Content/images/products/nike-2-sm.jpg", IsHot = true });
-            ThemSanPham(new SanPhamItem { Name = "Nike Air Max 90", Brand = "Nike", Description = "Đệm Air dày, hợp cả chạy bộ lẫn dạo phố.", Price = 4200000, Stock = 6, Sizes = "40,41,42,43", ImageUrl = "Content/images/products/nike-3-sm.jpg", IsHot = false });
-            ThemSanPham(new SanPhamItem { Name = "NikeCourt Air Zoom Vapor Cage 4", Brand = "Nike", Description = "Thân lưới nhẹ thoáng, đế dẻo ôm chân khi vận động.", Price = 2750000, Stock = 14, Sizes = "39,40,41,42", ImageUrl = "Content/images/products/nike-4-sm.jpg", IsHot = false });
-            ThemSanPham(new SanPhamItem { Name = "Converse Chuck 70 High", Brand = "Converse", Description = "Canvas cao cổ biểu tượng của phong cách skate từ năm 1970.", Price = 1950000, Stock = 0, Sizes = "38,39,40,41,42", ImageUrl = "Content/images/products/converse-5-sm.jpg", IsHot = true });
-            ThemSanPham(new SanPhamItem { Name = "Converse Chuck Taylor All Star Low", Brand = "Converse", Description = "Mũi thấp dễ phối, canvas bền và đế cao su trắng cổ điển.", Price = 1850000, Stock = 11, Sizes = "38,39,40,41", ImageUrl = "Content/images/products/converse-6-sm.jpg", IsHot = false });
-            ThemSanPham(new SanPhamItem { Name = "Vans Old Skool", Brand = "Vans", Description = "Dáng skate cổ điển, hợp quần jean và áo bomber.", Price = 1750000, Stock = 20, Sizes = "38,39,40,41", ImageUrl = "Content/images/products/vans-7-sm.jpg", IsHot = true });
-            ThemSanPham(new SanPhamItem { Name = "New Balance 574", Brand = "New Balance", Description = "Chất liệu da lộn mềm, form classic bền qua nhiều mùa.", Price = 2450000, Stock = 10, Sizes = "39,40,41,42", ImageUrl = "Content/images/products/newbalance-8-sm.jpg", IsHot = false });
-            ThemSanPham(new SanPhamItem { Name = "Puma RS-X", Brand = "Puma", Description = "Form chunky đặc trưng, phối lưới và da lộn, đế dày êm chân.", Price = 2450000, Stock = 12, Sizes = "39,40,41,42", ImageUrl = "Content/images/products/newbalance-9-sm.jpg", IsHot = false });
-            ThemSanPham(new SanPhamItem { Name = "Adidas Superstar", Brand = "Adidas", Description = "Mũi giày vỏ sò biểu tượng, da cao cấp, đế cao su bám tốt.", Price = 2100000, Stock = 13, Sizes = "38,39,40,41", ImageUrl = "Content/images/products/adidas-10-sm.jpg", IsHot = false });
-            ThemSanPham(new SanPhamItem { Name = "Nike LeBron Soldier 14", Brand = "Nike", Description = "Đệm Zoom Air, đai giữa bàn chân cố định khi di chuyển.", Price = 2650000, Stock = 9, Sizes = "40,41,42,43", ImageUrl = "Content/images/products/underarmour-11-sm.jpg", IsHot = false });
-            ThemSanPham(new SanPhamItem { Name = "Common Projects Achilles Low", Brand = "Common Projects", Description = "Da Ý trắng tối giản, dãy số vàng đặc trưng của dòng Achilles.", Price = 10500000, Stock = 7, Sizes = "39,40,41,42", ImageUrl = "Content/images/products/commonprojects-12-sm.jpg", IsHot = true });
+            ThemSanPham(new SanPhamItem { Name = "Nike Air Force 1", Brand = "Nike", Description = "Da chính hãng, đế cao su bám đường và đệm êm cả ngày.", Price = 2900000, Stock = 12, Sizes = "38,39,40,41", ImageUrl = "Content/images/products/nike-1-sm.jpg", Gallery = Anh("products/nike-1-sm.jpg", "gallery/w01-t.jpg"), IsHot = true });
+            ThemSanPham(new SanPhamItem { Name = "Nike Air Jordan 1", Brand = "Nike", Description = "Dòng giày bóng rổ nổi tiếng nhất của Nike, da cao cấp và đệm êm.", Price = 4500000, Stock = 3, Sizes = "40,41,42,43", ImageUrl = "Content/images/products/nike-2-sm.jpg", Gallery = Anh("products/nike-2-sm.jpg", "gallery/u17-t.jpg"), IsHot = true });
+            ThemSanPham(new SanPhamItem { Name = "Nike Air Max 90", Brand = "Nike", Description = "Đệm Air dày, hợp cả chạy bộ lẫn dạo phố.", Price = 4200000, Stock = 6, Sizes = "40,41,42,43", ImageUrl = "Content/images/products/nike-3-sm.jpg", Gallery = Anh("products/nike-3-sm.jpg", "gallery/v03-t.jpg"), IsHot = false });
+            ThemSanPham(new SanPhamItem { Name = "NikeCourt Air Zoom Vapor Cage 4", Brand = "Nike", Description = "Thân lưới nhẹ thoáng, đế dẻo ôm chân khi vận động.", Price = 2750000, Stock = 14, Sizes = "39,40,41,42", ImageUrl = "Content/images/products/nike-4-sm.jpg", Gallery = Anh("products/nike-4-sm.jpg", "gallery/w05-t.jpg", "gallery/u15-t.jpg"), IsHot = false });
+            ThemSanPham(new SanPhamItem { Name = "Converse Chuck 70 High", Brand = "Converse", Description = "Canvas cao cổ biểu tượng của phong cách skate từ năm 1970.", Price = 1950000, Stock = 0, Sizes = "38,39,40,41,42", ImageUrl = "Content/images/products/converse-5-sm.jpg", Gallery = Anh("products/converse-5-sm.jpg", "gallery/u11-t.jpg"), IsHot = true });
+            ThemSanPham(new SanPhamItem { Name = "Converse Chuck Taylor All Star Low", Brand = "Converse", Description = "Mũi thấp dễ phối, canvas bền và đế cao su trắng cổ điển.", Price = 1850000, Stock = 11, Sizes = "38,39,40,41", ImageUrl = "Content/images/products/converse-6-sm.jpg", Gallery = Anh("products/converse-6-sm.jpg"), IsHot = false });
+            ThemSanPham(new SanPhamItem { Name = "Vans Old Skool", Brand = "Vans", Description = "Dáng skate cổ điển, hợp quần jean và áo bomber.", Price = 1750000, Stock = 20, Sizes = "38,39,40,41", ImageUrl = "Content/images/products/vans-7-sm.jpg", Gallery = Anh("products/vans-7-sm.jpg", "gallery/u05-t.jpg", "gallery/w04-t.jpg"), IsHot = true });
+            ThemSanPham(new SanPhamItem { Name = "New Balance 574", Brand = "New Balance", Description = "Chất liệu da lộn mềm, form classic bền qua nhiều mùa.", Price = 2450000, Stock = 10, Sizes = "39,40,41,42", ImageUrl = "Content/images/products/newbalance-8-sm.jpg", Gallery = Anh("products/newbalance-8-sm.jpg", "gallery/u01-t.jpg", "gallery/u04-t.jpg", "gallery/w07-t.jpg"), IsHot = false });
+            ThemSanPham(new SanPhamItem { Name = "Puma RS-X", Brand = "Puma", Description = "Form chunky đặc trưng, phối lưới và da lộn, đế dày êm chân.", Price = 2450000, Stock = 12, Sizes = "39,40,41,42", ImageUrl = "Content/images/products/newbalance-9-sm.jpg", Gallery = Anh("products/newbalance-9-sm.jpg", "gallery/w07-t.jpg"), IsHot = false });
+            ThemSanPham(new SanPhamItem { Name = "Adidas Superstar", Brand = "Adidas", Description = "Mũi giày vỏ sò biểu tượng, da cao cấp, đế cao su bám tốt.", Price = 2100000, Stock = 13, Sizes = "38,39,40,41", ImageUrl = "Content/images/products/adidas-10-sm.jpg", Gallery = Anh("products/adidas-10-sm.jpg"), IsHot = false });
+            ThemSanPham(new SanPhamItem { Name = "Nike LeBron Soldier 14", Brand = "Nike", Description = "Đệm Zoom Air, đai giữa bàn chân cố định khi di chuyển.", Price = 2650000, Stock = 9, Sizes = "40,41,42,43", ImageUrl = "Content/images/products/underarmour-11-sm.jpg", Gallery = Anh("products/underarmour-11-sm.jpg"), IsHot = false });
+            ThemSanPham(new SanPhamItem { Name = "Common Projects Achilles Low", Brand = "Common Projects", Description = "Da Ý trắng tối giản, dãy số vàng đặc trưng của dòng Achilles.", Price = 10500000, Stock = 7, Sizes = "39,40,41,42", ImageUrl = "Content/images/products/commonprojects-12-sm.jpg", Gallery = Anh("products/commonprojects-12-sm.jpg"), IsHot = true });
         }
     }
 }
